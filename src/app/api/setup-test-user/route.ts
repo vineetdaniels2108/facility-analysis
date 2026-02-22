@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 // Requires the Service Role Key since we want to bypass RLS to create a user programatically
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET(request: Request) {
     try {
+        const supabaseAdmin = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+            process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+        );
         const { data: user, error: authError } = await supabaseAdmin.auth.admin.createUser({
             email: 'admin@simpl.ai',
             password: 'SimplPassword123!',

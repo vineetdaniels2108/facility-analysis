@@ -7,7 +7,7 @@ export async function GET() {
         const patientsDir = path.join(process.cwd(), 'public', 'mockData', 'patients');
 
         if (!fs.existsSync(patientsDir)) {
-            return NextResponse.json({ patients: [] });
+            return NextResponse.json({ error: 'Patients data directory not found' }, { status: 404 });
         }
 
         // Get folders (which are simpl_ids)
