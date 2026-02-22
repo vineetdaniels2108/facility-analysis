@@ -1,7 +1,44 @@
-import { Syringe, AlertCircle } from "lucide-react"
+"use client"
+import { useState } from "react"
+import { Syringe, AlertCircle, Loader2 } from "lucide-react"
 import { MOCK_INFUSION_CANDIDATES } from "@/lib/mockData"
+import { submitInfusionAnalysis } from "@/lib/api/ai"
 
 export default function InfusionPage() {
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+    const handleRunAnalysis = async () => {
+        setIsAnalyzing(true);
+        try {
+            // Mock patient payload representing data fetched from PointClickCare
+            const payload = {
+                simplId: "TEST-PATIENT-002",
+                conditions: [],
+                medications: [],
+                labs: {
+                    "Albumin": 2.1,
+                    "BUN": 45.0,
+                    "Creatinine": 1.9,
+                    "Sodium": 150,
+                    "Potassium": 5.2
+                },
+                vitals: {},
+                functional_score: 10,
+                bims_score: 15,
+                clinical_category: "Medical Management",
+                has_depression_flag: false
+            };
+
+            const result = await submitInfusionAnalysis(payload);
+            alert(`✅ Python AI Engine Success!\n\nPatient: ${result.patientId}\nInfusion Score: ${result.score}\nPriority: ${result.priority}\nReasons: ${result.reasons.join(", ")}`);
+        } catch (error) {
+            console.error(error);
+            alert("❌ Python AI Engine Failed to Connect. Make sure the FastAPI server is running on port 8000!");
+        } finally {
+            setIsAnalyzing(false);
+        }
+    }
+
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
@@ -18,8 +55,11 @@ export default function InfusionPage() {
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-lg font-bold text-slate-800">Infusion Candidates</h2>
-                    <button className="px-4 py-2 bg-primary-50 hover:bg-primary-100 text-primary-700 font-medium rounded-xl transition-colors text-sm">
-                        Scan Recent Labs
+                    <button
+                        onClick={handleRunAnalysis}
+                        disabled={isAnalyzing}
+                        className="px-4 py-2 bg-primary-50 hover:bg-primary-100 text-primary-700 font-medium rounded-xl transition-colors text-sm flex items-center gap-2 disabled:opacity-50">
+                        {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Scan Recent Labs"}
                     </button>
                 </div>
 
