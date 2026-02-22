@@ -5,7 +5,8 @@ import {
     ClipboardList,
     ArrowRight,
     Stethoscope,
-    Users
+    Users,
+    Building2
 } from "lucide-react"
 import Link from "next/link"
 
@@ -45,6 +46,24 @@ const ANALYSIS_MODULES = [
         color: "bg-primary-500",
         gradient: "from-primary-500/20 to-primary-500/5",
         border: "border-primary-200/50"
+    },
+    {
+        id: "patients",
+        title: "Patient Directory",
+        description: "Explore the raw clinical data JSON payloads ingested from PointClickCare for all patients.",
+        icon: Users,
+        color: "bg-teal-500",
+        gradient: "from-teal-500/20 to-teal-500/5",
+        border: "border-teal-200/50"
+    },
+    {
+        id: "facilities",
+        title: "Facilities Database",
+        description: "View automatically onboarded facilities and their respective PointClickCare integration statuses.",
+        icon: Building2,
+        color: "bg-indigo-500",
+        gradient: "from-indigo-500/20 to-indigo-500/5",
+        border: "border-indigo-200/50"
     }
 ]
 

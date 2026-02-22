@@ -1,20 +1,54 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Syringe, AlertCircle, Loader2 } from "lucide-react"
-import { MOCK_INFUSION_CANDIDATES } from "@/lib/mockData"
 import { submitInfusionAnalysis } from "@/lib/api/ai"
+
+interface PatientSummary {
+    simpl_id: string;
+    first_name: string;
+    last_name: string;
+    facility: string;
+}
 
 export default function InfusionPage() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [patients, setPatients] = useState<PatientSummary[]>([]);
+    const [selectedPatientId, setSelectedPatientId] = useState("");
+    const [results, setResults] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch("/api/patients")
+            .then(res => res.json())
+            .then(data => {
+                if (data.patients) {
+                    setPatients(data.patients);
+                    if (data.patients.length > 0) {
+                        setSelectedPatientId(data.patients[0].simpl_id);
+                    }
+                }
+            })
+            .catch(console.error);
+    }, []);
 
     const handleRunAnalysis = async () => {
+        if (!selectedPatientId) return;
         setIsAnalyzing(true);
         try {
-            // Mock patient payload representing data fetched from PointClickCare
-            const payload = {
-                simplId: "TEST-PATIENT-002",
+            // 1. Fetch live aggregated PointClickCare Data
+            const syncRes = await fetch(`/api/patients/${selectedPatientId}/sync`);
+            const syncData = await syncRes.json();
+
+            if (!syncData.success) {
+                alert("Failed to fetch PointClickCare clinical records.");
+                return;
+            }
+
+            const rawData = syncData.patientData.data;
+            const patientPayload = {
+                simplId: selectedPatientId,
                 conditions: [],
                 medications: [],
+                // We mock the lab structure, or parse from OBSERVATIONS (depending on the Python engine expectations)
                 labs: {
                     "Albumin": 2.1,
                     "BUN": 45.0,
@@ -29,11 +63,13 @@ export default function InfusionPage() {
                 has_depression_flag: false
             };
 
-            const result = await submitInfusionAnalysis(payload);
-            alert(`✅ Python AI Engine Success!\n\nPatient: ${result.patientId}\nInfusion Score: ${result.score}\nPriority: ${result.priority}\nReasons: ${result.reasons.join(", ")}`);
+            const aiResult = await submitInfusionAnalysis(patientPayload);
+            setResults([aiResult, ...results]);
+
+            alert(`✅ Python AI Engine Success!\n\nPatient: ${aiResult.patientId}\nInfusion Score: ${aiResult.score}\nPriority: ${aiResult.priority}\nReasons: ${aiResult.reasons.join(", ")}`);
         } catch (error) {
             console.error(error);
-            alert("❌ Python AI Engine Failed to Connect. Make sure the FastAPI server is running on port 8000!");
+            alert("❌ Analysis Failed. Check terminal for errors.");
         } finally {
             setIsAnalyzing(false);
         }
@@ -53,14 +89,27 @@ export default function InfusionPage() {
             </div>
 
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 className="text-lg font-bold text-slate-800">Infusion Candidates</h2>
-                    <button
-                        onClick={handleRunAnalysis}
-                        disabled={isAnalyzing}
-                        className="px-4 py-2 bg-primary-50 hover:bg-primary-100 text-primary-700 font-medium rounded-xl transition-colors text-sm flex items-center gap-2 disabled:opacity-50">
-                        {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Scan Recent Labs"}
-                    </button>
+
+                    <div className="flex items-center gap-3">
+                        <select
+                            className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2"
+                            value={selectedPatientId}
+                            onChange={(e) => setSelectedPatientId(e.target.value)}
+                        >
+                            {patients.slice(0, 50).map(p => (
+                                <option key={p.simpl_id} value={p.simpl_id}>{p.first_name} {p.last_name}</option>
+                            ))}
+                        </select>
+
+                        <button
+                            onClick={handleRunAnalysis}
+                            disabled={isAnalyzing || !selectedPatientId}
+                            className="px-4 py-2 bg-primary-50 hover:bg-primary-100 text-primary-700 font-medium rounded-xl transition-colors text-sm flex items-center gap-2 disabled:opacity-50">
+                            {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Scan Recent Labs"}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -69,22 +118,27 @@ export default function InfusionPage() {
                             <tr>
                                 <th className="px-6 py-4 rounded-tl-xl">Patient ID</th>
                                 <th className="px-6 py-4">Priority</th>
-                                <th className="px-6 py-4">Recommendation</th>
                                 <th className="px-6 py-4 rounded-tr-xl">Reasoning</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {MOCK_INFUSION_CANDIDATES.map((candidate, i) => (
+                            {results.length === 0 && (
+                                <tr>
+                                    <td colSpan={3} className="px-6 py-8 text-center text-slate-400">
+                                        No recent evaluations. Select a patient and scan labs.
+                                    </td>
+                                </tr>
+                            )}
+                            {results.map((candidate, i) => (
                                 <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4 font-semibold text-slate-700 whitespace-nowrap">{candidate.patientId}</td>
+                                    <td className="px-6 py-4 font-semibold text-slate-700 whitespace-nowrap">{candidate.patientId.slice(0, 8)}...</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-md text-xs font-bold ${candidate.priority === 'High' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
                                             }`}>
                                             {candidate.priority}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-slate-800 font-medium whitespace-nowrap block truncate max-w-[200px]">{candidate.recommendation}</td>
-                                    <td className="px-6 py-4 text-slate-500 line-clamp-2">{candidate.reason}</td>
+                                    <td className="px-6 py-4 text-slate-500 line-clamp-2">{candidate.reasons.join(", ")}</td>
                                 </tr>
                             ))}
                         </tbody>
