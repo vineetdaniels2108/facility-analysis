@@ -99,7 +99,7 @@ function DiagnosticReportCard({ report, idx }: { report: Record<string, unknown>
             </div>
 
             {/* Conclusion / text body */}
-            {(report.conclusion as string) && (
+            {typeof report.conclusion === "string" && report.conclusion && (
                 <div className="border-t border-slate-100 pt-3">
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">Conclusion</p>
                     <p className="text-xs text-slate-600 leading-relaxed">{report.conclusion as string}</p>
@@ -222,10 +222,10 @@ function MedicationCard({ med }: { med: Record<string, unknown> }) {
                 {doseQty && (
                     <Field label="Dose" value={`${doseQty.value} ${doseQty.unit ?? ""}`} />
                 )}
-                {dosage?.route && (
+                {dosage?.route != null && (
                     <Field label="Route" value={(dosage.route as Record<string, string>)?.text} />
                 )}
-                {dosage?.text && (
+                {dosage?.text != null && (
                     <Field label="Instructions" value={dosage.text as string} />
                 )}
             </div>
