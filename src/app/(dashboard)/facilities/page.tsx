@@ -348,7 +348,7 @@ export default function FacilitiesPage() {
                                                                     {rs.error}
                                                                 </p>
                                                             )}
-                                                            {rs.data && !rs.loading && (
+                                                            {rs.data != null && !rs.loading && (
                                                                 <pre className="text-xs text-slate-600 overflow-x-auto max-h-96 leading-relaxed whitespace-pre-wrap">
                                                                     {JSON.stringify(rs.data, null, 2)}
                                                                 </pre>
