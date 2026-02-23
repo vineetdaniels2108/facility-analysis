@@ -184,7 +184,7 @@ function ObservationCard({ obs }: { obs: Record<string, unknown> }) {
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">Date</p>
                     <p className="text-slate-600">{formatDate(obs.effectiveDateTime as string)}</p>
                 </div>
-                {obs.observationId && (
+                {obs.observationId != null && (
                     <div>
                         <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">ID</p>
                         <p className="text-slate-500 font-mono">{String(obs.observationId)}</p>
