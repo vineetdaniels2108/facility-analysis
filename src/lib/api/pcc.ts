@@ -1,8 +1,8 @@
 import { cache } from 'react';
 
 // Environment variables to be set in Next.js config or .env.local
-const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL;
-const CONSUMER_API_URL = process.env.NEXT_PUBLIC_CONSUMER_SERVICE_URL;
+const AUTH_API_URL = process.env.AUTH_SERVICE_URL;
+const CONSUMER_API_URL = process.env.CONSUMER_SERVICE_URL;
 const API_KEY = process.env.PCC_API_KEY; // "10du779irijl6jnl90to2ojfil"
 const API_SECRET = process.env.PCC_API_SECRET; // "1u7so5rhejlbd1b5goc1elrchitrre82cta8t1jqfpe6cg75ck93"
 

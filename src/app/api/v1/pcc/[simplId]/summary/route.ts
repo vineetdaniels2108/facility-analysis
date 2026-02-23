@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { getPccToken } from '@/lib/api/pcc-token';
+
+const CONSUMER_SERVICE_URL = process.env.CONSUMER_SERVICE_URL;
 
 export async function GET(
-    request: Request,
+    _request: Request,
     { params }: { params: Promise<{ simplId: string }> }
 ) {
     const { simplId } = await params;
@@ -12,21 +13,43 @@ export async function GET(
         return NextResponse.json({ error: 'simplId is required' }, { status: 400 });
     }
 
-    try {
-        const filePath = path.join(process.cwd(), 'public', 'mockData', 'patients', simplId, 'summary.json');
+    if (!CONSUMER_SERVICE_URL) {
+        return NextResponse.json({ error: 'CONSUMER_SERVICE_URL not configured' }, { status: 500 });
+    }
 
-        if (!fs.existsSync(filePath)) {
-            return NextResponse.json({ error: 'Patient summary not found' }, { status: 404 });
+    const token = await getPccToken();
+    if (!token) {
+        return NextResponse.json({ error: 'Authentication with PCC service failed' }, { status: 502 });
+    }
+
+    try {
+        const upstream = await fetch(
+            `${CONSUMER_SERVICE_URL}/api/v1/pcc/${simplId}/summary`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: 'application/json',
+                },
+                next: { revalidate: 3600 },
+            }
+        );
+
+        const body = await upstream.text();
+
+        if (!upstream.ok) {
+            console.error(`[pcc/summary] Upstream ${upstream.status} for ${simplId}: ${body.slice(0, 300)}`);
+            return NextResponse.json(
+                { error: `Consumer service returned ${upstream.status}`, detail: body.slice(0, 300) },
+                { status: upstream.status }
+            );
         }
 
-        const data = fs.readFileSync(filePath, 'utf-8');
-        return NextResponse.json(JSON.parse(data));
-
-    } catch (error) {
-        console.error(`Error in /api/v1/pcc/${simplId}/summary:`, error);
-        return NextResponse.json(
-            { error: 'Internal server error while fetching patient summary' },
-            { status: 500 }
-        );
+        return new NextResponse(body, {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+        });
+    } catch (err) {
+        console.error(`[pcc/summary] Network error for ${simplId}:`, err);
+        return NextResponse.json({ error: 'Failed to reach PCC consumer service' }, { status: 500 });
     }
 }
