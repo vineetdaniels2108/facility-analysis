@@ -6,6 +6,7 @@ import {
     Users, ChevronRight, ChevronDown, Loader2, RefreshCw,
     FileJson, X, Building2, AlertCircle
 } from "lucide-react"
+import { ResourceDataRenderer } from "@/components/data/ResourceDataRenderer"
 
 interface PatientSummary {
     simpl_id: string;
@@ -346,9 +347,7 @@ function PatientsView() {
                                                     </div>
                                                 )}
                                                 {rs.data != null && !rs.loading && (
-                                                    <pre className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap break-words">
-                                                        {JSON.stringify(rs.data, null, 2)}
-                                                    </pre>
+                                                    <ResourceDataRenderer resource={resource} data={rs.data} />
                                                 )}
                                             </div>
                                         </div>
