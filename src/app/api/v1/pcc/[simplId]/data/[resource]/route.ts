@@ -1,7 +1,23 @@
 import { NextResponse } from 'next/server';
 import { getPccToken } from '@/lib/api/pcc-token';
+import fs from 'fs';
+import path from 'path';
 
 const CONSUMER_SERVICE_URL = process.env.CONSUMER_SERVICE_URL;
+
+function readLocalFallback(simplId: string, resource: string): NextResponse | null {
+    try {
+        const filePath = path.join(process.cwd(), 'public', 'mockData', 'patients', simplId, `${resource}.json`);
+        if (!fs.existsSync(filePath)) return null;
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        return new NextResponse(JSON.stringify(data), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json', 'X-Data-Source': 'local_cache' },
+        });
+    } catch {
+        return null;
+    }
+}
 
 export async function GET(
     _request: Request,
@@ -13,43 +29,46 @@ export async function GET(
         return NextResponse.json({ error: 'simplId and resource are required' }, { status: 400 });
     }
 
-    if (!CONSUMER_SERVICE_URL) {
-        return NextResponse.json({ error: 'CONSUMER_SERVICE_URL not configured' }, { status: 500 });
-    }
+    // Try live AWS first
+    if (CONSUMER_SERVICE_URL) {
+        const token = await getPccToken();
 
-    const token = await getPccToken();
-    if (!token) {
-        return NextResponse.json({ error: 'Authentication with PCC service failed' }, { status: 502 });
-    }
+        if (token) {
+            try {
+                const upstream = await fetch(
+                    `${CONSUMER_SERVICE_URL}/api/v1/pcc/${simplId}/data/${resource}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            Accept: 'application/json',
+                        },
+                        cache: 'no-store',
+                    }
+                );
 
-    try {
-        const upstream = await fetch(
-            `${CONSUMER_SERVICE_URL}/api/v1/pcc/${simplId}/data/${resource}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: 'application/json',
-                },
-                cache: 'no-store',
+                if (upstream.ok) {
+                    const body = await upstream.text();
+                    return new NextResponse(body, {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                }
+
+                console.warn(`[pcc/data] Upstream ${upstream.status} for ${simplId}/${resource} — falling back to local cache`);
+            } catch (err) {
+                console.warn(`[pcc/data] AWS unreachable for ${simplId}/${resource} — falling back to local cache:`, err);
             }
-        );
-
-        const body = await upstream.text();
-
-        if (!upstream.ok) {
-            console.error(`[pcc/data] Upstream ${upstream.status} for ${simplId}/${resource}: ${body.slice(0, 300)}`);
-            return NextResponse.json(
-                { error: `Consumer service returned ${upstream.status}`, detail: body.slice(0, 300) },
-                { status: upstream.status }
-            );
+        } else {
+            console.warn(`[pcc/data] Auth unavailable — falling back to local cache for ${simplId}/${resource}`);
         }
-
-        return new NextResponse(body, {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    } catch (err) {
-        console.error(`[pcc/data] Network error for ${simplId}/${resource}:`, err);
-        return NextResponse.json({ error: 'Failed to reach PCC consumer service' }, { status: 500 });
     }
+
+    // Fall back to local JSON cache
+    const local = readLocalFallback(simplId, resource);
+    if (local) return local;
+
+    return NextResponse.json(
+        { error: `No data found for ${resource} — AWS is unreachable and no local cache exists for this patient.` },
+        { status: 404 }
+    );
 }
