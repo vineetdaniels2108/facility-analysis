@@ -69,14 +69,12 @@ export async function POST(request: Request) {
 
     const basePayload = {
         simplId,
+        patient_name: patient_name ?? simplId,
+        facility: facility ?? '',
         conditions,
         medications,
         labs,
         vitals,
-        functional_score: 10,
-        bims_score: 15,
-        clinical_category: 'Medical Management',
-        has_depression_flag: false,
     };
 
     // Build lab records list for critical-labs analyzer

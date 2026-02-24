@@ -9,12 +9,31 @@ export type AnalysisPriority = "critical" | "high" | "medium" | "low" | "none"
 export interface PDPMResult {
     success?: boolean
     error?: string
-    components?: {
-        NTA?: { total_score?: number; group?: string }
-        PT_OT?: { pt_group?: string; ot_group?: string }
-        SLP?: { group?: string }
-        Nursing?: { group?: string }
+    hasData?: boolean
+    clinicalProfile?: {
+        primaryCategory: string
+        drivingConditions: string[]
+        functionalScore: number
+        bimsScore: number
+        cognitiveLevel: string
+        hasDepression: boolean
+        conditionsCount: number
+        medicationsCount: number
     }
+    components?: {
+        PT?: { group?: string; cmi?: number; dailyRate?: number; baseRate?: number; functionalLevel?: string }
+        OT?: { group?: string; cmi?: number; dailyRate?: number; baseRate?: number; functionalLevel?: string }
+        SLP?: { group?: string; cmi?: number; dailyRate?: number; baseRate?: number; bimsScore?: number; cognitiveLevel?: string; hasSwallowingDisorder?: boolean; slpComorbidities?: string[] }
+        Nursing?: { group?: string; cmi?: number; dailyRate?: number; baseRate?: number; extensiveServices?: string[]; hasDepression?: boolean }
+        NTA?: { group?: string; cmi?: number; dailyRate?: number; baseRate?: number; totalScore?: number; description?: string; items?: Array<{ condition: string; label: string; points: number; mds_item: string }> }
+        NonCaseMix?: { dailyRate?: number }
+    }
+    financials?: {
+        totalDailyRate?: number
+        estimated30Day?: number
+        vpdProjections?: { "20_day": number; "60_day": number; "100_day": number }
+    }
+    documentationRecommendations?: Array<{ title: string; detail: string }>
 }
 
 export interface InfusionResult {
@@ -132,7 +151,7 @@ function Badge({
 
 // ─── PDPM Badge ───────────────────────────────────────────────────────────────
 
-function PDPMBadge({ result, noData }: { result: PDPMResult; noData: boolean }) {
+function PDPMBadge({ result, noData, onViewReport }: { result: PDPMResult; noData: boolean; onViewReport?: () => void }) {
     if (result.error === "unavailable") {
         return (
             <Badge
@@ -145,33 +164,29 @@ function PDPMBadge({ result, noData }: { result: PDPMResult; noData: boolean }) 
         )
     }
 
-    if (noData) {
-        return (
-            <Badge
-                icon={<ClipboardList className="w-3 h-3" />}
-                label="PDPM"
-                suffix="no labs"
-                priority="none"
-                tooltip="No structured lab data found in local records. Will update with live AWS data."
-            />
-        )
-    }
-
-    const nta     = result.components?.NTA?.total_score ?? 0
+    const nta     = result.components?.NTA?.totalScore ?? 0
     const nursing = result.components?.Nursing?.group ?? "—"
-    const pt      = result.components?.PT_OT?.pt_group ?? "—"
-    const ot      = result.components?.PT_OT?.ot_group ?? "—"
-    const slp     = result.components?.SLP?.group ?? "—"
+    const total   = result.financials?.totalDailyRate
     const priority: AnalysisPriority = nta >= 10 ? "high" : nta >= 5 ? "medium" : "low"
+    const cfg = PRIORITY_CONFIG[priority]
 
     return (
-        <Badge
-            icon={<ClipboardList className="w-3 h-3" />}
-            label={`PDPM ${nta}pts`}
-            suffix={nursing}
-            priority={priority}
-            tooltip={`NTA Score: ${nta} pts · Nursing: ${nursing} · PT: ${pt} · OT: ${ot} · SLP: ${slp}`}
-        />
+        <button
+            onClick={onViewReport}
+            className={`group relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold cursor-pointer select-none transition-all hover:ring-2 hover:ring-offset-1 hover:ring-teal-400 ${cfg.badge}`}
+        >
+            <span className="flex-shrink-0 opacity-80"><ClipboardList className="w-3 h-3" /></span>
+            <span className="flex items-center gap-1">
+                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
+                {noData ? "PDPM" : `PDPM ${nta}pts`}
+                {!noData && nursing !== "—" && <span className="opacity-60 font-normal ml-0.5">{nursing}</span>}
+                {noData && <span className="opacity-60 font-normal ml-0.5">no data</span>}
+            </span>
+            {total != null && !noData && (
+                <span className="ml-1 opacity-70 font-normal">${total.toFixed(0)}/day</span>
+            )}
+            <Tooltip text={noData ? "No structured clinical data yet. Click to see report template." : `NTA: ${nta} pts · Nursing: ${nursing} · Daily: $${total ?? "—"} · Click to view full report`} />
+        </button>
     )
 }
 
@@ -284,7 +299,7 @@ function LoadingBadge({ label }: { label: string }) {
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
-export function AnalysisBadges({ analysis }: { analysis: PatientAnalysis | undefined }) {
+export function AnalysisBadges({ analysis, onViewPDPM }: { analysis: PatientAnalysis | undefined; onViewPDPM?: () => void }) {
     if (!analysis || analysis.status === "idle") {
         return (
             <div className="text-[11px] text-slate-400 italic">
@@ -325,7 +340,7 @@ export function AnalysisBadges({ analysis }: { analysis: PatientAnalysis | undef
 
     return (
         <div className="flex items-center gap-1.5 flex-wrap">
-            {analysis.pdpm       && <PDPMBadge       result={analysis.pdpm}       noData={noData} />}
+            {analysis.pdpm       && <PDPMBadge       result={analysis.pdpm}       noData={noData} onViewReport={onViewPDPM} />}
             {analysis.infusion   && <InfusionBadge   result={analysis.infusion}   noData={noData} />}
             {analysis.transfusion && <TransfusionBadge result={analysis.transfusion} noData={noData} />}
         </div>

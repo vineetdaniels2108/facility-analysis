@@ -8,6 +8,7 @@ import {
 } from "lucide-react"
 import { ResourceDataRenderer } from "@/components/data/ResourceDataRenderer"
 import { AnalysisBadges, type PatientAnalysis, type AnalysisPriority } from "@/components/data/AnalysisBadges"
+import { PDPMReportCard } from "@/components/data/PDPMReportCard"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -67,6 +68,7 @@ function PatientsView() {
     const [isSyncing, setIsSyncing] = useState(false)
     const [lastSynced, setLastSynced] = useState<Date | null>(null)
     const [globalRefreshing, setGlobalRefreshing] = useState(false)
+    const [pdpmModal, setPdpmModal] = useState<{ patient: PatientSummary; analysis: PatientAnalysis } | null>(null)
 
     const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -377,7 +379,10 @@ function PatientsView() {
 
                                 {/* Middle: analysis badges */}
                                 <div className="flex-1 min-w-0">
-                                    <AnalysisBadges analysis={analysis} />
+                                    <AnalysisBadges
+                                        analysis={analysis}
+                                        onViewPDPM={analysis?.pdpm ? () => setPdpmModal({ patient, analysis }) : undefined}
+                                    />
                                 </div>
 
                                 {/* Right: resource chips + refresh */}
@@ -480,6 +485,23 @@ function PatientsView() {
                 })}
             </div>
         </div>
+
+        {/* PDPM Report Modal */}
+        {pdpmModal && (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+                onClick={() => setPdpmModal(null)}
+            >
+                <div onClick={e => e.stopPropagation()} className="relative w-full max-w-2xl">
+                    <PDPMReportCard
+                        patientName={`${pdpmModal.patient.last_name}, ${pdpmModal.patient.first_name}`}
+                        facility={pdpmModal.patient.facility}
+                        result={pdpmModal.analysis.pdpm!}
+                        onClose={() => setPdpmModal(null)}
+                    />
+                </div>
+            </div>
+        )}
     )
 }
 
