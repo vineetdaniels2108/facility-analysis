@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
 
-    // Allow all API routes and public assets through without auth
+    // API routes are server-to-server — never require browser auth
     if (pathname.startsWith('/api/')) {
         return NextResponse.next()
     }
