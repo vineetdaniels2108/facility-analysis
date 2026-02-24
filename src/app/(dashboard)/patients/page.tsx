@@ -350,7 +350,7 @@ function PatientsView() {
                     const openResources = Object.entries(state?.resources ?? {})
 
                     return (
-                        <div key={patient.simpl_id} className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                        <div key={patient.simpl_id} className="bg-white border border-slate-100 rounded-2xl shadow-sm">
 
                             {/* Patient Row */}
                             <div className="flex items-center justify-between px-5 py-3.5 hover:bg-slate-50/50 transition-colors gap-4">

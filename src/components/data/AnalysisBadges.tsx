@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader2, FlaskConical, Droplets, ClipboardList, WifiOff } from "lucide-react"
+import { Loader2, FlaskConical, Droplets, ClipboardList, WifiOff, AlertTriangle } from "lucide-react"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,121 +48,196 @@ export interface PatientAnalysis {
     timestamp?: string
 }
 
-// ─── Priority helpers ─────────────────────────────────────────────────────────
+// ─── Priority config ──────────────────────────────────────────────────────────
 
-const PRIORITY_STYLES: Record<AnalysisPriority, string> = {
-    critical: "bg-red-600 text-white",
-    high:     "bg-red-100 text-red-700 border border-red-200",
-    medium:   "bg-amber-100 text-amber-700 border border-amber-200",
-    low:      "bg-slate-100 text-slate-400",
-    none:     "bg-slate-100 text-slate-400",
+const PRIORITY_CONFIG: Record<AnalysisPriority, { badge: string; dot: string; label: string }> = {
+    critical: {
+        badge: "bg-red-600 text-white shadow-sm shadow-red-200",
+        dot:   "bg-red-500",
+        label: "Critical",
+    },
+    high: {
+        badge: "bg-red-50 text-red-700 border border-red-200 ring-1 ring-red-100",
+        dot:   "bg-red-400",
+        label: "High",
+    },
+    medium: {
+        badge: "bg-amber-50 text-amber-800 border border-amber-200 ring-1 ring-amber-100",
+        dot:   "bg-amber-400",
+        label: "Medium",
+    },
+    low: {
+        badge: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+        dot:   "bg-emerald-400",
+        label: "Low",
+    },
+    none: {
+        badge: "bg-slate-100 text-slate-500 border border-slate-200",
+        dot:   "bg-slate-300",
+        label: "—",
+    },
 }
 
 function priorityFromString(s: string | undefined): AnalysisPriority {
     const lower = (s ?? "").toLowerCase()
     if (lower === "critical") return "critical"
-    if (lower === "high") return "high"
-    if (lower === "medium") return "medium"
-    return "low"
+    if (lower === "high")     return "high"
+    if (lower === "medium")   return "medium"
+    if (lower === "low")      return "low"
+    return "none"
 }
 
-// ─── Individual badge ─────────────────────────────────────────────────────────
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+
+function Tooltip({ text }: { text: string }) {
+    return (
+        <div className="
+            pointer-events-none absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2
+            w-64 bg-slate-900 text-white text-[11px] leading-relaxed
+            rounded-xl px-3 py-2.5 shadow-2xl z-[9999]
+            opacity-0 group-hover:opacity-100
+            transition-opacity duration-150
+            whitespace-normal
+        ">
+            {text}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+        </div>
+    )
+}
+
+// ─── Single badge ─────────────────────────────────────────────────────────────
 
 function Badge({
-    icon, label, priority, tooltip
+    icon, label, priority, tooltip, suffix
 }: {
     icon: React.ReactNode
     label: string
     priority: AnalysisPriority
     tooltip?: string
+    suffix?: string
 }) {
+    const cfg = PRIORITY_CONFIG[priority]
     return (
-        <div
-            className={`group relative flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-all ${PRIORITY_STYLES[priority]}`}
-            title={tooltip}
-        >
-            <span className="flex-shrink-0">{icon}</span>
-            <span className="whitespace-nowrap">{label}</span>
-            {tooltip && (
-                <div className="absolute bottom-full left-0 mb-1 hidden group-hover:block w-56 bg-slate-900 text-white text-[11px] rounded-lg px-3 py-2 leading-snug z-50 shadow-xl">
-                    {tooltip}
-                </div>
-            )}
+        <div className={`group relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold cursor-default select-none transition-all ${cfg.badge}`}>
+            <span className="flex-shrink-0 opacity-80">{icon}</span>
+            <span className="flex items-center gap-1">
+                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
+                {label}
+                {suffix && <span className="opacity-60 font-normal ml-0.5">{suffix}</span>}
+            </span>
+            {tooltip && <Tooltip text={tooltip} />}
         </div>
     )
 }
 
 // ─── PDPM Badge ───────────────────────────────────────────────────────────────
 
-function PDPMBadge({ result }: { result: PDPMResult }) {
+function PDPMBadge({ result, noData }: { result: PDPMResult; noData: boolean }) {
     if (result.error === "unavailable") {
         return (
             <Badge
                 icon={<ClipboardList className="w-3 h-3" />}
-                label="PDPM: Offline"
+                label="PDPM"
+                suffix="offline"
                 priority="none"
-                tooltip="Python analysis backend not reachable"
+                tooltip="Analysis backend not reachable"
             />
         )
     }
 
-    const nta = result.components?.NTA?.total_score ?? 0
-    const nursing = result.components?.Nursing?.group ?? "—"
-    const pt = result.components?.PT_OT?.pt_group ?? "—"
+    if (noData) {
+        return (
+            <Badge
+                icon={<ClipboardList className="w-3 h-3" />}
+                label="PDPM"
+                suffix="no labs"
+                priority="none"
+                tooltip="No structured lab data found in local records. Will update with live AWS data."
+            />
+        )
+    }
 
+    const nta     = result.components?.NTA?.total_score ?? 0
+    const nursing = result.components?.Nursing?.group ?? "—"
+    const pt      = result.components?.PT_OT?.pt_group ?? "—"
+    const ot      = result.components?.PT_OT?.ot_group ?? "—"
+    const slp     = result.components?.SLP?.group ?? "—"
     const priority: AnalysisPriority = nta >= 10 ? "high" : nta >= 5 ? "medium" : "low"
-    const label = `PDPM: ${nta}pts · ${nursing}`
-    const tooltip = `NTA: ${nta} pts | Nursing: ${nursing} | PT: ${pt} | OT: ${result.components?.PT_OT?.ot_group ?? "—"} | SLP: ${result.components?.SLP?.group ?? "—"}`
 
     return (
         <Badge
             icon={<ClipboardList className="w-3 h-3" />}
-            label={label}
+            label={`PDPM ${nta}pts`}
+            suffix={nursing}
             priority={priority}
-            tooltip={tooltip}
+            tooltip={`NTA Score: ${nta} pts · Nursing: ${nursing} · PT: ${pt} · OT: ${ot} · SLP: ${slp}`}
         />
     )
 }
 
 // ─── Infusion Badge ───────────────────────────────────────────────────────────
 
-function InfusionBadge({ result }: { result: InfusionResult }) {
+function InfusionBadge({ result, noData }: { result: InfusionResult; noData: boolean }) {
     if (result.error === "unavailable") {
         return (
             <Badge
                 icon={<Droplets className="w-3 h-3" />}
-                label="Infusion: Offline"
+                label="Infusion"
+                suffix="offline"
                 priority="none"
             />
         )
     }
 
+    if (noData) {
+        return (
+            <Badge
+                icon={<Droplets className="w-3 h-3" />}
+                label="Infusion"
+                suffix="no labs"
+                priority="none"
+                tooltip="No lab values available to assess infusion candidacy."
+            />
+        )
+    }
+
     const priority = priorityFromString(result.priority)
-    const reasons = result.reasons ?? []
-    const topReason = reasons[0] ?? "No significant indicators"
-    const label = priority === "low"
-        ? "Infusion: Low"
-        : `Infusion: ${result.priority} ↑`
+    const reasons  = result.reasons ?? []
+    const score    = result.score ?? 0
 
     return (
         <Badge
             icon={<Droplets className="w-3 h-3" />}
-            label={label}
+            label="Infusion"
+            suffix={result.priority ?? "Low"}
             priority={priority}
-            tooltip={`Score: ${result.score ?? 0}/100 · ${reasons.slice(0, 3).join(" · ") || topReason}`}
+            tooltip={`Score: ${score}/100 · ${reasons.slice(0, 3).join(" · ") || "No significant indicators"}`}
         />
     )
 }
 
 // ─── Transfusion Badge ────────────────────────────────────────────────────────
 
-function TransfusionBadge({ result }: { result: TransfusionResult }) {
+function TransfusionBadge({ result, noData }: { result: TransfusionResult; noData: boolean }) {
     if (result.error === "unavailable") {
         return (
             <Badge
                 icon={<FlaskConical className="w-3 h-3" />}
-                label="Transfusion: Offline"
+                label="Transfusion"
+                suffix="offline"
                 priority="none"
+            />
+        )
+    }
+
+    if (noData) {
+        return (
+            <Badge
+                icon={<FlaskConical className="w-3 h-3" />}
+                label="Transfusion"
+                suffix="no labs"
+                priority="none"
+                tooltip="No Hemoglobin / Hematocrit / Ferritin values found in local records."
             />
         )
     }
@@ -173,45 +248,36 @@ function TransfusionBadge({ result }: { result: TransfusionResult }) {
         return (
             <Badge
                 icon={<FlaskConical className="w-3 h-3" />}
-                label="Transfusion: Low"
+                label="Transfusion"
+                suffix="Low"
                 priority="low"
                 tooltip="No critical lab findings"
             />
         )
     }
 
-    const top = findings[0]
+    const top      = findings[0]
     const priority = priorityFromString(top.priority)
-    const label = `Transfusion: ${top.priority}${findings.length > 1 ? ` +${findings.length - 1}` : ""}`
+    const extra    = findings.length > 1 ? ` +${findings.length - 1} more` : ""
 
     return (
         <Badge
             icon={<FlaskConical className="w-3 h-3" />}
-            label={label}
+            label="Transfusion"
+            suffix={`${top.priority}${extra}`}
             priority={priority}
-            tooltip={findings.map(f => f.reason ?? f.action ?? "").join(" · ")}
+            tooltip={findings.map(f => f.reason ?? f.action ?? "").filter(Boolean).join(" · ")}
         />
     )
 }
 
-// ─── Skeleton / loading state ─────────────────────────────────────────────────
+// ─── Loading skeleton ─────────────────────────────────────────────────────────
 
 function LoadingBadge({ label }: { label: string }) {
     return (
-        <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-400 animate-pulse">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-400 border border-slate-200 animate-pulse">
             <Loader2 className="w-3 h-3 animate-spin" />
-            <span>{label}</span>
-        </div>
-    )
-}
-
-// ─── Offline badge ────────────────────────────────────────────────────────────
-
-function OfflineBadge() {
-    return (
-        <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-400" title="Analysis backend offline">
-            <WifiOff className="w-3 h-3" />
-            <span>Analysis offline</span>
+            <span>{label}...</span>
         </div>
     )
 }
@@ -221,7 +287,7 @@ function OfflineBadge() {
 export function AnalysisBadges({ analysis }: { analysis: PatientAnalysis | undefined }) {
     if (!analysis || analysis.status === "idle") {
         return (
-            <div className="flex items-center gap-1.5 opacity-40 text-[11px] text-slate-400 italic">
+            <div className="text-[11px] text-slate-400 italic">
                 Analysis pending...
             </div>
         )
@@ -238,25 +304,30 @@ export function AnalysisBadges({ analysis }: { analysis: PatientAnalysis | undef
     }
 
     if (analysis.status === "offline") {
-        return <OfflineBadge />
+        return (
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-500 border border-slate-200" title="Analysis backend offline">
+                <WifiOff className="w-3 h-3" />
+                <span>Analysis offline</span>
+            </div>
+        )
     }
 
     if (analysis.status === "error") {
         return (
-            <div className="text-[11px] text-red-500">Analysis failed</div>
+            <div className="flex items-center gap-1.5 text-[11px] text-red-500">
+                <AlertTriangle className="w-3 h-3" />
+                Analysis failed
+            </div>
         )
     }
 
+    const noData = analysis.dataSource === "default"
+
     return (
         <div className="flex items-center gap-1.5 flex-wrap">
-            {analysis.pdpm && <PDPMBadge result={analysis.pdpm} />}
-            {analysis.infusion && <InfusionBadge result={analysis.infusion} />}
-            {analysis.transfusion && <TransfusionBadge result={analysis.transfusion} />}
-            {analysis.dataSource === "default" && (
-                <span className="text-[10px] text-slate-400 italic" title="No lab data available — results based on defaults">
-                    (default values)
-                </span>
-            )}
+            {analysis.pdpm       && <PDPMBadge       result={analysis.pdpm}       noData={noData} />}
+            {analysis.infusion   && <InfusionBadge   result={analysis.infusion}   noData={noData} />}
+            {analysis.transfusion && <TransfusionBadge result={analysis.transfusion} noData={noData} />}
         </div>
     )
 }
