@@ -6,7 +6,9 @@ export async function middleware(request: NextRequest) {
 
     // API routes bypass auth completely
     if (pathname.startsWith('/api/')) {
-        return NextResponse.next()
+        const res = NextResponse.next()
+        res.headers.set('x-simpl-middleware', 'bypassed')
+        return res
     }
 
     // Auth check for page routes
