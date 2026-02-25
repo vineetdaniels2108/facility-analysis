@@ -2,48 +2,40 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-interface PatientSummary {
-    simpl_id: string;
-    first_name: string;
-    last_name: string;
-    facility: string;
-    resources: string[];
+const INDEX_PATH = path.join(process.cwd(), 'public', 'mockData', 'patients', '_facility_index.json');
+
+let cachedIndex: Record<string, unknown[]> | null = null;
+let cachedAt = 0;
+const CACHE_TTL = 60_000;
+
+function loadIndex(): Record<string, unknown[]> {
+    const now = Date.now();
+    if (cachedIndex && now - cachedAt < CACHE_TTL) return cachedIndex;
+    try {
+        cachedIndex = JSON.parse(fs.readFileSync(INDEX_PATH, 'utf-8'));
+        cachedAt = now;
+        return cachedIndex!;
+    } catch {
+        return {};
+    }
 }
 
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const facilityFilter = searchParams.get('facility')?.trim().toLowerCase();
+        const facilityFilter = searchParams.get('facility')?.trim();
 
-        const patientsDir = path.join(process.cwd(), 'public', 'mockData', 'patients');
+        const index = loadIndex();
 
-        if (!fs.existsSync(patientsDir)) {
-            return NextResponse.json({ error: 'Patients data directory not found' }, { status: 404 });
+        if (facilityFilter) {
+            // Case-insensitive lookup
+            const key = Object.keys(index).find(k => k.trim().toLowerCase() === facilityFilter.toLowerCase());
+            const patients = key ? index[key] : [];
+            return NextResponse.json({ patients });
         }
 
-        const entries = fs.readdirSync(patientsDir, { withFileTypes: true });
-        const patients: PatientSummary[] = [];
-
-        for (const entry of entries) {
-            if (!entry.isDirectory()) continue;
-            const summaryPath = path.join(patientsDir, entry.name, 'summary.json');
-            if (!fs.existsSync(summaryPath)) continue;
-
-            try {
-                const summary: PatientSummary = JSON.parse(fs.readFileSync(summaryPath, 'utf-8'));
-
-                if (facilityFilter && summary.facility?.trim().toLowerCase() !== facilityFilter) {
-                    continue;
-                }
-
-                patients.push(summary);
-            } catch {
-                // ignore malformed summary files
-            }
-        }
-
-        patients.sort((a, b) => a.last_name.localeCompare(b.last_name));
-
+        // Return all patients (flattened)
+        const patients = Object.values(index).flat();
         return NextResponse.json({ patients });
     } catch (error) {
         console.error('[/api/patients] Error:', error);

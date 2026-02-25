@@ -40,3 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# patient mock data (large JSON files, generated from CSV)
+public/mockData/patients/*/DIAGNOSTICREPORTS.json
+public/mockData/patients/*/OBSERVATIONS.json
+public/mockData/patients/*/labs_history.json
+public/mockData/patients/*/labs_latest.json
+public/mockData/patients/*/summary.json

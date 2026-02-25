@@ -66,39 +66,96 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 
 // ─── DIAGNOSTICREPORTS renderer ───────────────────────────────────────────────
 
+interface TestResult {
+    observationName?: string
+    valueQuantity?: { value?: string | number; unitText?: string }
+    referenceRange?: string
+    interpretation?: string
+}
+interface TestSet {
+    panelName?: string | null
+    results?: TestResult[]
+}
+
 function DiagnosticReportCard({ report, idx }: { report: Record<string, unknown>; idx: number }) {
+    // PCC native: reportName, reportStatus, category (string[]), testSet
+    const pccName = report.reportName as string | undefined
     const code = (report.code as Record<string, unknown>)
-    const codeName = typeof code?.text === "string" ? code.text
-        : typeof code?.coding === "object" ? (code.coding as Array<{ display?: string }>)?.[0]?.display
-        : undefined
+    const codeName = pccName
+        ?? (typeof code?.text === "string" ? code.text
+            : typeof code?.coding === "object" ? (code.coding as Array<{ display?: string }>)?.[0]?.display
+            : undefined)
     const presentedText = (report.presentedForm as Array<{ data?: string; contentType?: string }>)?.[0]?.data
+
+    const pccStatus = (report.reportStatus ?? report.status) as string | undefined
+    const pccCategory = Array.isArray(report.category)
+        ? (report.category as (string | { text?: string })[]).map(c => typeof c === "string" ? c : c?.text).filter(Boolean).join(", ")
+        : (report.category as { text?: string })?.text
+    const testSets = report.testSet as TestSet[] | undefined
+    const practitioner = report.orderingPractitioner as string | undefined
+    const performer = (report.performer as Array<{ display?: string }>)?.[0]?.display
 
     return (
         <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
                     <FlaskConical className="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm font-semibold text-slate-800">
+                    <span className="text-sm font-semibold text-slate-800 leading-tight">
                         {codeName ?? `Lab Report #${idx + 1}`}
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {statusBadge(report.status as string)}
+                    {statusBadge(pccStatus)}
                 </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-                <Field label="Report ID" value={report.reportId as string} />
                 <Field label="Date" value={formatDate(report.effectiveDateTime as string)} />
-                <Field label="Category" value={
-                    (report.category as Array<{ text?: string }>)?.[0]?.text
-                } />
-                <Field label="Performer" value={
-                    (report.performer as Array<{ display?: string }>)?.[0]?.display
-                } />
+                {pccCategory && <Field label="Category" value={pccCategory} />}
+                {practitioner && <Field label="Ordering" value={practitioner} />}
+                {performer && <Field label="Performer" value={performer} />}
+                {typeof report.reportingLaboratory === "string" && <Field label="Lab" value={report.reportingLaboratory} />}
             </div>
 
-            {/* Conclusion / text body */}
+            {/* PCC testSet results */}
+            {testSets && testSets.length > 0 && testSets.some(ts => ts.results && ts.results.length > 0) && (
+                <div className="border-t border-slate-100 pt-3">
+                    {testSets.map((ts, ti) => (
+                        <div key={ti} className="mb-3 last:mb-0">
+                            {ts.panelName && <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1.5">{ts.panelName}</p>}
+                            <table className="w-full text-xs">
+                                <thead><tr className="text-[10px] text-slate-400 uppercase">
+                                    <th className="text-left pb-1 font-semibold">Test</th>
+                                    <th className="text-right pb-1 font-semibold">Value</th>
+                                    <th className="text-right pb-1 font-semibold">Ref</th>
+                                </tr></thead>
+                                <tbody>
+                                    {ts.results?.map((r, ri) => {
+                                        const val = String(r.valueQuantity?.value ?? '')
+                                        const numVal = parseFloat(val)
+                                        const ref = r.referenceRange ?? ''
+                                        let abnormal = false
+                                        if (!isNaN(numVal) && ref) {
+                                            const m = ref.match(/([\d.]+)\s*[-–]\s*([\d.]+)/)
+                                            if (m) abnormal = numVal < parseFloat(m[1]) || numVal > parseFloat(m[2])
+                                        }
+                                        return (
+                                            <tr key={ri} className={`border-t border-slate-50 ${abnormal ? 'bg-red-50/50' : ''}`}>
+                                                <td className="py-1 text-slate-700">{r.observationName}</td>
+                                                <td className={`py-1 text-right font-medium ${abnormal ? 'text-red-600' : 'text-slate-800'}`}>
+                                                    {val} {r.valueQuantity?.unitText && <span className="text-slate-400 font-normal">{r.valueQuantity.unitText}</span>}
+                                                </td>
+                                                <td className="py-1 text-right text-slate-400">{ref}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             {typeof report.conclusion === "string" && report.conclusion && (
                 <div className="border-t border-slate-100 pt-3">
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">Conclusion</p>
@@ -106,7 +163,6 @@ function DiagnosticReportCard({ report, idx }: { report: Record<string, unknown>
                 </div>
             )}
 
-            {/* Decoded base64 report if present */}
             {presentedText && (
                 <div className="border-t border-slate-100 pt-3">
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">Report Content</p>
@@ -122,28 +178,38 @@ function DiagnosticReportCard({ report, idx }: { report: Record<string, unknown>
 // ─── OBSERVATIONS renderer ────────────────────────────────────────────────────
 
 function ObservationCard({ obs }: { obs: Record<string, unknown> }) {
+    // Support FHIR (code.text), PCC native (observationName), and PCC direct (type)
     const code = obs.code as Record<string, unknown> | undefined
-    const name = typeof code?.text === "string" ? code.text
-        : (code?.coding as Array<{ display?: string }>)?.[0]?.display
-        ?? "Observation"
+    const name = (obs.observationName as string)
+        ?? (obs.type as string)
+        ?? (typeof code?.text === "string" ? code.text
+            : (code?.coding as Array<{ display?: string }>)?.[0]?.display
+            ?? "Observation")
 
+    // PCC direct: value is top-level number; FHIR: valueQuantity.value
     const qty = obs.valueQuantity as Record<string, unknown> | undefined
-    const value = qty?.value
-    const unit = qty?.unit as string | undefined
+    const value = qty?.value ?? obs.value
+    const unitCode = obs.unitCode as { code?: string } | undefined
+    const unit = (qty?.unitText ?? qty?.unit ?? unitCode?.code) as string | undefined
 
     const interp = (obs.interpretation as Array<{ coding?: Array<{ code?: string }> }>)?.[0]
         ?.coding?.[0]?.code
 
-    const refRange = (obs.referenceRange as Array<{
+    const pccRef = obs.referenceRange
+    const refRange = (Array.isArray(pccRef) ? pccRef[0] : null) as {
         low?: { value?: number; unit?: string }
         high?: { value?: number; unit?: string }
         text?: string
-    }>)?.[0]
-
-    const refText = refRange?.text
+    } | null
+    const refText = (typeof pccRef === "string" ? pccRef : null)
+        ?? refRange?.text
         ?? (refRange?.low?.value !== undefined && refRange?.high?.value !== undefined
             ? `${refRange.low.value}–${refRange.high.value} ${refRange.high.unit ?? ""}`
             : undefined)
+
+    const dateStr = (obs.effectiveDateTime ?? obs.recordedDate) as string | undefined
+    const method = obs.method as string | undefined
+    const recordedBy = obs.recordedBy as string | undefined
 
     return (
         <div className="bg-white border border-slate-200 rounded-xl p-4">
@@ -154,12 +220,12 @@ function ObservationCard({ obs }: { obs: Record<string, unknown> }) {
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                     {interpretationBadge(interp)}
-                    {statusBadge(obs.status as string)}
+                    {statusBadge((obs.observationStatus ?? obs.status) as string)}
                 </div>
             </div>
 
             <div className="flex items-end gap-2 mb-3">
-                {value !== undefined ? (
+                {value !== undefined && value !== null ? (
                     <>
                         <span className="text-3xl font-bold text-slate-900 leading-none">{String(value)}</span>
                         {unit && <span className="text-sm text-slate-500 mb-0.5">{unit}</span>}
@@ -182,8 +248,10 @@ function ObservationCard({ obs }: { obs: Record<string, unknown> }) {
                 )}
                 <div>
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">Date</p>
-                    <p className="text-slate-600">{formatDate(obs.effectiveDateTime as string)}</p>
+                    <p className="text-slate-600">{formatDate(dateStr)}</p>
                 </div>
+                {method && <Field label="Method" value={method} />}
+                {recordedBy && <Field label="Recorded By" value={recordedBy} />}
                 {obs.observationId != null && (
                     <div>
                         <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">ID</p>
