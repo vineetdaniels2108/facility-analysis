@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect, useCallback, Suspense, useRef } from "react"
+import { useState, useEffect, useCallback, Suspense, useRef, Fragment } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import {
     Users, ChevronRight, ChevronDown, Loader2, RefreshCw,
     Building2, AlertTriangle, Droplets, FlaskConical,
     Activity, Calendar, ClipboardList, FileText, X, AlertCircle,
-    Search, SlidersHorizontal, ArrowUpDown, ChevronUp, TrendingDown, Eye
+    Search, ArrowUpDown, ChevronUp, TrendingDown, Eye
 } from "lucide-react"
 import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from "recharts"
 import { ResourceDataRenderer } from "@/components/data/ResourceDataRenderer"
@@ -150,6 +150,31 @@ function analyzeTransfusion(labs: Record<string, LabValue>): TransfusionResult {
     return { priority, hemoglobin: hgb, hemoglobin_date: hgbLab?.date, hematocrit: hct, ferritin: ferr, findings }
 }
 
+// ─── Combined severity ──────────────────────────────────────────────────────
+
+type Severity = "critical" | "high" | "medium" | "low" | "normal"
+
+function combinedSeverity(inf: InfusionResult, tran: TransfusionResult): Severity {
+    if (tran.priority === "critical") return "critical"
+    if (tran.priority === "high" || inf.priority === "high") return "high"
+    if (tran.priority === "medium" || inf.priority === "medium") return "medium"
+    if (inf.priority === "low") return "low"
+    return "normal"
+}
+
+function severityUrgencyScore(sev: Severity, inf: InfusionResult): number {
+    const base = { critical: 1000, high: 500, medium: 200, low: 50, normal: 0 }
+    return base[sev] + inf.score
+}
+
+const SEVERITY_BADGE: Record<Severity, { label: string; className: string }> = {
+    critical: { label: "CRITICAL", className: "bg-red-600 text-white" },
+    high: { label: "HIGH", className: "bg-red-100 text-red-800" },
+    medium: { label: "MEDIUM", className: "bg-amber-100 text-amber-800" },
+    low: { label: "LOW", className: "bg-blue-50 text-blue-700" },
+    normal: { label: "OK", className: "bg-emerald-50 text-emerald-700" },
+}
+
 // ─── Trend chart (compact) ──────────────────────────────────────────────────
 
 function LabTrendChart({ name, history, refRange }: { name: string; history: Array<{ date: string; value: number }>; refRange?: string }) {
@@ -182,7 +207,7 @@ function LabTrendChart({ name, history, refRange }: { name: string; history: Arr
 
 // ─── Types & sort ─────────────────────────────────────────────────────────────
 
-type FilterType = "all" | "action" | "watch" | "stable" | "infusion" | "transfusion" | "no-labs"
+type FilterType = "all" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "no-labs"
 type SortType = "urgency" | "name-az" | "name-za" | "lab-date-new" | "lab-date-old" | "hgb-low" | "alb-low"
 
 interface AnalyzedPatient {
@@ -190,7 +215,7 @@ interface AnalyzedPatient {
     inf: InfusionResult
     tran: TransfusionResult
     hasLabs: boolean
-    tier: "action" | "watch" | "stable"
+    severity: Severity
     urgencyScore: number
 }
 
@@ -240,9 +265,9 @@ function LabPill({ value, low, high, unit }: { value?: number; low: number; high
     )
 }
 
-// ─── Detail Panel ─────────────────────────────────────────────────────────────
+// ─── Inline Detail Row ───────────────────────────────────────────────────────
 
-function DetailPanel({ patient, labs, labHistory, labHistoryLoading, openResources, fetchResource, closeResource, onClose }: {
+function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResources, fetchResource, closeResource, colSpan }: {
     patient: PatientSummary
     labs: Record<string, LabValue>
     labHistory: Record<string, unknown> | null
@@ -250,9 +275,9 @@ function DetailPanel({ patient, labs, labHistory, labHistoryLoading, openResourc
     openResources: Record<string, ResourceState>
     fetchResource: (simplId: string, resource: string) => void
     closeResource: (resource: string) => void
-    onClose: () => void
+    colSpan: number
 }) {
-    const panelRef = useRef<HTMLDivElement>(null)
+    const panelRef = useRef<HTMLTableRowElement>(null)
     const [activeTab, setActiveTab] = useState<"labs" | "trends" | "data">("labs")
 
     useEffect(() => {
@@ -275,124 +300,124 @@ function DetailPanel({ patient, labs, labHistory, labHistoryLoading, openResourc
     }).filter(Boolean) as Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string }>
 
     const tabs = [
-        { id: "labs" as const, label: "Lab Values", count: keyLabs.length },
-        { id: "trends" as const, label: "Trends", count: charts.length },
+        { id: "labs" as const, label: "Labs", count: keyLabs.length },
+        { id: "trends" as const, label: "Trends", count: labHistoryLoading ? -1 : charts.length },
         { id: "data" as const, label: "Raw Data", count: patient.resources.length },
     ]
 
     return (
-        <div ref={panelRef} className="bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-            {/* Panel header */}
-            <div className="px-4 py-2.5 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <p className="font-bold text-sm text-slate-800">{patient.last_name}, {patient.first_name}</p>
-                    <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                        {patient.lastLabDate && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{patient.lastLabDate}</span>}
-                        {patient.reportCount != null && <span className="flex items-center gap-1"><FileText className="w-3 h-3" />{patient.reportCount} reports</span>}
+        <tr ref={panelRef} className="bg-slate-50/50">
+            <td colSpan={colSpan} className="p-0">
+                <div className="mx-3 my-2 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    {/* Header + tabs on the same line */}
+                    <div className="px-4 py-2 border-b border-slate-100 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <p className="font-bold text-sm text-slate-800">{patient.last_name}, {patient.first_name}</p>
+                            <div className="flex items-center gap-3 text-[10px] text-slate-400">
+                                {patient.lastLabDate && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{patient.lastLabDate}</span>}
+                                {patient.reportCount != null && <span className="flex items-center gap-1"><FileText className="w-3 h-3" />{patient.reportCount} rpts</span>}
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-0">
+                            {tabs.map(t => (
+                                <button
+                                    key={t.id}
+                                    onClick={() => setActiveTab(t.id)}
+                                    className={`px-3 py-1.5 text-[11px] font-semibold rounded-md transition-colors ${activeTab === t.id
+                                        ? "bg-teal-50 text-teal-700"
+                                        : "text-slate-400 hover:text-slate-600"}`}
+                                >
+                                    {t.label}
+                                    {t.count > 0 && <span className="ml-1 text-[9px] bg-slate-100 text-slate-500 px-1 rounded">{t.count}</span>}
+                                    {t.count === -1 && <Loader2 className="w-2.5 h-2.5 animate-spin inline ml-1" />}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
-                <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-md transition-colors"><X className="w-4 h-4 text-slate-400" /></button>
-            </div>
 
-            {/* Tabs */}
-            <div className="px-4 border-b border-slate-100 flex gap-0">
-                {tabs.map(t => (
-                    <button
-                        key={t.id}
-                        onClick={() => setActiveTab(t.id)}
-                        className={`px-3 py-2 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.id
-                            ? "border-teal-500 text-teal-700"
-                            : "border-transparent text-slate-400 hover:text-slate-600"}`}
-                    >
-                        {t.label}
-                        {t.count > 0 && <span className="ml-1.5 text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full">{t.count}</span>}
-                    </button>
-                ))}
-            </div>
+                    {/* Tab content */}
+                    <div className="max-h-[380px] overflow-y-auto">
+                        {activeTab === "labs" && keyLabs.length > 0 && (
+                            <div className="p-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
+                                    {keyLabs.map(({ canonical, lab }) => {
+                                        const range = NORMAL[canonical]
+                                        const abnormal = range ? (lab.value < range[0] || lab.value > range[1]) : false
+                                        return (
+                                            <div key={canonical} className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg border ${abnormal ? "bg-red-50/60 border-red-200" : "bg-slate-50/60 border-slate-100"}`}>
+                                                <div>
+                                                    <p className="text-[10px] font-semibold text-slate-400">{canonical}</p>
+                                                    <p className={`text-sm font-black leading-tight ${abnormal ? "text-red-700" : "text-slate-800"}`}>
+                                                        {lab.value} <span className="text-[9px] font-normal text-slate-400">{lab.unit}</span>
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    {abnormal
+                                                        ? <span className="px-1 py-0.5 text-[8px] font-bold bg-red-100 text-red-700 rounded">ABN</span>
+                                                        : <span className="px-1 py-0.5 text-[8px] font-bold bg-green-100 text-green-700 rounded">OK</span>}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        )}
 
-            {/* Tab content */}
-            <div className="max-h-[420px] overflow-y-auto">
-                {activeTab === "labs" && keyLabs.length > 0 && (
-                    <div className="p-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                            {keyLabs.map(({ canonical, lab }) => {
-                                const range = NORMAL[canonical]
-                                const abnormal = range ? (lab.value < range[0] || lab.value > range[1]) : false
-                                return (
-                                    <div key={canonical} className={`flex items-center justify-between px-3 py-2 rounded-lg border ${abnormal ? "bg-red-50/60 border-red-200" : "bg-slate-50/60 border-slate-100"}`}>
-                                        <div>
-                                            <p className="text-[11px] font-semibold text-slate-500">{canonical}</p>
-                                            <p className={`text-base font-black ${abnormal ? "text-red-700" : "text-slate-800"}`}>
-                                                {lab.value} <span className="text-[10px] font-normal text-slate-400">{lab.unit}</span>
-                                            </p>
+                        {activeTab === "labs" && keyLabs.length === 0 && (
+                            <div className="p-6 text-center text-xs text-slate-400">No lab data available.</div>
+                        )}
+
+                        {activeTab === "trends" && (
+                            <div className="p-3">
+                                {labHistoryLoading && <div className="py-4 text-center text-slate-400 text-xs"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading trends...</div>}
+                                {!labHistoryLoading && charts.length > 0 && (
+                                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                                        {charts.map(c => <LabTrendChart key={c.canonical} name={c.canonical} history={c.history} refRange={c.refRange} />)}
+                                    </div>
+                                )}
+                                {!labHistoryLoading && charts.length === 0 && (
+                                    <div className="py-4 text-center text-xs text-slate-400">Not enough historical data for trend charts.</div>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === "data" && (
+                            <div className="p-3">
+                                <div className="flex flex-wrap gap-1.5 mb-2">
+                                    {patient.resources.map(resource => {
+                                        const rs = openResources[resource]
+                                        const isActive = !!rs
+                                        return (
+                                            <button key={resource} onClick={(e) => { e.stopPropagation(); isActive ? closeResource(resource) : fetchResource(patient.simpl_id, resource) }}
+                                                className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium border transition-all ${isActive ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-400'}`}>
+                                                {rs?.loading ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : isActive ? <X className="w-2.5 h-2.5" /> : <FileText className="w-2.5 h-2.5" />}
+                                                {resource}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                                {Object.entries(openResources).map(([resource, rs]) => (
+                                    <div key={resource} className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-2">
+                                        <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-100 bg-slate-50/80">
+                                            <span className="text-[10px] font-semibold text-slate-700">{resource}</span>
+                                            <button onClick={() => closeResource(resource)} className="p-0.5 text-slate-400 hover:text-red-600"><X className="w-3 h-3" /></button>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-[9px] text-slate-400">{lab.referenceRange || (range ? `${range[0]}–${range[1]}` : '')}</p>
-                                            <p className="text-[9px] text-slate-400">{lab.date}</p>
-                                            {abnormal
-                                                ? <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold bg-red-100 text-red-700 rounded">ABNORMAL</span>
-                                                : <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold bg-green-100 text-green-700 rounded">NORMAL</span>}
+                                        <div className="p-2 max-h-56 overflow-y-auto">
+                                            {rs.loading && <div className="text-xs text-slate-400 py-2 text-center"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading...</div>}
+                                            {rs.error && <div className="text-xs text-red-600 bg-red-50 rounded p-2"><AlertCircle className="w-3 h-3 inline mr-1" />{rs.error}</div>}
+                                            {rs.data != null && !rs.loading && <ResourceDataRenderer resource={resource} data={rs.data} />}
                                         </div>
                                     </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                )}
-
-                {activeTab === "labs" && keyLabs.length === 0 && (
-                    <div className="p-8 text-center text-sm text-slate-400">No lab data available for this patient.</div>
-                )}
-
-                {activeTab === "trends" && (
-                    <div className="p-4">
-                        {labHistoryLoading && <div className="py-6 text-center text-slate-400 text-sm"><Loader2 className="w-4 h-4 animate-spin inline mr-2" />Loading trends...</div>}
-                        {!labHistoryLoading && charts.length > 0 && (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                                {charts.map(c => <LabTrendChart key={c.canonical} name={c.canonical} history={c.history} refRange={c.refRange} />)}
+                                ))}
+                                {Object.keys(openResources).length === 0 && (
+                                    <p className="text-[10px] text-slate-400 text-center py-3">Select a resource above to view raw data.</p>
+                                )}
                             </div>
                         )}
-                        {!labHistoryLoading && charts.length === 0 && (
-                            <div className="py-6 text-center text-sm text-slate-400">Not enough data points for trend charts.</div>
-                        )}
                     </div>
-                )}
-
-                {activeTab === "data" && (
-                    <div className="p-4">
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                            {patient.resources.map(resource => {
-                                const rs = openResources[resource]
-                                const isActive = !!rs
-                                return (
-                                    <button key={resource} onClick={() => isActive ? closeResource(resource) : fetchResource(patient.simpl_id, resource)}
-                                        className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium border transition-all ${isActive ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-400'}`}>
-                                        {rs?.loading ? <Loader2 className="w-3 h-3 animate-spin" /> : isActive ? <X className="w-2.5 h-2.5" /> : <FileText className="w-2.5 h-2.5" />}
-                                        {resource}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                        {Object.entries(openResources).map(([resource, rs]) => (
-                            <div key={resource} className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-2">
-                                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50/80">
-                                    <span className="text-[11px] font-semibold text-slate-700">{resource}</span>
-                                    <button onClick={() => closeResource(resource)} className="p-0.5 text-slate-400 hover:text-red-600"><X className="w-3 h-3" /></button>
-                                </div>
-                                <div className="p-3 max-h-64 overflow-y-auto">
-                                    {rs.loading && <div className="text-sm text-slate-400 py-3 text-center"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading...</div>}
-                                    {rs.error && <div className="text-xs text-red-600 bg-red-50 rounded p-2"><AlertCircle className="w-3 h-3 inline mr-1" />{rs.error}</div>}
-                                    {rs.data != null && !rs.loading && <ResourceDataRenderer resource={resource} data={rs.data} />}
-                                </div>
-                            </div>
-                        ))}
-                        {Object.keys(openResources).length === 0 && (
-                            <p className="text-xs text-slate-400 text-center py-4">Select a resource above to view raw data.</p>
-                        )}
-                    </div>
-                )}
-            </div>
-        </div>
+                </div>
+            </td>
+        </tr>
     )
 }
 
@@ -451,25 +476,23 @@ function PatientsView() {
         setOpenResources(prev => { const n = { ...prev }; delete n[resource]; return n })
     }, [])
 
-    // Analyze all patients
+    // Analyze all patients with fixed severity scoring
     const analyzed: AnalyzedPatient[] = patients.map(p => {
         const labs = p.labs_latest ?? {}
         const inf = analyzeInfusion(labs)
         const tran = analyzeTransfusion(labs)
         const hasLabs = Object.keys(labs).length > 0
-        const isAction = tran.priority === "critical" || tran.priority === "high" || inf.priority === "high"
-        const isWatch = !isAction && (inf.priority === "medium" || tran.priority === "medium")
-        const tier = isAction ? "action" as const : isWatch ? "watch" as const : "stable" as const
-        const orderMap = { critical: 100, high: 80, medium: 50, low: 20, none: 0 }
-        const urgencyScore = Math.max(orderMap[tran.priority], orderMap[inf.priority]) + inf.score
-        return { patient: p, inf, tran, hasLabs, tier, urgencyScore }
+        const severity = combinedSeverity(inf, tran)
+        const urgencyScore = severityUrgencyScore(severity, inf)
+        return { patient: p, inf, tran, hasLabs, severity, urgencyScore }
     })
 
     const counts = {
         all: analyzed.length,
-        action: analyzed.filter(a => a.tier === "action").length,
-        watch: analyzed.filter(a => a.tier === "watch").length,
-        stable: analyzed.filter(a => a.tier === "stable").length,
+        critical: analyzed.filter(a => a.severity === "critical").length,
+        high: analyzed.filter(a => a.severity === "high").length,
+        medium: analyzed.filter(a => a.severity === "medium").length,
+        low: analyzed.filter(a => a.severity === "low").length,
         infusion: analyzed.filter(a => a.inf.priority !== "none" && a.inf.priority !== "low").length,
         transfusion: analyzed.filter(a => a.tran.priority !== "none").length,
         "no-labs": analyzed.filter(a => !a.hasLabs).length,
@@ -486,9 +509,10 @@ function PatientsView() {
 
     const filtered = searched.filter(a => {
         switch (activeFilter) {
-            case "action": return a.tier === "action"
-            case "watch": return a.tier === "watch"
-            case "stable": return a.tier === "stable"
+            case "critical": return a.severity === "critical"
+            case "high": return a.severity === "high"
+            case "medium": return a.severity === "medium"
+            case "low": return a.severity === "low"
             case "infusion": return a.inf.priority !== "none" && a.inf.priority !== "low"
             case "transfusion": return a.tran.priority !== "none"
             case "no-labs": return !a.hasLabs
@@ -497,7 +521,7 @@ function PatientsView() {
     })
 
     const sorted = sortPatients(filtered, sortBy)
-    const expandedPatient = sorted.find(a => a.patient.simpl_id === expandedId)
+    const COL_SPAN = 13
 
     if (!facilityName) {
         return (
@@ -511,11 +535,11 @@ function PatientsView() {
 
     const FILTERS: { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
         { key: "all", label: "All", icon: <Users className="w-3 h-3" />, color: "text-slate-600 border-slate-200 hover:bg-slate-50", activeColor: "text-white bg-slate-700 border-slate-700" },
-        { key: "action", label: "Action", icon: <AlertTriangle className="w-3 h-3" />, color: "text-red-600 border-red-200 hover:bg-red-50", activeColor: "text-white bg-red-600 border-red-600" },
-        { key: "watch", label: "Watch", icon: <Eye className="w-3 h-3" />, color: "text-amber-600 border-amber-200 hover:bg-amber-50", activeColor: "text-white bg-amber-500 border-amber-500" },
+        { key: "critical", label: "Critical", icon: <AlertTriangle className="w-3 h-3" />, color: "text-red-600 border-red-200 hover:bg-red-50", activeColor: "text-white bg-red-600 border-red-600" },
+        { key: "high", label: "High", icon: <TrendingDown className="w-3 h-3" />, color: "text-red-500 border-red-200 hover:bg-red-50", activeColor: "text-white bg-red-500 border-red-500" },
+        { key: "medium", label: "Medium", icon: <Eye className="w-3 h-3" />, color: "text-amber-600 border-amber-200 hover:bg-amber-50", activeColor: "text-white bg-amber-500 border-amber-500" },
         { key: "infusion", label: "Infusion", icon: <Droplets className="w-3 h-3" />, color: "text-blue-600 border-blue-200 hover:bg-blue-50", activeColor: "text-white bg-blue-600 border-blue-600" },
         { key: "transfusion", label: "Transfusion", icon: <FlaskConical className="w-3 h-3" />, color: "text-rose-600 border-rose-200 hover:bg-rose-50", activeColor: "text-white bg-rose-600 border-rose-600" },
-        { key: "stable", label: "Stable", icon: <Activity className="w-3 h-3" />, color: "text-emerald-600 border-emerald-200 hover:bg-emerald-50", activeColor: "text-white bg-emerald-600 border-emerald-600" },
     ]
 
     return (
@@ -534,22 +558,25 @@ function PatientsView() {
                 <div className="flex items-center gap-2">
                     {!loading && patients.length > 0 && (
                         <div className="flex items-center gap-1.5 mr-2">
-                            {counts.action > 0 && (
+                            {counts.critical > 0 && (
                                 <div className="flex items-center gap-1 px-2 py-1 bg-red-50 border border-red-200 rounded-lg">
                                     <AlertTriangle className="w-3 h-3 text-red-600" />
-                                    <span className="text-xs font-bold text-red-700">{counts.action}</span>
+                                    <span className="text-xs font-bold text-red-700">{counts.critical}</span>
+                                    <span className="text-[9px] text-red-500">crit</span>
                                 </div>
                             )}
-                            {counts.watch > 0 && (
+                            {counts.high > 0 && (
+                                <div className="flex items-center gap-1 px-2 py-1 bg-red-50 border border-red-100 rounded-lg">
+                                    <span className="text-xs font-bold text-red-600">{counts.high}</span>
+                                    <span className="text-[9px] text-red-400">high</span>
+                                </div>
+                            )}
+                            {counts.medium > 0 && (
                                 <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 border border-amber-200 rounded-lg">
-                                    <TrendingDown className="w-3 h-3 text-amber-600" />
-                                    <span className="text-xs font-bold text-amber-700">{counts.watch}</span>
+                                    <span className="text-xs font-bold text-amber-700">{counts.medium}</span>
+                                    <span className="text-[9px] text-amber-500">med</span>
                                 </div>
                             )}
-                            <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 border border-emerald-200 rounded-lg">
-                                <Activity className="w-3 h-3 text-emerald-600" />
-                                <span className="text-xs font-bold text-emerald-700">{counts.stable}</span>
-                            </div>
                         </div>
                     )}
                     <button onClick={loadPatients} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 hover:border-teal-400 hover:text-teal-600 text-slate-600 rounded-lg transition-colors shadow-sm disabled:opacity-50">
@@ -562,7 +589,6 @@ function PatientsView() {
             {/* ─── Search + Filter + Sort ─── */}
             {!loading && patients.length > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
-                    {/* Search */}
                     <div className="relative flex-1 min-w-[200px] max-w-sm">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                         <input
@@ -579,10 +605,8 @@ function PatientsView() {
                         )}
                     </div>
 
-                    {/* Divider */}
                     <div className="h-5 w-px bg-slate-200" />
 
-                    {/* Filters */}
                     {FILTERS.map(f => (
                         <button
                             key={f.key}
@@ -599,10 +623,8 @@ function PatientsView() {
                         </button>
                     ))}
 
-                    {/* Divider */}
                     <div className="h-5 w-px bg-slate-200" />
 
-                    {/* Sort */}
                     <div className="relative">
                         <button
                             onClick={() => setShowSortMenu(v => !v)}
@@ -630,11 +652,8 @@ function PatientsView() {
                         )}
                     </div>
 
-                    {/* Active filter info */}
                     {(searchQuery || activeFilter !== "all") && (
-                        <span className="text-[10px] text-slate-400 ml-1">
-                            {sorted.length}/{patients.length}
-                        </span>
+                        <span className="text-[10px] text-slate-400 ml-1">{sorted.length}/{patients.length}</span>
                     )}
                 </div>
             )}
@@ -653,15 +672,15 @@ function PatientsView() {
                 </div>
             )}
 
-            {/* ─── Patient list ─── */}
+            {/* ─── Patient table with inline expand ─── */}
             {!loading && sorted.length > 0 && (
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <table className="w-full">
                         <thead>
                             <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                <th className="text-left pl-4 pr-2 py-2.5 w-8"></th>
+                                <th className="text-left pl-4 pr-1 py-2.5 w-6"></th>
                                 <th className="text-left px-2 py-2.5">Patient</th>
-                                <th className="text-center px-2 py-2.5 hidden sm:table-cell">Status</th>
+                                <th className="text-center px-2 py-2.5">Severity</th>
                                 <th className="text-center px-2 py-2.5">Hgb</th>
                                 <th className="text-center px-2 py-2.5">Alb</th>
                                 <th className="text-center px-2 py-2.5 hidden md:table-cell">Hct</th>
@@ -675,7 +694,7 @@ function PatientsView() {
                             </tr>
                         </thead>
                         <tbody>
-                            {sorted.map(({ patient, inf, tran, tier, hasLabs }) => {
+                            {sorted.map(({ patient, inf, tran, severity, hasLabs }) => {
                                 const labs = patient.labs_latest ?? {}
                                 const hgb = tran.hemoglobin
                                 const alb = inf.albumin
@@ -686,90 +705,92 @@ function PatientsView() {
                                 const creat = labLookup(labs, "Creatinine")?.value
                                 const isExpanded = expandedId === patient.simpl_id
 
-                                const rowAccent = tier === "action"
+                                const rowAccent = severity === "critical"
                                     ? "border-l-[3px] border-l-red-500"
-                                    : tier === "watch"
+                                    : severity === "high"
+                                    ? "border-l-[3px] border-l-red-300"
+                                    : severity === "medium"
                                     ? "border-l-[3px] border-l-amber-400"
                                     : "border-l-[3px] border-l-transparent"
 
+                                const badge = SEVERITY_BADGE[severity]
+
                                 return (
-                                    <tr
-                                        key={patient.simpl_id}
-                                        className={`border-b border-slate-50 hover:bg-slate-50/60 cursor-pointer transition-colors ${rowAccent} ${isExpanded ? "bg-teal-50/40" : ""}`}
-                                        onClick={() => expandPatient(patient.simpl_id)}
-                                    >
-                                        {/* Urgency dot */}
-                                        <td className="pl-4 pr-1 py-2">
-                                            {tier === "action" ? (
-                                                <span className="relative flex h-2.5 w-2.5">
-                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                                                </span>
-                                            ) : tier === "watch" ? (
-                                                <span className="inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
-                                            ) : (
-                                                <span className="inline-flex rounded-full h-2 w-2 bg-slate-200"></span>
-                                            )}
-                                        </td>
-                                        <td className="px-2 py-2">
-                                            <p className={`text-sm leading-tight ${tier === "action" ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>
-                                                {patient.last_name}, {patient.first_name}
-                                            </p>
-                                        </td>
-                                        <td className="px-2 py-2 text-center hidden sm:table-cell">
-                                            {tier === "action" ? (
-                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-red-100 text-red-700 rounded">ACTION</span>
-                                            ) : tier === "watch" ? (
-                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded">WATCH</span>
-                                            ) : !hasLabs ? (
-                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-500 rounded">NO LABS</span>
-                                            ) : (
-                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-50 text-emerald-600 rounded">OK</span>
-                                            )}
-                                        </td>
-                                        <td className="px-2 py-2 text-center"><LabPill value={hgb} low={11} high={16} /></td>
-                                        <td className="px-2 py-2 text-center"><LabPill value={alb} low={3.4} high={5} /></td>
-                                        <td className="px-2 py-2 text-center hidden md:table-cell"><LabPill value={hct} low={34} high={45} unit="%" /></td>
-                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={na} low={136} high={145} /></td>
-                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={k} low={3.5} high={5} /></td>
-                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={bun} low={7} high={23} /></td>
-                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={creat} low={0.6} high={1.2} /></td>
-                                        <td className="px-2 py-2 hidden md:table-cell">
-                                            <div className="flex gap-1 flex-wrap">
-                                                {tran.priority !== "none" && (
-                                                    <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${tran.priority === "critical" ? "bg-red-600 text-white" : "bg-red-100 text-red-700"}`}>
-                                                        {tran.priority === "critical" ? "TRANSFUSE" : "Transfusion"}
+                                    <Fragment key={patient.simpl_id}>
+                                        <tr
+                                            className={`border-b border-slate-50 hover:bg-slate-50/60 cursor-pointer transition-colors ${rowAccent} ${isExpanded ? "bg-teal-50/40 !border-b-0" : ""}`}
+                                            onClick={() => expandPatient(patient.simpl_id)}
+                                        >
+                                            <td className="pl-4 pr-1 py-2">
+                                                {severity === "critical" ? (
+                                                    <span className="relative flex h-2.5 w-2.5">
+                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
                                                     </span>
+                                                ) : severity === "high" ? (
+                                                    <span className="inline-flex rounded-full h-2.5 w-2.5 bg-red-400"></span>
+                                                ) : severity === "medium" ? (
+                                                    <span className="inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
+                                                ) : (
+                                                    <span className="inline-flex rounded-full h-2 w-2 bg-slate-200"></span>
                                                 )}
-                                                {inf.priority !== "none" && inf.priority !== "low" && (
-                                                    <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${inf.priority === "high" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>
-                                                        Infusion
+                                            </td>
+                                            <td className="px-2 py-2">
+                                                <p className={`text-sm leading-tight ${severity === "critical" || severity === "high" ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>
+                                                    {patient.last_name}, {patient.first_name}
+                                                </p>
+                                            </td>
+                                            <td className="px-2 py-2 text-center">
+                                                {hasLabs ? (
+                                                    <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${badge.className}`}>
+                                                        {badge.label}
                                                     </span>
+                                                ) : (
+                                                    <span className="px-1.5 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-500 rounded">NO LABS</span>
                                                 )}
-                                            </div>
-                                        </td>
-                                        <td className="px-2 py-2 text-right text-[10px] text-slate-400 hidden sm:table-cell tabular-nums">{patient.lastLabDate ?? '—'}</td>
-                                        <td className="pr-3 py-2">{isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-teal-500" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}</td>
-                                    </tr>
+                                            </td>
+                                            <td className="px-2 py-2 text-center"><LabPill value={hgb} low={11} high={16} /></td>
+                                            <td className="px-2 py-2 text-center"><LabPill value={alb} low={3.4} high={5} /></td>
+                                            <td className="px-2 py-2 text-center hidden md:table-cell"><LabPill value={hct} low={34} high={45} unit="%" /></td>
+                                            <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={na} low={136} high={145} /></td>
+                                            <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={k} low={3.5} high={5} /></td>
+                                            <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={bun} low={7} high={23} /></td>
+                                            <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={creat} low={0.6} high={1.2} /></td>
+                                            <td className="px-2 py-2 hidden md:table-cell">
+                                                <div className="flex gap-1 flex-wrap">
+                                                    {tran.priority !== "none" && (
+                                                        <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${tran.priority === "critical" ? "bg-red-600 text-white" : "bg-red-100 text-red-700"}`}>
+                                                            {tran.priority === "critical" ? "TRANSFUSE" : "Transfusion"}
+                                                        </span>
+                                                    )}
+                                                    {inf.priority !== "none" && inf.priority !== "low" && (
+                                                        <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${inf.priority === "high" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>
+                                                            Infusion
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="px-2 py-2 text-right text-[10px] text-slate-400 hidden sm:table-cell tabular-nums">{patient.lastLabDate ?? '—'}</td>
+                                            <td className="pr-3 py-2">{isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-teal-500" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}</td>
+                                        </tr>
+                                        {isExpanded && (
+                                            <InlineDetail
+                                                patient={patient}
+                                                labs={labs}
+                                                labHistory={labHistory}
+                                                labHistoryLoading={labHistoryLoading}
+                                                openResources={openResources}
+                                                fetchResource={fetchResource}
+                                                closeResource={closeResource}
+                                                colSpan={COL_SPAN}
+                                            />
+                                        )}
+                                    </Fragment>
                                 )
                             })}
                         </tbody>
                     </table>
                 </div>
-            )}
-
-            {/* ─── Detail panel (appears below the table) ─── */}
-            {expandedPatient && (
-                <DetailPanel
-                    patient={expandedPatient.patient}
-                    labs={expandedPatient.patient.labs_latest ?? {}}
-                    labHistory={labHistory}
-                    labHistoryLoading={labHistoryLoading}
-                    openResources={openResources}
-                    fetchResource={fetchResource}
-                    closeResource={closeResource}
-                    onClose={() => { setExpandedId(null); setLabHistory(null); setOpenResources({}) }}
-                />
             )}
         </div>
     )
