@@ -486,8 +486,6 @@ function PatientsView() {
             </div>
         </div>
 
-        </div>
-
         {/* PDPM Report Modal */}
         {pdpmModal && (
             <div
