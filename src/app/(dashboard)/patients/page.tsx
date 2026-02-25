@@ -276,7 +276,7 @@ function PatientsView() {
     // ── Render ─────────────────────────────────────────────────────────────────
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <><div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             {/* Header */}
             <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -486,6 +486,8 @@ function PatientsView() {
             </div>
         </div>
 
+        </div>
+
         {/* PDPM Report Modal */}
         {pdpmModal && (
             <div
@@ -502,7 +504,7 @@ function PatientsView() {
                 </div>
             </div>
         )}
-    )
+        </>
 }
 
 export default function PatientsPage() {
