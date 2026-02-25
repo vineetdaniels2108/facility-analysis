@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect, useCallback, Suspense } from "react"
+import { useState, useEffect, useCallback, Suspense, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import {
     Users, ChevronRight, ChevronDown, Loader2, RefreshCw,
     Building2, AlertTriangle, Droplets, FlaskConical,
-    Activity, Calendar, ClipboardList, FileText, X, AlertCircle
+    Activity, Calendar, ClipboardList, FileText, X, AlertCircle,
+    Search, SlidersHorizontal, ArrowUpDown, ChevronUp, TrendingDown, Eye
 } from "lucide-react"
 import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from "recharts"
 import { ResourceDataRenderer } from "@/components/data/ResourceDataRenderer"
@@ -149,7 +150,7 @@ function analyzeTransfusion(labs: Record<string, LabValue>): TransfusionResult {
     return { priority, hemoglobin: hgb, hemoglobin_date: hgbLab?.date, hematocrit: hct, ferritin: ferr, findings }
 }
 
-// ─── Trend chart ─────────────────────────────────────────────────────────────
+// ─── Trend chart (compact) ──────────────────────────────────────────────────
 
 function LabTrendChart({ name, history, refRange }: { name: string; history: Array<{ date: string; value: number }>; refRange?: string }) {
     const data = history.map(h => ({ date: h.date.slice(5), value: h.value, fullDate: h.date }))
@@ -159,117 +160,243 @@ function LabTrendChart({ name, history, refRange }: { name: string; history: Arr
         if (m) { refLow = parseFloat(m[1]); refHigh = parseFloat(m[2]) }
     }
     return (
-        <div className="bg-white border border-slate-200 rounded-xl p-4">
-            <p className="text-xs font-semibold text-slate-600 mb-1">{name}</p>
-            {refRange && <p className="text-[10px] text-slate-400 mb-2">Normal: {refRange}</p>}
-            <ResponsiveContainer width="100%" height={120}>
-                <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-                    <XAxis dataKey="date" tick={{ fontSize: 9 }} />
-                    <YAxis tick={{ fontSize: 9 }} width={35} domain={["auto", "auto"]} />
+        <div className="bg-slate-50/80 border border-slate-100 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-1">
+                <p className="text-[11px] font-semibold text-slate-600">{name}</p>
+                {refRange && <p className="text-[9px] text-slate-400">{refRange}</p>}
+            </div>
+            <ResponsiveContainer width="100%" height={90}>
+                <LineChart data={data} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
+                    <XAxis dataKey="date" tick={{ fontSize: 8 }} />
+                    <YAxis tick={{ fontSize: 8 }} width={30} domain={["auto", "auto"]} />
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    <RechartsTooltip contentStyle={{ fontSize: 11 }} formatter={(val: any) => [String(val ?? ''), name]} labelFormatter={(_l: any, p: any) => p?.[0]?.payload?.fullDate ?? String(_l ?? '')} />
+                    <RechartsTooltip contentStyle={{ fontSize: 10, padding: '4px 8px' }} formatter={(val: any) => [String(val ?? ''), name]} labelFormatter={(_l: any, p: any) => p?.[0]?.payload?.fullDate ?? String(_l ?? '')} />
                     {refLow !== undefined && <ReferenceLine y={refLow} stroke="#94a3b8" strokeDasharray="3 3" />}
                     {refHigh !== undefined && <ReferenceLine y={refHigh} stroke="#94a3b8" strokeDasharray="3 3" />}
-                    <Line type="monotone" dataKey="value" stroke="#0d9488" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                    <Line type="monotone" dataKey="value" stroke="#0d9488" strokeWidth={1.5} dot={{ r: 1.5 }} activeDot={{ r: 3 }} />
                 </LineChart>
             </ResponsiveContainer>
         </div>
     )
 }
 
-// ─── Alert Card (for critical/high patients) ────────────────────────────────
+// ─── Types & sort ─────────────────────────────────────────────────────────────
 
-function AlertCard({ patient, inf, tran, onExpand }: {
+type FilterType = "all" | "action" | "watch" | "stable" | "infusion" | "transfusion" | "no-labs"
+type SortType = "urgency" | "name-az" | "name-za" | "lab-date-new" | "lab-date-old" | "hgb-low" | "alb-low"
+
+interface AnalyzedPatient {
     patient: PatientSummary
     inf: InfusionResult
     tran: TransfusionResult
-    onExpand: () => void
+    hasLabs: boolean
+    tier: "action" | "watch" | "stable"
+    urgencyScore: number
+}
+
+const SORT_OPTIONS: { value: SortType; label: string }[] = [
+    { value: "urgency", label: "Most Urgent" },
+    { value: "hgb-low", label: "Lowest Hgb" },
+    { value: "alb-low", label: "Lowest Alb" },
+    { value: "lab-date-new", label: "Recent Lab" },
+    { value: "lab-date-old", label: "Oldest Lab" },
+    { value: "name-az", label: "Name A→Z" },
+    { value: "name-za", label: "Name Z→A" },
+]
+
+function sortPatients(list: AnalyzedPatient[], sort: SortType): AnalyzedPatient[] {
+    return [...list].sort((a, b) => {
+        switch (sort) {
+            case "urgency": return b.urgencyScore - a.urgencyScore
+            case "name-az": return a.patient.last_name.localeCompare(b.patient.last_name)
+            case "name-za": return b.patient.last_name.localeCompare(a.patient.last_name)
+            case "lab-date-new": return (b.patient.lastLabDate ?? "").localeCompare(a.patient.lastLabDate ?? "")
+            case "lab-date-old": return (a.patient.lastLabDate ?? "").localeCompare(b.patient.lastLabDate ?? "")
+            case "hgb-low": return (a.tran.hemoglobin ?? 999) - (b.tran.hemoglobin ?? 999)
+            case "alb-low": return (a.inf.albumin ?? 999) - (b.inf.albumin ?? 999)
+            default: return 0
+        }
+    })
+}
+
+const KEY_LABS_CANONICAL = ["Hemoglobin", "Hematocrit", "Albumin", "Ferritin", "BUN", "Creatinine", "Sodium", "Potassium", "CO2"]
+
+const NORMAL: Record<string, [number, number]> = {
+    Hemoglobin: [11.0, 16.0], Hematocrit: [34, 45], Albumin: [3.4, 5.0],
+    BUN: [7, 23], Creatinine: [0.6, 1.2], Sodium: [136, 145],
+    Potassium: [3.5, 5.0], CO2: [23, 29], Ferritin: [30, 400],
+}
+
+// ─── Lab value pill ──────────────────────────────────────────────────────────
+
+function LabPill({ value, low, high, unit }: { value?: number; low: number; high: number; unit?: string }) {
+    if (value === undefined) return <span className="text-slate-300 text-xs">—</span>
+    const abnormal = value < low || value > high
+    const critical = value < low * 0.85
+    return (
+        <span className={`text-xs font-bold tabular-nums ${critical ? "text-red-700" : abnormal ? "text-amber-600" : "text-slate-600"}`}>
+            {value}{unit && <span className="text-[9px] font-normal text-slate-400 ml-0.5">{unit}</span>}
+        </span>
+    )
+}
+
+// ─── Detail Panel ─────────────────────────────────────────────────────────────
+
+function DetailPanel({ patient, labs, labHistory, labHistoryLoading, openResources, fetchResource, closeResource, onClose }: {
+    patient: PatientSummary
+    labs: Record<string, LabValue>
+    labHistory: Record<string, unknown> | null
+    labHistoryLoading: boolean
+    openResources: Record<string, ResourceState>
+    fetchResource: (simplId: string, resource: string) => void
+    closeResource: (resource: string) => void
+    onClose: () => void
 }) {
-    const isCritical = tran.priority === "critical"
-    const borderColor = isCritical ? "border-red-400" : tran.priority === "high" ? "border-red-300" : inf.priority === "high" ? "border-amber-300" : "border-amber-200"
-    const bgColor = isCritical ? "bg-red-50" : tran.priority === "high" ? "bg-red-50/60" : "bg-amber-50/60"
+    const panelRef = useRef<HTMLDivElement>(null)
+    const [activeTab, setActiveTab] = useState<"labs" | "trends" | "data">("labs")
+
+    useEffect(() => {
+        panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    }, [patient.simpl_id])
+
+    const keyLabs = KEY_LABS_CANONICAL.map(canonical => {
+        const lab = labLookup(labs, canonical)
+        if (!lab) return null
+        return { canonical, lab }
+    }).filter(Boolean) as Array<{ canonical: string; lab: LabValue }>
+
+    const histMap = (labHistory ?? {}) as Record<string, Array<{ date: string; value: number; referenceRange?: string }>>
+    const charts = KEY_LABS_CANONICAL.map(canonical => {
+        const aliases = LAB_ALIASES[canonical] ?? [canonical]
+        const key = aliases.find(a => histMap[a] && histMap[a].length >= 2)
+        if (!key) return null
+        const latestLab = labLookup(labs, canonical)
+        return { canonical, history: histMap[key], refRange: histMap[key][0]?.referenceRange ?? latestLab?.referenceRange }
+    }).filter(Boolean) as Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string }>
+
+    const tabs = [
+        { id: "labs" as const, label: "Lab Values", count: keyLabs.length },
+        { id: "trends" as const, label: "Trends", count: charts.length },
+        { id: "data" as const, label: "Raw Data", count: patient.resources.length },
+    ]
 
     return (
-        <div className={`${bgColor} border-2 ${borderColor} rounded-2xl p-5 cursor-pointer hover:shadow-lg transition-all`} onClick={onExpand}>
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <AlertTriangle className={`w-5 h-5 ${isCritical ? "text-red-600" : "text-amber-600"}`} />
-                        <h3 className="font-bold text-lg text-slate-900">{patient.last_name}, {patient.first_name}</h3>
-                    </div>
-
-                    {/* Key numbers — big and clear */}
-                    <div className="flex items-center gap-6 mb-3">
-                        {tran.hemoglobin !== undefined && (
-                            <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase">Hemoglobin</p>
-                                <p className={`text-2xl font-black ${tran.hemoglobin < 7 ? "text-red-700" : tran.hemoglobin < 8 ? "text-red-600" : tran.hemoglobin < 9 ? "text-amber-600" : "text-slate-700"}`}>
-                                    {tran.hemoglobin} <span className="text-sm font-medium">g/dL</span>
-                                </p>
-                            </div>
-                        )}
-                        {inf.albumin !== undefined && (
-                            <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase">Albumin</p>
-                                <p className={`text-2xl font-black ${inf.albumin < 2.8 ? "text-red-700" : inf.albumin < 3.0 ? "text-red-600" : inf.albumin < 3.5 ? "text-amber-600" : "text-slate-700"}`}>
-                                    {inf.albumin} <span className="text-sm font-medium">g/dL</span>
-                                </p>
-                            </div>
-                        )}
-                        {tran.hematocrit !== undefined && (
-                            <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase">Hematocrit</p>
-                                <p className={`text-2xl font-black ${tran.hematocrit < 25 ? "text-red-600" : "text-slate-700"}`}>
-                                    {tran.hematocrit} <span className="text-sm font-medium">%</span>
-                                </p>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Reasons */}
-                    <div className="space-y-1.5">
-                        {tran.findings.map((f, i) => (
-                            <div key={`t${i}`} className="flex items-start gap-2">
-                                <FlaskConical className="w-3.5 h-3.5 text-red-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-slate-700"><span className="font-bold text-red-700">{f.test}:</span> {f.reason}</p>
-                            </div>
-                        ))}
-                        {inf.reasons.map((r, i) => (
-                            <div key={`i${i}`} className="flex items-start gap-2">
-                                <Droplets className="w-3.5 h-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-slate-700">{r}</p>
-                            </div>
-                        ))}
+        <div ref={panelRef} className="bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+            {/* Panel header */}
+            <div className="px-4 py-2.5 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <p className="font-bold text-sm text-slate-800">{patient.last_name}, {patient.first_name}</p>
+                    <div className="flex items-center gap-3 text-[10px] text-slate-400">
+                        {patient.lastLabDate && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{patient.lastLabDate}</span>}
+                        {patient.reportCount != null && <span className="flex items-center gap-1"><FileText className="w-3 h-3" />{patient.reportCount} reports</span>}
                     </div>
                 </div>
+                <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-md transition-colors"><X className="w-4 h-4 text-slate-400" /></button>
+            </div>
 
-                <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                    {tran.priority !== "none" && (
-                        <span className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide ${
-                            isCritical ? "bg-red-600 text-white" : "bg-red-200 text-red-800"
-                        }`}>
-                            Transfusion
-                        </span>
-                    )}
-                    {inf.priority !== "none" && inf.priority !== "low" && (
-                        <span className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide ${
-                            inf.priority === "high" ? "bg-amber-500 text-white" : "bg-amber-200 text-amber-800"
-                        }`}>
-                            Infusion
-                        </span>
-                    )}
-                    {patient.lastLabDate && (
-                        <p className="text-[10px] text-slate-400 mt-1">Lab: {patient.lastLabDate}</p>
-                    )}
-                </div>
+            {/* Tabs */}
+            <div className="px-4 border-b border-slate-100 flex gap-0">
+                {tabs.map(t => (
+                    <button
+                        key={t.id}
+                        onClick={() => setActiveTab(t.id)}
+                        className={`px-3 py-2 text-xs font-semibold border-b-2 transition-colors ${activeTab === t.id
+                            ? "border-teal-500 text-teal-700"
+                            : "border-transparent text-slate-400 hover:text-slate-600"}`}
+                    >
+                        {t.label}
+                        {t.count > 0 && <span className="ml-1.5 text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-full">{t.count}</span>}
+                    </button>
+                ))}
+            </div>
+
+            {/* Tab content */}
+            <div className="max-h-[420px] overflow-y-auto">
+                {activeTab === "labs" && keyLabs.length > 0 && (
+                    <div className="p-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {keyLabs.map(({ canonical, lab }) => {
+                                const range = NORMAL[canonical]
+                                const abnormal = range ? (lab.value < range[0] || lab.value > range[1]) : false
+                                return (
+                                    <div key={canonical} className={`flex items-center justify-between px-3 py-2 rounded-lg border ${abnormal ? "bg-red-50/60 border-red-200" : "bg-slate-50/60 border-slate-100"}`}>
+                                        <div>
+                                            <p className="text-[11px] font-semibold text-slate-500">{canonical}</p>
+                                            <p className={`text-base font-black ${abnormal ? "text-red-700" : "text-slate-800"}`}>
+                                                {lab.value} <span className="text-[10px] font-normal text-slate-400">{lab.unit}</span>
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[9px] text-slate-400">{lab.referenceRange || (range ? `${range[0]}–${range[1]}` : '')}</p>
+                                            <p className="text-[9px] text-slate-400">{lab.date}</p>
+                                            {abnormal
+                                                ? <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold bg-red-100 text-red-700 rounded">ABNORMAL</span>
+                                                : <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold bg-green-100 text-green-700 rounded">NORMAL</span>}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === "labs" && keyLabs.length === 0 && (
+                    <div className="p-8 text-center text-sm text-slate-400">No lab data available for this patient.</div>
+                )}
+
+                {activeTab === "trends" && (
+                    <div className="p-4">
+                        {labHistoryLoading && <div className="py-6 text-center text-slate-400 text-sm"><Loader2 className="w-4 h-4 animate-spin inline mr-2" />Loading trends...</div>}
+                        {!labHistoryLoading && charts.length > 0 && (
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                                {charts.map(c => <LabTrendChart key={c.canonical} name={c.canonical} history={c.history} refRange={c.refRange} />)}
+                            </div>
+                        )}
+                        {!labHistoryLoading && charts.length === 0 && (
+                            <div className="py-6 text-center text-sm text-slate-400">Not enough data points for trend charts.</div>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === "data" && (
+                    <div className="p-4">
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                            {patient.resources.map(resource => {
+                                const rs = openResources[resource]
+                                const isActive = !!rs
+                                return (
+                                    <button key={resource} onClick={() => isActive ? closeResource(resource) : fetchResource(patient.simpl_id, resource)}
+                                        className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium border transition-all ${isActive ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-400'}`}>
+                                        {rs?.loading ? <Loader2 className="w-3 h-3 animate-spin" /> : isActive ? <X className="w-2.5 h-2.5" /> : <FileText className="w-2.5 h-2.5" />}
+                                        {resource}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                        {Object.entries(openResources).map(([resource, rs]) => (
+                            <div key={resource} className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-2">
+                                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50/80">
+                                    <span className="text-[11px] font-semibold text-slate-700">{resource}</span>
+                                    <button onClick={() => closeResource(resource)} className="p-0.5 text-slate-400 hover:text-red-600"><X className="w-3 h-3" /></button>
+                                </div>
+                                <div className="p-3 max-h-64 overflow-y-auto">
+                                    {rs.loading && <div className="text-sm text-slate-400 py-3 text-center"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading...</div>}
+                                    {rs.error && <div className="text-xs text-red-600 bg-red-50 rounded p-2"><AlertCircle className="w-3 h-3 inline mr-1" />{rs.error}</div>}
+                                    {rs.data != null && !rs.loading && <ResourceDataRenderer resource={resource} data={rs.data} />}
+                                </div>
+                            </div>
+                        ))}
+                        {Object.keys(openResources).length === 0 && (
+                            <p className="text-xs text-slate-400 text-center py-4">Select a resource above to view raw data.</p>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )
 }
 
 // ─── Main view ────────────────────────────────────────────────────────────────
-
-const KEY_LABS_CANONICAL = ["Hemoglobin", "Hematocrit", "Albumin", "Ferritin", "BUN", "Creatinine", "Sodium", "Potassium", "CO2"]
 
 function PatientsView() {
     const searchParams = useSearchParams()
@@ -282,7 +409,11 @@ function PatientsView() {
     const [labHistory, setLabHistory] = useState<Record<string, unknown> | null>(null)
     const [labHistoryLoading, setLabHistoryLoading] = useState(false)
     const [openResources, setOpenResources] = useState<Record<string, ResourceState>>({})
-    const [showAllPatients, setShowAllPatients] = useState(false)
+
+    const [searchQuery, setSearchQuery] = useState("")
+    const [activeFilter, setActiveFilter] = useState<FilterType>("all")
+    const [sortBy, setSortBy] = useState<SortType>("urgency")
+    const [showSortMenu, setShowSortMenu] = useState(false)
 
     const loadPatients = useCallback(async () => {
         setLoading(true)
@@ -320,27 +451,53 @@ function PatientsView() {
         setOpenResources(prev => { const n = { ...prev }; delete n[resource]; return n })
     }, [])
 
-    // Categorize patients
-    const analyzed = patients.map(p => {
+    // Analyze all patients
+    const analyzed: AnalyzedPatient[] = patients.map(p => {
         const labs = p.labs_latest ?? {}
-        return { patient: p, inf: analyzeInfusion(labs), tran: analyzeTransfusion(labs), hasLabs: Object.keys(labs).length > 0 }
+        const inf = analyzeInfusion(labs)
+        const tran = analyzeTransfusion(labs)
+        const hasLabs = Object.keys(labs).length > 0
+        const isAction = tran.priority === "critical" || tran.priority === "high" || inf.priority === "high"
+        const isWatch = !isAction && (inf.priority === "medium" || tran.priority === "medium")
+        const tier = isAction ? "action" as const : isWatch ? "watch" as const : "stable" as const
+        const orderMap = { critical: 100, high: 80, medium: 50, low: 20, none: 0 }
+        const urgencyScore = Math.max(orderMap[tran.priority], orderMap[inf.priority]) + inf.score
+        return { patient: p, inf, tran, hasLabs, tier, urgencyScore }
     })
 
-    const actionRequired = analyzed.filter(a =>
-        a.tran.priority === "critical" || a.tran.priority === "high" ||
-        a.inf.priority === "high"
-    ).sort((a, b) => {
-        const order = { critical: 0, high: 1, medium: 2, low: 3, none: 4 }
-        return Math.min(order[a.tran.priority] ?? 4, order[a.inf.priority] ?? 4) - Math.min(order[b.tran.priority] ?? 4, order[b.inf.priority] ?? 4)
+    const counts = {
+        all: analyzed.length,
+        action: analyzed.filter(a => a.tier === "action").length,
+        watch: analyzed.filter(a => a.tier === "watch").length,
+        stable: analyzed.filter(a => a.tier === "stable").length,
+        infusion: analyzed.filter(a => a.inf.priority !== "none" && a.inf.priority !== "low").length,
+        transfusion: analyzed.filter(a => a.tran.priority !== "none").length,
+        "no-labs": analyzed.filter(a => !a.hasLabs).length,
+    }
+
+    const searched = searchQuery.trim()
+        ? analyzed.filter(a => {
+            const q = searchQuery.toLowerCase()
+            return a.patient.first_name.toLowerCase().includes(q)
+                || a.patient.last_name.toLowerCase().includes(q)
+                || a.patient.simpl_id.includes(q)
+        })
+        : analyzed
+
+    const filtered = searched.filter(a => {
+        switch (activeFilter) {
+            case "action": return a.tier === "action"
+            case "watch": return a.tier === "watch"
+            case "stable": return a.tier === "stable"
+            case "infusion": return a.inf.priority !== "none" && a.inf.priority !== "low"
+            case "transfusion": return a.tran.priority !== "none"
+            case "no-labs": return !a.hasLabs
+            default: return true
+        }
     })
 
-    const watchList = analyzed.filter(a =>
-        a.inf.priority === "medium" || a.tran.priority === "medium"
-    ).sort((a, b) => (b.inf.score) - (a.inf.score))
-
-    const stable = analyzed.filter(a =>
-        !actionRequired.includes(a) && !watchList.includes(a)
-    )
+    const sorted = sortPatients(filtered, sortBy)
+    const expandedPatient = sorted.find(a => a.patient.simpl_id === expandedId)
 
     if (!facilityName) {
         return (
@@ -352,24 +509,135 @@ function PatientsView() {
         )
     }
 
+    const FILTERS: { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
+        { key: "all", label: "All", icon: <Users className="w-3 h-3" />, color: "text-slate-600 border-slate-200 hover:bg-slate-50", activeColor: "text-white bg-slate-700 border-slate-700" },
+        { key: "action", label: "Action", icon: <AlertTriangle className="w-3 h-3" />, color: "text-red-600 border-red-200 hover:bg-red-50", activeColor: "text-white bg-red-600 border-red-600" },
+        { key: "watch", label: "Watch", icon: <Eye className="w-3 h-3" />, color: "text-amber-600 border-amber-200 hover:bg-amber-50", activeColor: "text-white bg-amber-500 border-amber-500" },
+        { key: "infusion", label: "Infusion", icon: <Droplets className="w-3 h-3" />, color: "text-blue-600 border-blue-200 hover:bg-blue-50", activeColor: "text-white bg-blue-600 border-blue-600" },
+        { key: "transfusion", label: "Transfusion", icon: <FlaskConical className="w-3 h-3" />, color: "text-rose-600 border-rose-200 hover:bg-rose-50", activeColor: "text-white bg-rose-600 border-rose-600" },
+        { key: "stable", label: "Stable", icon: <Activity className="w-3 h-3" />, color: "text-emerald-600 border-emerald-200 hover:bg-emerald-50", activeColor: "text-white bg-emerald-600 border-emerald-600" },
+    ]
+
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* ─── Compact header + stats ─── */}
+            <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center shadow-sm border border-teal-200/50">
-                        <Users className="w-6 h-6" />
+                    <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center border border-teal-200/50">
+                        <Users className="w-5 h-5" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">{facilityName}</h1>
-                        <p className="text-slate-500 text-sm">{loading ? 'Loading...' : `${patients.length} patients`}</p>
+                        <h1 className="text-xl font-bold text-slate-800 tracking-tight leading-tight">{facilityName}</h1>
+                        <p className="text-slate-400 text-xs">{loading ? 'Loading...' : `${patients.length} patients`}</p>
                     </div>
                 </div>
-                <button onClick={loadPatients} disabled={loading} className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white border border-slate-200 hover:border-teal-400 hover:text-teal-600 text-slate-600 rounded-xl transition-colors shadow-sm disabled:opacity-50">
-                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                    Refresh
-                </button>
+                <div className="flex items-center gap-2">
+                    {!loading && patients.length > 0 && (
+                        <div className="flex items-center gap-1.5 mr-2">
+                            {counts.action > 0 && (
+                                <div className="flex items-center gap-1 px-2 py-1 bg-red-50 border border-red-200 rounded-lg">
+                                    <AlertTriangle className="w-3 h-3 text-red-600" />
+                                    <span className="text-xs font-bold text-red-700">{counts.action}</span>
+                                </div>
+                            )}
+                            {counts.watch > 0 && (
+                                <div className="flex items-center gap-1 px-2 py-1 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <TrendingDown className="w-3 h-3 text-amber-600" />
+                                    <span className="text-xs font-bold text-amber-700">{counts.watch}</span>
+                                </div>
+                            )}
+                            <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                <Activity className="w-3 h-3 text-emerald-600" />
+                                <span className="text-xs font-bold text-emerald-700">{counts.stable}</span>
+                            </div>
+                        </div>
+                    )}
+                    <button onClick={loadPatients} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 hover:border-teal-400 hover:text-teal-600 text-slate-600 rounded-lg transition-colors shadow-sm disabled:opacity-50">
+                        <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+                </div>
             </div>
+
+            {/* ─── Search + Filter + Sort ─── */}
+            {!loading && patients.length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                    {/* Search */}
+                    <div className="relative flex-1 min-w-[200px] max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Search patients..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full pl-8 pr-8 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 shadow-sm"
+                        />
+                        {searchQuery && (
+                            <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600">
+                                <X className="w-3 h-3" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-5 w-px bg-slate-200" />
+
+                    {/* Filters */}
+                    {FILTERS.map(f => (
+                        <button
+                            key={f.key}
+                            onClick={() => setActiveFilter(f.key)}
+                            className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-semibold border transition-all ${activeFilter === f.key ? f.activeColor : f.color}`}
+                        >
+                            {f.icon}
+                            {f.label}
+                            {counts[f.key] > 0 && (
+                                <span className={`ml-0.5 px-1 py-0 rounded text-[9px] font-bold ${activeFilter === f.key ? "bg-white/25 text-white" : "bg-slate-100 text-slate-500"}`}>
+                                    {counts[f.key]}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+
+                    {/* Divider */}
+                    <div className="h-5 w-px bg-slate-200" />
+
+                    {/* Sort */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowSortMenu(v => !v)}
+                            className="flex items-center gap-1 px-2 py-1.5 text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors"
+                        >
+                            <ArrowUpDown className="w-3 h-3" />
+                            {SORT_OPTIONS.find(s => s.value === sortBy)?.label}
+                            {showSortMenu ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                        </button>
+                        {showSortMenu && (
+                            <>
+                                <div className="fixed inset-0 z-40" onClick={() => setShowSortMenu(false)} />
+                                <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-xl border border-slate-200 py-1 z-50">
+                                    {SORT_OPTIONS.map(s => (
+                                        <button
+                                            key={s.value}
+                                            onClick={() => { setSortBy(s.value); setShowSortMenu(false) }}
+                                            className={`w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-50 transition-colors ${sortBy === s.value ? "font-bold text-teal-700 bg-teal-50/50" : "text-slate-600"}`}
+                                        >
+                                            {s.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Active filter info */}
+                    {(searchQuery || activeFilter !== "all") && (
+                        <span className="text-[10px] text-slate-400 ml-1">
+                            {sorted.length}/{patients.length}
+                        </span>
+                    )}
+                </div>
+            )}
 
             {loading && <div className="flex items-center justify-center py-20 text-slate-400"><Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading patients...</div>}
 
@@ -377,226 +645,111 @@ function PatientsView() {
                 <div className="flex flex-col items-center justify-center py-20 text-slate-400 space-y-2"><AlertCircle className="w-6 h-6" /><p>No patients found.</p></div>
             )}
 
-            {!loading && patients.length > 0 && (
-                <>
-                    {/* ═══ ACTION REQUIRED ═══ */}
-                    {actionRequired.length > 0 && (
-                        <section>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                                    <AlertTriangle className="w-4 h-4 text-red-600" />
-                                </div>
-                                <div>
-                                    <h2 className="text-lg font-bold text-red-800">Action Required</h2>
-                                    <p className="text-xs text-red-600">{actionRequired.length} patient{actionRequired.length !== 1 ? 's' : ''} need immediate evaluation for infusion or transfusion</p>
-                                </div>
-                            </div>
-                            <div className="space-y-3">
-                                {actionRequired.map(({ patient, inf, tran }) => (
-                                    <div key={patient.simpl_id}>
-                                        <AlertCard patient={patient} inf={inf} tran={tran} onExpand={() => expandPatient(patient.simpl_id)} />
-                                        {expandedId === patient.simpl_id && <ExpandedDetail patient={patient} labs={patient.labs_latest ?? {}} labHistory={labHistory} labHistoryLoading={labHistoryLoading} openResources={openResources} fetchResource={fetchResource} closeResource={closeResource} />}
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
-                    {/* ═══ WATCH LIST ═══ */}
-                    {watchList.length > 0 && (
-                        <section>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                                    <Activity className="w-4 h-4 text-amber-600" />
-                                </div>
-                                <div>
-                                    <h2 className="text-lg font-bold text-amber-800">Watch List</h2>
-                                    <p className="text-xs text-amber-600">{watchList.length} patient{watchList.length !== 1 ? 's' : ''} with abnormal values — monitor and reassess</p>
-                                </div>
-                            </div>
-                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
-                                            <th className="text-left px-4 py-3">Patient</th>
-                                            <th className="text-center px-3 py-3">Hgb</th>
-                                            <th className="text-center px-3 py-3">Alb</th>
-                                            <th className="text-left px-3 py-3">Flags</th>
-                                            <th className="text-right px-4 py-3">Last Lab</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {watchList.map(({ patient, inf, tran }) => {
-                                            const hgb = tran.hemoglobin
-                                            const alb = inf.albumin
-                                            return (
-                                                <tr key={patient.simpl_id} className="border-b border-slate-100 hover:bg-amber-50/30 cursor-pointer transition-colors" onClick={() => expandPatient(patient.simpl_id)}>
-                                                    <td className="px-4 py-3">
-                                                        <p className="font-semibold text-sm text-slate-800">{patient.last_name}, {patient.first_name}</p>
-                                                    </td>
-                                                    <td className="px-3 py-3 text-center">
-                                                        {hgb !== undefined ? (
-                                                            <span className={`text-sm font-bold ${hgb < 9 ? "text-red-600" : hgb < 11 ? "text-amber-600" : "text-slate-700"}`}>{hgb}</span>
-                                                        ) : <span className="text-slate-300">—</span>}
-                                                    </td>
-                                                    <td className="px-3 py-3 text-center">
-                                                        {alb !== undefined ? (
-                                                            <span className={`text-sm font-bold ${alb < 3.0 ? "text-red-600" : alb < 3.5 ? "text-amber-600" : "text-slate-700"}`}>{alb}</span>
-                                                        ) : <span className="text-slate-300">—</span>}
-                                                    </td>
-                                                    <td className="px-3 py-3">
-                                                        <div className="flex gap-1.5 flex-wrap">
-                                                            {inf.priority !== "none" && inf.priority !== "low" && (
-                                                                <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-md">Infusion</span>
-                                                            )}
-                                                            {tran.priority !== "none" && (
-                                                                <span className="px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded-md">Transfusion</span>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-4 py-3 text-right text-xs text-slate-400">{patient.lastLabDate ?? '—'}</td>
-                                                </tr>
-                                            )
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {watchList.some(w => expandedId === w.patient.simpl_id) && (() => {
-                                const w = watchList.find(w => expandedId === w.patient.simpl_id)!
-                                return <ExpandedDetail patient={w.patient} labs={w.patient.labs_latest ?? {}} labHistory={labHistory} labHistoryLoading={labHistoryLoading} openResources={openResources} fetchResource={fetchResource} closeResource={closeResource} />
-                            })()}
-                        </section>
-                    )}
-
-                    {/* ═══ ALL OTHER PATIENTS ═══ */}
-                    <section>
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <Users className="w-4 h-4 text-slate-500" />
-                                </div>
-                                <div>
-                                    <h2 className="text-lg font-bold text-slate-700">All Patients</h2>
-                                    <p className="text-xs text-slate-500">{stable.length} patient{stable.length !== 1 ? 's' : ''} with no immediate concerns</p>
-                                </div>
-                            </div>
-                            <button onClick={() => setShowAllPatients(p => !p)} className="text-sm font-medium text-teal-600 hover:text-teal-700">
-                                {showAllPatients ? 'Hide' : 'Show'}
-                            </button>
-                        </div>
-
-                        {showAllPatients && (
-                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
-                                            <th className="text-left px-4 py-3">Patient</th>
-                                            <th className="text-center px-3 py-3">Hgb</th>
-                                            <th className="text-center px-3 py-3">Alb</th>
-                                            <th className="text-center px-3 py-3">Na</th>
-                                            <th className="text-center px-3 py-3">K</th>
-                                            <th className="text-center px-3 py-3">BUN</th>
-                                            <th className="text-right px-4 py-3">Last Lab</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {stable.map(({ patient, inf }) => {
-                                            const labs = patient.labs_latest ?? {}
-                                            const hgb = labLookup(labs, "Hemoglobin")?.value
-                                            const alb = inf.albumin
-                                            const na = labLookup(labs, "Sodium")?.value
-                                            const k = labLookup(labs, "Potassium")?.value
-                                            const bun = labLookup(labs, "BUN")?.value
-                                            return (
-                                                <tr key={patient.simpl_id} className="border-b border-slate-50 hover:bg-slate-50/50 cursor-pointer transition-colors" onClick={() => expandPatient(patient.simpl_id)}>
-                                                    <td className="px-4 py-2.5">
-                                                        <p className="font-medium text-sm text-slate-700">{patient.last_name}, {patient.first_name}</p>
-                                                    </td>
-                                                    <td className="px-3 py-2.5 text-center text-sm text-slate-600">{hgb ?? '—'}</td>
-                                                    <td className="px-3 py-2.5 text-center text-sm text-slate-600">{alb ?? '—'}</td>
-                                                    <td className="px-3 py-2.5 text-center text-sm text-slate-600">{na ?? '—'}</td>
-                                                    <td className="px-3 py-2.5 text-center text-sm text-slate-600">{k ?? '—'}</td>
-                                                    <td className="px-3 py-2.5 text-center text-sm text-slate-600">{bun ?? '—'}</td>
-                                                    <td className="px-4 py-2.5 text-right text-xs text-slate-400">{patient.lastLabDate ?? '—'}</td>
-                                                </tr>
-                                            )
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-
-                        {showAllPatients && stable.some(s => expandedId === s.patient.simpl_id) && (() => {
-                            const s = stable.find(s => expandedId === s.patient.simpl_id)!
-                            return <ExpandedDetail patient={s.patient} labs={s.patient.labs_latest ?? {}} labHistory={labHistory} labHistoryLoading={labHistoryLoading} openResources={openResources} fetchResource={fetchResource} closeResource={closeResource} />
-                        })()}
-                    </section>
-                </>
-            )}
-        </div>
-    )
-}
-
-// ─── Expanded Detail (shared by all sections) ────────────────────────────────
-
-function ExpandedDetail({ patient, labs, labHistory, labHistoryLoading, openResources, fetchResource, closeResource }: {
-    patient: PatientSummary
-    labs: Record<string, LabValue>
-    labHistory: Record<string, unknown> | null
-    labHistoryLoading: boolean
-    openResources: Record<string, ResourceState>
-    fetchResource: (simplId: string, resource: string) => void
-    closeResource: (resource: string) => void
-}) {
-    const keyLabs = KEY_LABS_CANONICAL.map(canonical => {
-        const lab = labLookup(labs, canonical)
-        if (!lab) return null
-        return { canonical, lab }
-    }).filter(Boolean) as Array<{ canonical: string; lab: LabValue }>
-
-    const NORMAL: Record<string, [number, number]> = {
-        Hemoglobin: [11.0, 16.0], Hematocrit: [34, 45], Albumin: [3.4, 5.0],
-        BUN: [7, 23], Creatinine: [0.6, 1.2], Sodium: [136, 145],
-        Potassium: [3.5, 5.0], CO2: [23, 29], Ferritin: [30, 400],
-    }
-
-    return (
-        <div className="mt-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-            <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <p className="font-bold text-sm text-slate-700">{patient.last_name}, {patient.first_name} — Detail</p>
-                <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                    {patient.lastLabDate && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />Last: {patient.lastLabDate}</span>}
-                    {patient.reportCount != null && <span className="flex items-center gap-1"><FileText className="w-3 h-3" />{patient.reportCount} reports</span>}
+            {!loading && patients.length > 0 && sorted.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-slate-400 space-y-2">
+                    <Search className="w-5 h-5" />
+                    <p className="text-sm">No patients match your search or filters.</p>
+                    <button onClick={() => { setSearchQuery(""); setActiveFilter("all") }} className="text-xs text-teal-600 hover:text-teal-700 font-medium">Clear filters</button>
                 </div>
-            </div>
+            )}
 
-            {/* Lab values table */}
-            {keyLabs.length > 0 && (
-                <div className="px-5 py-4 border-b border-slate-100">
-                    <table className="w-full text-sm">
-                        <thead><tr className="text-[10px] text-slate-400 uppercase font-bold">
-                            <th className="text-left pb-2">Test</th>
-                            <th className="text-right pb-2">Value</th>
-                            <th className="text-right pb-2">Normal Range</th>
-                            <th className="text-right pb-2">Date</th>
-                            <th className="text-right pb-2">Status</th>
-                        </tr></thead>
+            {/* ─── Patient list ─── */}
+            {!loading && sorted.length > 0 && (
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                <th className="text-left pl-4 pr-2 py-2.5 w-8"></th>
+                                <th className="text-left px-2 py-2.5">Patient</th>
+                                <th className="text-center px-2 py-2.5 hidden sm:table-cell">Status</th>
+                                <th className="text-center px-2 py-2.5">Hgb</th>
+                                <th className="text-center px-2 py-2.5">Alb</th>
+                                <th className="text-center px-2 py-2.5 hidden md:table-cell">Hct</th>
+                                <th className="text-center px-2 py-2.5 hidden lg:table-cell">Na</th>
+                                <th className="text-center px-2 py-2.5 hidden lg:table-cell">K</th>
+                                <th className="text-center px-2 py-2.5 hidden lg:table-cell">BUN</th>
+                                <th className="text-center px-2 py-2.5 hidden lg:table-cell">Creat</th>
+                                <th className="text-left px-2 py-2.5 hidden md:table-cell">Flags</th>
+                                <th className="text-right px-2 py-2.5 hidden sm:table-cell">Last Lab</th>
+                                <th className="w-6 pr-3"></th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            {keyLabs.map(({ canonical, lab }) => {
-                                const range = NORMAL[canonical]
-                                const abnormal = range ? (lab.value < range[0] || lab.value > range[1]) : false
+                            {sorted.map(({ patient, inf, tran, tier, hasLabs }) => {
+                                const labs = patient.labs_latest ?? {}
+                                const hgb = tran.hemoglobin
+                                const alb = inf.albumin
+                                const hct = tran.hematocrit
+                                const na = labLookup(labs, "Sodium")?.value
+                                const k = labLookup(labs, "Potassium")?.value
+                                const bun = labLookup(labs, "BUN")?.value
+                                const creat = labLookup(labs, "Creatinine")?.value
+                                const isExpanded = expandedId === patient.simpl_id
+
+                                const rowAccent = tier === "action"
+                                    ? "border-l-[3px] border-l-red-500"
+                                    : tier === "watch"
+                                    ? "border-l-[3px] border-l-amber-400"
+                                    : "border-l-[3px] border-l-transparent"
+
                                 return (
-                                    <tr key={canonical} className={`border-t border-slate-50 ${abnormal ? "bg-red-50/50" : ""}`}>
-                                        <td className="py-1.5 font-medium text-slate-700">{canonical}</td>
-                                        <td className={`py-1.5 text-right font-bold ${abnormal ? "text-red-700" : "text-slate-800"}`}>{lab.value} <span className="text-slate-400 font-normal text-xs">{lab.unit}</span></td>
-                                        <td className="py-1.5 text-right text-xs text-slate-400">{lab.referenceRange || (range ? `${range[0]}–${range[1]}` : '—')}</td>
-                                        <td className="py-1.5 text-right text-xs text-slate-400">{lab.date}</td>
-                                        <td className="py-1.5 text-right">
-                                            {abnormal
-                                                ? <span className="px-2 py-0.5 text-[10px] font-bold bg-red-100 text-red-700 rounded-md">ABNORMAL</span>
-                                                : <span className="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-md">NORMAL</span>
-                                            }
+                                    <tr
+                                        key={patient.simpl_id}
+                                        className={`border-b border-slate-50 hover:bg-slate-50/60 cursor-pointer transition-colors ${rowAccent} ${isExpanded ? "bg-teal-50/40" : ""}`}
+                                        onClick={() => expandPatient(patient.simpl_id)}
+                                    >
+                                        {/* Urgency dot */}
+                                        <td className="pl-4 pr-1 py-2">
+                                            {tier === "action" ? (
+                                                <span className="relative flex h-2.5 w-2.5">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                                                </span>
+                                            ) : tier === "watch" ? (
+                                                <span className="inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
+                                            ) : (
+                                                <span className="inline-flex rounded-full h-2 w-2 bg-slate-200"></span>
+                                            )}
                                         </td>
+                                        <td className="px-2 py-2">
+                                            <p className={`text-sm leading-tight ${tier === "action" ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>
+                                                {patient.last_name}, {patient.first_name}
+                                            </p>
+                                        </td>
+                                        <td className="px-2 py-2 text-center hidden sm:table-cell">
+                                            {tier === "action" ? (
+                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-red-100 text-red-700 rounded">ACTION</span>
+                                            ) : tier === "watch" ? (
+                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded">WATCH</span>
+                                            ) : !hasLabs ? (
+                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-500 rounded">NO LABS</span>
+                                            ) : (
+                                                <span className="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-50 text-emerald-600 rounded">OK</span>
+                                            )}
+                                        </td>
+                                        <td className="px-2 py-2 text-center"><LabPill value={hgb} low={11} high={16} /></td>
+                                        <td className="px-2 py-2 text-center"><LabPill value={alb} low={3.4} high={5} /></td>
+                                        <td className="px-2 py-2 text-center hidden md:table-cell"><LabPill value={hct} low={34} high={45} unit="%" /></td>
+                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={na} low={136} high={145} /></td>
+                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={k} low={3.5} high={5} /></td>
+                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={bun} low={7} high={23} /></td>
+                                        <td className="px-2 py-2 text-center hidden lg:table-cell"><LabPill value={creat} low={0.6} high={1.2} /></td>
+                                        <td className="px-2 py-2 hidden md:table-cell">
+                                            <div className="flex gap-1 flex-wrap">
+                                                {tran.priority !== "none" && (
+                                                    <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${tran.priority === "critical" ? "bg-red-600 text-white" : "bg-red-100 text-red-700"}`}>
+                                                        {tran.priority === "critical" ? "TRANSFUSE" : "Transfusion"}
+                                                    </span>
+                                                )}
+                                                {inf.priority !== "none" && inf.priority !== "low" && (
+                                                    <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${inf.priority === "high" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>
+                                                        Infusion
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-2 py-2 text-right text-[10px] text-slate-400 hidden sm:table-cell tabular-nums">{patient.lastLabDate ?? '—'}</td>
+                                        <td className="pr-3 py-2">{isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-teal-500" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}</td>
                                     </tr>
                                 )
                             })}
@@ -605,59 +758,19 @@ function ExpandedDetail({ patient, labs, labHistory, labHistoryLoading, openReso
                 </div>
             )}
 
-            {/* Trend charts */}
-            {labHistoryLoading && <div className="px-5 py-6 text-center text-slate-400 text-sm"><Loader2 className="w-4 h-4 animate-spin inline mr-2" />Loading trends...</div>}
-
-            {!labHistoryLoading && labHistory && Object.keys(labHistory).length > 0 && (() => {
-                const histMap = labHistory as Record<string, Array<{ date: string; value: number; referenceRange?: string }>>
-                const charts = KEY_LABS_CANONICAL.map(canonical => {
-                    const aliases = LAB_ALIASES[canonical] ?? [canonical]
-                    const key = aliases.find(a => histMap[a] && histMap[a].length >= 2)
-                    if (!key) return null
-                    const latestLab = labLookup(labs, canonical)
-                    return { canonical, history: histMap[key], refRange: histMap[key][0]?.referenceRange ?? latestLab?.referenceRange }
-                }).filter(Boolean) as Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string }>
-                if (charts.length === 0) return null
-                return (
-                    <div className="px-5 py-4 border-b border-slate-100">
-                        <p className="text-xs font-bold text-slate-500 uppercase mb-3">Trends</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {charts.map(c => <LabTrendChart key={c.canonical} name={c.canonical} history={c.history} refRange={c.refRange} />)}
-                        </div>
-                    </div>
-                )
-            })()}
-
-            {/* Resources */}
-            <div className="px-5 py-4">
-                <p className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-1.5"><ClipboardList className="w-3.5 h-3.5" />Raw Data</p>
-                <div className="flex flex-wrap gap-2 mb-3">
-                    {patient.resources.map(resource => {
-                        const rs = openResources[resource]
-                        const isActive = !!rs
-                        return (
-                            <button key={resource} onClick={() => isActive ? closeResource(resource) : fetchResource(patient.simpl_id, resource)}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${isActive ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-700 border-slate-200 hover:border-teal-400'}`}>
-                                {rs?.loading ? <Loader2 className="w-3 h-3 animate-spin" /> : isActive ? <X className="w-3 h-3" /> : <FileText className="w-3 h-3" />}
-                                {resource}
-                            </button>
-                        )
-                    })}
-                </div>
-                {Object.entries(openResources).map(([resource, rs]) => (
-                    <div key={resource} className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3">
-                        <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 bg-slate-50/80">
-                            <span className="text-xs font-semibold text-slate-700">{resource}</span>
-                            <button onClick={() => closeResource(resource)} className="p-1 text-slate-400 hover:text-red-600"><X className="w-3 h-3" /></button>
-                        </div>
-                        <div className="p-4 max-h-80 overflow-y-auto">
-                            {rs.loading && <div className="text-sm text-slate-400 py-4 text-center"><Loader2 className="w-4 h-4 animate-spin inline mr-2" />Loading...</div>}
-                            {rs.error && <div className="text-xs text-red-600 bg-red-50 rounded-lg p-3"><AlertCircle className="w-4 h-4 inline mr-1" />{rs.error}</div>}
-                            {rs.data != null && !rs.loading && <ResourceDataRenderer resource={resource} data={rs.data} />}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            {/* ─── Detail panel (appears below the table) ─── */}
+            {expandedPatient && (
+                <DetailPanel
+                    patient={expandedPatient.patient}
+                    labs={expandedPatient.patient.labs_latest ?? {}}
+                    labHistory={labHistory}
+                    labHistoryLoading={labHistoryLoading}
+                    openResources={openResources}
+                    fetchResource={fetchResource}
+                    closeResource={closeResource}
+                    onClose={() => { setExpandedId(null); setLabHistory(null); setOpenResources({}) }}
+                />
+            )}
         </div>
     )
 }
