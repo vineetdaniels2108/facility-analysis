@@ -503,6 +503,7 @@ function PatientsView() {
             </div>
         )}
         </>
+    )
 }
 
 export default function PatientsPage() {
