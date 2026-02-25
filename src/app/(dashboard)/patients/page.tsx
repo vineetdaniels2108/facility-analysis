@@ -46,7 +46,7 @@ function getPatientPriority(analysis: PatientAnalysis | undefined): number {
     const tranP = tranFindings.length > 0
         ? (tranFindings[0].priority ?? "low").toLowerCase() as AnalysisPriority
         : "none" as AnalysisPriority
-    const nta = analysis.pdpm?.components?.NTA?.total_score ?? 0
+    const nta = analysis.pdpm?.components?.NTA?.totalScore ?? 0
     const pdpmP: AnalysisPriority = nta >= 10 ? "high" : nta >= 5 ? "medium" : "low"
     return Math.min(PRIORITY_ORDER[infP], PRIORITY_ORDER[tranP], PRIORITY_ORDER[pdpmP])
 }
