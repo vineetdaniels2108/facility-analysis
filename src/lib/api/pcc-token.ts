@@ -33,33 +33,77 @@ export async function getPccToken(): Promise<string | null> {
         return null;
     }
 
-    try {
-        const res = await fetch(`${AUTH_SERVICE_URL}/api/v1/auth/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                ...getBypassHeaders(),
+    const authUrl = `${AUTH_SERVICE_URL}/api/v1/auth/token`;
+    const bypass = getBypassHeaders();
+
+    const attempts: Array<{ label: string; init: RequestInit }> = [
+        {
+            label: 'json:key/secret',
+            init: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...bypass },
+                body: JSON.stringify({ key: API_KEY, secret: API_SECRET }),
             },
-            body: JSON.stringify({ key: API_KEY, secret: API_SECRET }),
-            cache: 'no-store',
-        });
+        },
+        {
+            label: 'json:username/password',
+            init: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...bypass },
+                body: JSON.stringify({ username: API_KEY, password: API_SECRET }),
+            },
+        },
+        {
+            label: 'form:username/password',
+            init: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', ...bypass },
+                body: `username=${encodeURIComponent(API_KEY)}&password=${encodeURIComponent(API_SECRET)}`,
+            },
+        },
+        {
+            label: 'form:grant_type+client',
+            init: {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', ...bypass },
+                body: `grant_type=client_credentials&client_id=${encodeURIComponent(API_KEY)}&client_secret=${encodeURIComponent(API_SECRET)}`,
+            },
+        },
+        {
+            label: 'basic-auth-header',
+            init: {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Basic ${Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64')}`,
+                    ...bypass,
+                },
+                body: '{}',
+            },
+        },
+    ];
 
-        if (!res.ok) {
+    for (const { label, init } of attempts) {
+        try {
+            const res = await fetch(authUrl, { ...init, cache: 'no-store' });
+
+            if (res.ok) {
+                const data = await res.json();
+                cachedToken = data.access_token ?? data.token ?? null;
+                const expiresIn = data.expires_in ?? 3600;
+                tokenExpiresAt = now + expiresIn * 1000;
+                console.log(`[pcc-token] Auth succeeded with format: ${label}`);
+                return cachedToken;
+            }
+
             const body = await res.text().catch(() => '');
-            const isCf = body.includes('Just a moment') || body.includes('<!DOCTYPE');
-            console.error(`[pcc-token] Auth failed ${res.status}${isCf ? ' (Cloudflare challenge)' : ''}: ${body.slice(0, 200)}`);
-            return null;
+            console.warn(`[pcc-token] ${label} → ${res.status}: ${body.slice(0, 120)}`);
+        } catch (err) {
+            console.warn(`[pcc-token] ${label} → error: ${err instanceof Error ? err.message : err}`);
         }
-
-        const data = await res.json();
-        cachedToken = data.access_token ?? data.token ?? null;
-        const expiresIn = data.expires_in ?? 3600;
-        tokenExpiresAt = now + expiresIn * 1000;
-
-        return cachedToken;
-    } catch (err) {
-        console.error('[pcc-token] Network error fetching token:', err);
-        return null;
     }
+
+    console.error('[pcc-token] All auth formats failed');
+    return null;
 }

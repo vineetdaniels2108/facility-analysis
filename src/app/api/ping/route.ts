@@ -23,68 +23,35 @@ export async function GET() {
         bypassHeadersSent: Object.keys(bypassHeaders),
     };
 
-    // Try multiple auth body formats to find the right one
+    // Test token fetch (uses auto-format detection from pcc-token)
     if (AUTH_SERVICE_URL && PCC_API_KEY && PCC_API_SECRET) {
         const authUrl = `${AUTH_SERVICE_URL}/api/v1/auth/token`;
-        const bodyFormats: Record<string, unknown> = {
-            'key_secret': { key: PCC_API_KEY, secret: PCC_API_SECRET },
-            'username_password': { username: PCC_API_KEY, password: PCC_API_SECRET },
-            'apiKey_apiSecret': { apiKey: PCC_API_KEY, apiSecret: PCC_API_SECRET },
-            'client_id_client_secret': { client_id: PCC_API_KEY, client_secret: PCC_API_SECRET, grant_type: 'client_credentials' },
-            'clientId_clientSecret': { clientId: PCC_API_KEY, clientSecret: PCC_API_SECRET },
-        };
+        const formats = [
+            { label: 'json:key/secret', ct: 'application/json', body: JSON.stringify({ key: PCC_API_KEY, secret: PCC_API_SECRET }) },
+            { label: 'json:username/password', ct: 'application/json', body: JSON.stringify({ username: PCC_API_KEY, password: PCC_API_SECRET }) },
+            { label: 'form:username/password', ct: 'application/x-www-form-urlencoded', body: `username=${encodeURIComponent(PCC_API_KEY!)}&password=${encodeURIComponent(PCC_API_SECRET!)}` },
+            { label: 'form:client_credentials', ct: 'application/x-www-form-urlencoded', body: `grant_type=client_credentials&client_id=${encodeURIComponent(PCC_API_KEY!)}&client_secret=${encodeURIComponent(PCC_API_SECRET!)}` },
+            { label: 'basic-auth', ct: 'application/json', body: '{}', auth: `Basic ${Buffer.from(`${PCC_API_KEY}:${PCC_API_SECRET}`).toString('base64')}` },
+        ];
 
-        const basicToken = Buffer.from(`${PCC_API_KEY}:${PCC_API_SECRET}`).toString('base64');
-
-        const authResults: Record<string, unknown> = {};
-        for (const [label, bodyObj] of Object.entries(bodyFormats)) {
+        const results: Record<string, unknown> = {};
+        for (const fmt of formats) {
             try {
+                const headers: Record<string, string> = { 'Content-Type': fmt.ct, Accept: 'application/json', ...bypassHeaders };
+                if (fmt.auth) headers['Authorization'] = fmt.auth;
                 const res = await fetch(authUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        ...bypassHeaders,
-                    },
-                    body: JSON.stringify(bodyObj),
+                    method: 'POST', headers, body: fmt.body,
                     signal: AbortSignal.timeout(8000),
                 });
                 const body = await res.text();
                 const isHtml = body.includes('<!DOCTYPE') || body.includes('Just a moment');
-                authResults[label] = {
-                    status: res.status,
-                    body: isHtml ? 'CF_BLOCK' : body.slice(0, 200),
-                };
-                if (res.ok) break;
+                results[fmt.label] = { status: res.status, body: isHtml ? 'CF_BLOCK' : body.slice(0, 250) };
+                if (res.ok) { results[fmt.label] = { status: res.status, body: body.slice(0, 250), SUCCESS: true }; break; }
             } catch (err) {
-                authResults[label] = { error: err instanceof Error ? err.message : String(err) };
+                results[fmt.label] = { error: err instanceof Error ? err.message : String(err) };
             }
         }
-
-        // Also try Basic Auth header
-        try {
-            const res = await fetch(authUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Basic ${basicToken}`,
-                    ...bypassHeaders,
-                },
-                body: '{}',
-                signal: AbortSignal.timeout(8000),
-            });
-            const body = await res.text();
-            const isHtml = body.includes('<!DOCTYPE') || body.includes('Just a moment');
-            authResults['basic_auth_header'] = {
-                status: res.status,
-                body: isHtml ? 'CF_BLOCK' : body.slice(0, 200),
-            };
-        } catch (err) {
-            authResults['basic_auth_header'] = { error: err instanceof Error ? err.message : String(err) };
-        }
-
-        diag.auth = { url: authUrl, attempts: authResults };
+        diag.auth = { url: authUrl, results };
     }
 
     // Test Railway backend
