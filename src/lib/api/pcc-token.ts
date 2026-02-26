@@ -10,11 +10,20 @@ let tokenExpiresAt = 0;
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 const API_KEY = process.env.PCC_API_KEY;
 const API_SECRET = process.env.PCC_API_SECRET;
+const CF_BYPASS_TOKEN = process.env.CLOUDFLARE_BYPASS_TOKEN;
+
+export function getBypassHeaders(): Record<string, string> {
+    if (!CF_BYPASS_TOKEN) return {};
+    return {
+        'x-cf-bypass-token': CF_BYPASS_TOKEN,
+        'CF-Access-Client-Id': CF_BYPASS_TOKEN,
+        'x-bypass-token': CF_BYPASS_TOKEN,
+    };
+}
 
 export async function getPccToken(): Promise<string | null> {
     const now = Date.now();
 
-    // Return cached token if still valid (5-minute safety buffer before expiry)
     if (cachedToken && now < tokenExpiresAt - 5 * 60 * 1000) {
         return cachedToken;
     }
@@ -30,6 +39,7 @@ export async function getPccToken(): Promise<string | null> {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                ...getBypassHeaders(),
             },
             body: JSON.stringify({ key: API_KEY, secret: API_SECRET }),
             cache: 'no-store',
@@ -37,7 +47,8 @@ export async function getPccToken(): Promise<string | null> {
 
         if (!res.ok) {
             const body = await res.text().catch(() => '');
-            console.error(`[pcc-token] Auth failed ${res.status}: ${body.slice(0, 200)}`);
+            const isCf = body.includes('Just a moment') || body.includes('<!DOCTYPE');
+            console.error(`[pcc-token] Auth failed ${res.status}${isCf ? ' (Cloudflare challenge)' : ''}: ${body.slice(0, 200)}`);
             return null;
         }
 

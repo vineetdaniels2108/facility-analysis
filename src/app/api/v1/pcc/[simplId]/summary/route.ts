@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPccToken } from '@/lib/api/pcc-token';
+import { getPccToken, getBypassHeaders } from '@/lib/api/pcc-token';
 import fs from 'fs';
 import path from 'path';
 
@@ -41,6 +41,7 @@ export async function GET(
                         headers: {
                             Authorization: `Bearer ${token}`,
                             Accept: 'application/json',
+                            ...getBypassHeaders(),
                         },
                         next: { revalidate: 3600 },
                     }
