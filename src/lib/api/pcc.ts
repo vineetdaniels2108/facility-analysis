@@ -25,7 +25,7 @@ async function fetchApiToken(): Promise<string | null> {
                 'Content-Type': 'application/json',
                 ...getBypassHeaders(),
             },
-            body: JSON.stringify({ key: API_KEY, secret: API_SECRET }),
+            body: JSON.stringify({ client_id: API_KEY, client_secret: API_SECRET }),
             cache: 'no-store',
         });
 
@@ -33,8 +33,9 @@ async function fetchApiToken(): Promise<string | null> {
             throw new Error(`Failed to fetch token: ${response.statusText}`);
         }
 
-        const data: AuthTokenResponse = await response.json();
-        return data.access_token;
+        const data = await response.json();
+        const tokenBody = data.body ?? data;
+        return tokenBody.access_token ?? null;
     } catch (error) {
         console.error("Error authenticating with external service:", error);
         return null;

@@ -25,37 +25,55 @@ export async function GET() {
 
     if (AUTH_SERVICE_URL && PCC_API_KEY && PCC_API_SECRET) {
         const authUrl = `${AUTH_SERVICE_URL}/api/v1/auth/token`;
+        try {
+            const res = await fetch(authUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...bypassHeaders },
+                body: JSON.stringify({ client_id: PCC_API_KEY, client_secret: PCC_API_SECRET }),
+                signal: AbortSignal.timeout(10000),
+            });
+            const body = await res.text();
+            const isHtml = body.includes('<!DOCTYPE') || body.includes('Just a moment');
+            diag.auth = {
+                url: authUrl,
+                status: res.status,
+                ok: res.ok,
+                isCloudflareBlock: isHtml,
+                hasToken: body.includes('access_token'),
+                body: isHtml ? 'CF_BLOCK' : body.slice(0, 200),
+            };
+        } catch (err) {
+            diag.auth = { url: authUrl, error: err instanceof Error ? err.message : String(err) };
+        }
+    }
 
-        type Fmt = { label: string; method?: string; ct?: string; body?: string; extraHeaders?: Record<string, string> };
-        const formats: Fmt[] = [
-            { label: 'json:key/secret', ct: 'application/json', body: JSON.stringify({ key: PCC_API_KEY, secret: PCC_API_SECRET }) },
-            { label: 'json:username/password', ct: 'application/json', body: JSON.stringify({ username: PCC_API_KEY, password: PCC_API_SECRET }) },
-            { label: 'headers:key/secret', ct: 'application/json', body: '{}', extraHeaders: { key: PCC_API_KEY!, secret: PCC_API_SECRET! } },
-            { label: 'headers:x-api-key/secret', ct: 'application/json', body: '{}', extraHeaders: { 'x-api-key': PCC_API_KEY!, 'x-api-secret': PCC_API_SECRET! } },
-            { label: 'basic-auth', ct: 'application/json', body: '{}', extraHeaders: { Authorization: `Basic ${Buffer.from(`${PCC_API_KEY}:${PCC_API_SECRET}`).toString('base64')}` } },
-            { label: 'json:apiKey/apiSecret', ct: 'application/json', body: JSON.stringify({ apiKey: PCC_API_KEY, apiSecret: PCC_API_SECRET }) },
-            { label: 'json:clientId/clientSecret', ct: 'application/json', body: JSON.stringify({ clientId: PCC_API_KEY, clientSecret: PCC_API_SECRET }) },
-            { label: 'json:client_id/client_secret', ct: 'application/json', body: JSON.stringify({ client_id: PCC_API_KEY, client_secret: PCC_API_SECRET }) },
-        ];
-
-        const results: Record<string, unknown> = {};
-        for (const fmt of formats) {
+    // Test consumer service with a sample patient
+    if (CONSUMER_SERVICE_URL) {
+        const { getPccToken } = await import('@/lib/api/pcc-token');
+        const token = await getPccToken();
+        diag.consumer = {
+            tokenObtained: !!token,
+            url: CONSUMER_SERVICE_URL,
+        };
+        if (token) {
             try {
-                const headers: Record<string, string> = { Accept: 'application/json', ...bypassHeaders, ...fmt.extraHeaders };
-                if (fmt.ct) headers['Content-Type'] = fmt.ct;
-                const res = await fetch(authUrl, {
-                    method: fmt.method ?? 'POST', headers, body: fmt.body,
-                    signal: AbortSignal.timeout(6000),
+                const sampleId = '4dfce815-3bf0-4d06-815a-0140d603b5c9';
+                const res = await fetch(`${CONSUMER_SERVICE_URL}/api/v1/pcc/${sampleId}/summary`, {
+                    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', ...bypassHeaders },
+                    signal: AbortSignal.timeout(10000),
                 });
                 const body = await res.text();
-                const isHtml = body.includes('<!DOCTYPE') || body.includes('Just a moment');
-                results[fmt.label] = { status: res.status, body: isHtml ? 'CF_BLOCK' : body.slice(0, 250) };
-                if (res.ok) { results[fmt.label] = { ...results[fmt.label] as object, SUCCESS: true }; break; }
+                diag.consumer = {
+                    ...diag.consumer as object,
+                    samplePatient: sampleId,
+                    status: res.status,
+                    ok: res.ok,
+                    body: body.slice(0, 300),
+                };
             } catch (err) {
-                results[fmt.label] = { error: err instanceof Error ? err.message : String(err) };
+                diag.consumer = { ...diag.consumer as object, error: err instanceof Error ? err.message : String(err) };
             }
         }
-        diag.auth = { url: authUrl, results };
     }
 
     // Test Railway backend
