@@ -1,7 +1,55 @@
 "use client"
 
 import { X, ClipboardList, TrendingUp, AlertTriangle, CheckCircle2, DollarSign } from "lucide-react"
-import type { PDPMResult } from "./AnalysisBadges"
+
+// ─── Types (mirroring the Python response) ───────────────────────────────────
+
+interface PDPMComponent {
+    group: string
+    cmi: number
+    dailyRate: number
+    baseRate: number
+    functionalLevel?: string
+    bimsScore?: number
+    cognitiveLevel?: string
+    hasSwallowingDisorder?: boolean
+    slpComorbidities?: string[]
+    extensiveServices?: string[]
+    hasDepression?: boolean
+    totalScore?: number
+    description?: string
+    items?: Array<{ condition: string; label: string; points: number; mds_item: string }>
+}
+
+interface PDPMResult {
+    success?: boolean
+    error?: string
+    hasData?: boolean
+    clinicalProfile?: {
+        primaryCategory: string
+        drivingConditions: string[]
+        functionalScore: number
+        bimsScore: number
+        cognitiveLevel: string
+        hasDepression: boolean
+        conditionsCount: number
+        medicationsCount: number
+    }
+    components?: {
+        PT?: PDPMComponent
+        OT?: PDPMComponent
+        SLP?: PDPMComponent
+        Nursing?: PDPMComponent
+        NTA?: PDPMComponent
+        NonCaseMix?: { dailyRate: number }
+    }
+    financials?: {
+        totalDailyRate: number
+        estimated30Day: number
+        vpdProjections?: { "20_day": number; "60_day": number; "100_day": number }
+    }
+    documentationRecommendations?: Array<{ title: string; detail: string }>
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -12,20 +60,20 @@ function fmt(n: number): string {
 function ComponentRow({
     label, group, cmi, dailyRate, sub
 }: {
-    label: string; group?: string; cmi?: number; dailyRate?: number; sub?: string
+    label: string; group: string; cmi: number; dailyRate: number; sub?: string
 }) {
     return (
         <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-slate-700">{label}</span>
-                    <span className="px-2 py-0.5 text-[11px] font-bold bg-teal-50 text-teal-700 border border-teal-200 rounded-md">{group ?? "—"}</span>
+                    <span className="px-2 py-0.5 text-[11px] font-bold bg-teal-50 text-teal-700 border border-teal-200 rounded-md">{group}</span>
                 </div>
                 {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
             </div>
             <div className="text-right ml-4 flex-shrink-0">
-                <p className="text-sm font-bold text-slate-800">{fmt(dailyRate ?? 0)}<span className="text-[11px] font-normal text-slate-400">/day</span></p>
-                <p className="text-[11px] text-slate-400">CMI: {(cmi ?? 0).toFixed(2)}</p>
+                <p className="text-sm font-bold text-slate-800">{fmt(dailyRate)}<span className="text-[11px] font-normal text-slate-400">/day</span></p>
+                <p className="text-[11px] text-slate-400">CMI: {cmi.toFixed(2)}</p>
             </div>
         </div>
     )
@@ -77,9 +125,9 @@ export function PDPMReportCard({
                     <div className="text-right flex-shrink-0">
                         {fin && (
                             <>
-                                <p className="text-3xl font-bold">{fmt(fin.totalDailyRate ?? 0)}</p>
+                                <p className="text-3xl font-bold">{fmt(fin.totalDailyRate)}</p>
                                 <p className="text-sm opacity-70">Total Daily Rate</p>
-                                <p className="text-base font-semibold mt-1">{fmt(fin.estimated30Day ?? 0)}</p>
+                                <p className="text-base font-semibold mt-1">{fmt(fin.estimated30Day)}</p>
                                 <p className="text-xs opacity-70">Est. 30-Day</p>
                             </>
                         )}
@@ -202,7 +250,7 @@ export function PDPMReportCard({
                             {comps.NonCaseMix && (
                                 <div className="flex items-center justify-between py-3">
                                     <span className="text-sm text-slate-500">Non-Case-Mix</span>
-                                    <span className="text-sm font-bold text-slate-800">{fmt(comps.NonCaseMix.dailyRate ?? 0)}<span className="text-[11px] font-normal text-slate-400">/day</span></span>
+                                    <span className="text-sm font-bold text-slate-800">{fmt(comps.NonCaseMix.dailyRate)}<span className="text-[11px] font-normal text-slate-400">/day</span></span>
                                 </div>
                             )}
                         </div>
