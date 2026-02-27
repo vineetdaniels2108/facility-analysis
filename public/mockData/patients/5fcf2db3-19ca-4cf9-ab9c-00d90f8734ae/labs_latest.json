@@ -1,0 +1,194 @@
+{
+  "Bun/Crea": {
+    "date": "2026-01-29",
+    "value": 28.2,
+    "unit": "",
+    "referenceRange": ""
+  },
+  "BUN": {
+    "date": "2026-01-29",
+    "value": 31.0,
+    "unit": "mg/dL",
+    "referenceRange": "3-23"
+  },
+  "Creatinine": {
+    "date": "2026-01-29",
+    "value": 1.1,
+    "unit": "mg/dL",
+    "referenceRange": "0.70-1.30"
+  },
+  "Glucose": {
+    "date": "2026-01-29",
+    "value": 195.0,
+    "unit": "mg/dL",
+    "referenceRange": "65-110"
+  },
+  "Calcium": {
+    "date": "2026-01-29",
+    "value": 9.2,
+    "unit": "mg/dL",
+    "referenceRange": "8.4-10.2"
+  },
+  "eGFR": {
+    "date": "2026-01-29",
+    "value": 67.54,
+    "unit": "mL/min/1.73mS2",
+    "referenceRange": ""
+  },
+  "eGFR (Black)": {
+    "date": "2026-01-29",
+    "value": 81.7,
+    "unit": "mL/min/1.73mS2",
+    "referenceRange": ""
+  },
+  "Sodium": {
+    "date": "2026-01-29",
+    "value": 135.0,
+    "unit": "mmol/L",
+    "referenceRange": "136-145"
+  },
+  "Potassium": {
+    "date": "2026-01-29",
+    "value": 5.3,
+    "unit": "mmol/L",
+    "referenceRange": "3.6-5.2"
+  },
+  "Chloride": {
+    "date": "2026-01-29",
+    "value": 96.0,
+    "unit": "mmol/L",
+    "referenceRange": "98-107"
+  },
+  "CO2": {
+    "date": "2026-01-29",
+    "value": 31.0,
+    "unit": "mmol/L",
+    "referenceRange": "21.0-31.0"
+  },
+  "MCH": {
+    "date": "2026-01-19",
+    "value": 29.0,
+    "unit": "pg",
+    "referenceRange": "26-32"
+  },
+  "RBC": {
+    "date": "2026-01-19",
+    "value": 4.47,
+    "unit": "10S6/uL",
+    "referenceRange": "4.63-6.08"
+  },
+  "MCV": {
+    "date": "2026-01-19",
+    "value": 88.0,
+    "unit": "fL",
+    "referenceRange": "79-92"
+  },
+  "MPV": {
+    "date": "2026-01-19",
+    "value": 10.1,
+    "unit": "fL",
+    "referenceRange": "9.4-12.4"
+  },
+  "MCHC": {
+    "date": "2026-01-19",
+    "value": 32.5,
+    "unit": "g/dL",
+    "referenceRange": "32.3-36.5"
+  },
+  "HGB": {
+    "date": "2026-01-19",
+    "value": 12.8,
+    "unit": "g/dL",
+    "referenceRange": "13.7-17.5"
+  },
+  "MONO%": {
+    "date": "2026-01-19",
+    "value": 9.3,
+    "unit": "%",
+    "referenceRange": "5.3-12.2"
+  },
+  "EO%": {
+    "date": "2026-01-19",
+    "value": 5.6,
+    "unit": "%",
+    "referenceRange": "0.8-7.0"
+  },
+  "BASO%": {
+    "date": "2026-01-19",
+    "value": 0.4,
+    "unit": "%",
+    "referenceRange": "0.2-1.2"
+  },
+  "HCT": {
+    "date": "2026-01-19",
+    "value": 39.4,
+    "unit": "%",
+    "referenceRange": "40.1-51.0"
+  },
+  "%A1c": {
+    "date": "2026-01-19",
+    "value": 9.6,
+    "unit": "%",
+    "referenceRange": "4.30-5.70"
+  },
+  "RDW": {
+    "date": "2026-01-19",
+    "value": 12.9,
+    "unit": "%",
+    "referenceRange": "11.6-14.4"
+  },
+  "NEUTRO%": {
+    "date": "2026-01-19",
+    "value": 53.0,
+    "unit": "%",
+    "referenceRange": "34.0-67.9"
+  },
+  "LYMPHO%": {
+    "date": "2026-01-19",
+    "value": 31.6,
+    "unit": "%",
+    "referenceRange": "21.8-53.1"
+  },
+  "MONO#": {
+    "date": "2026-01-19",
+    "value": 1.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "LYMPHO#": {
+    "date": "2026-01-19",
+    "value": 2.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "PLT": {
+    "date": "2026-01-19",
+    "value": 279.0,
+    "unit": "10S3/uL",
+    "referenceRange": "163-337"
+  },
+  "NEUTRO#": {
+    "date": "2026-01-19",
+    "value": 4.2,
+    "unit": "10S3/uL",
+    "referenceRange": "1.8-5.4"
+  },
+  "WBC": {
+    "date": "2026-01-19",
+    "value": 7.9,
+    "unit": "10S3/uL",
+    "referenceRange": "4.2-9.1"
+  },
+  "BASO#": {
+    "date": "2026-01-19",
+    "value": 0.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "EO#": {
+    "date": "2026-01-19",
+    "value": 0.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  }
+}

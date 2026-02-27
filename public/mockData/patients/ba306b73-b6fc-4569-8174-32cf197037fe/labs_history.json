@@ -1,0 +1,1606 @@
+{
+  "HILref": [
+    {
+      "date": "2023-09-21",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    }
+  ],
+  "BUN/Creatinine Ratio": [
+    {
+      "date": "2023-09-21",
+      "value": 15.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 21.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 21.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 17.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 19.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 18.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    }
+  ],
+  "A/G Ratio": [
+    {
+      "date": "2024-09-18",
+      "value": 1.12,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 1.06,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    }
+  ],
+  "Neutrophil %": [
+    {
+      "date": "2023-09-21",
+      "value": 73.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 57.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 40.3,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 57.4,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 51.6,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 69.1,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    }
+  ],
+  "Lymphocyte %": [
+    {
+      "date": "2023-09-21",
+      "value": 19.8,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 35.1,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 50.1,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 33.2,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 39.4,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 19.5,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    }
+  ],
+  "Monocyte %": [
+    {
+      "date": "2023-09-21",
+      "value": 5.7,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 6.4,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 8.0,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 7.5,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 7.4,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 8.8,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    }
+  ],
+  "Eosinophil %": [
+    {
+      "date": "2023-09-21",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 1.2,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 1.3,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 1.2,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 2.0,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    }
+  ],
+  "Basophil %": [
+    {
+      "date": "2023-09-21",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.0,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    }
+  ],
+  "Immature Granulocyte %": [
+    {
+      "date": "2023-09-21",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.0,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    }
+  ],
+  "Hematocrit": [
+    {
+      "date": "2023-09-21",
+      "value": 41.6,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 40.8,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 46.4,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 43.6,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 42.5,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 39.1,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    }
+  ],
+  "RDW": [
+    {
+      "date": "2023-09-21",
+      "value": 11.8,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 11.7,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 12.1,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 12.0,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 11.7,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 11.9,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    }
+  ],
+  "Platelet": [
+    {
+      "date": "2023-09-21",
+      "value": 205.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 186.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 216.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 195.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 238.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 169.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    }
+  ],
+  "WBC": [
+    {
+      "date": "2023-09-21",
+      "value": 6.4,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 5.4,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 4.3,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 3.9,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 5.1,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 5.5,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    }
+  ],
+  "Neutrophil #": [
+    {
+      "date": "2023-09-21",
+      "value": 4.71,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 3.1,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 1.72,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 2.22,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 2.65,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 3.83,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    }
+  ],
+  "Lymphocyte #": [
+    {
+      "date": "2023-09-21",
+      "value": 1.26,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 1.88,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 2.14,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 1.28,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 2.02,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 1.08,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    }
+  ],
+  "Monocyte #": [
+    {
+      "date": "2023-09-21",
+      "value": 0.36,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.34,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.34,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.29,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.38,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.49,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    }
+  ],
+  "Eosinophil #": [
+    {
+      "date": "2023-09-21",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.05,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.05,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.06,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.11,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    }
+  ],
+  "Basophil #": [
+    {
+      "date": "2023-09-21",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.0,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    }
+  ],
+  "Immature Granulocyte #": [
+    {
+      "date": "2023-09-21",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.0,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    }
+  ],
+  "RBC": [
+    {
+      "date": "2023-09-21",
+      "value": 4.27,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 4.26,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 4.66,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 4.45,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 4.37,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 4.0,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    }
+  ],
+  "MPV": [
+    {
+      "date": "2023-09-21",
+      "value": 9.8,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 9.7,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 9.6,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 9.6,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 9.9,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 9.9,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    }
+  ],
+  "MCV": [
+    {
+      "date": "2023-09-21",
+      "value": 97.4,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 95.8,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 99.6,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 98.0,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 97.3,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 97.8,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    }
+  ],
+  "CO2": [
+    {
+      "date": "2023-09-21",
+      "value": 24.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 26.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 19.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 30.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 23.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    }
+  ],
+  "Calcium": [
+    {
+      "date": "2023-09-21",
+      "value": 9.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 9.2,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 9.6,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 8.8,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 9.4,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 8.4,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    }
+  ],
+  "BUN": [
+    {
+      "date": "2023-09-21",
+      "value": 15.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 20.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 15.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 16.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 16.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    }
+  ],
+  "Creatinine": [
+    {
+      "date": "2023-09-21",
+      "value": 1.0,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 0.94,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 0.8,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 0.89,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.83,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.87,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    }
+  ],
+  "Glucose": [
+    {
+      "date": "2023-09-21",
+      "value": 164.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 145.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 86.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 136.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 134.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 107.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    }
+  ],
+  "Total Bilirubin": [
+    {
+      "date": "2024-09-18",
+      "value": 0.43,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 0.61,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    }
+  ],
+  "Albumin": [
+    {
+      "date": "2024-09-18",
+      "value": 3.8,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 3.3,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    }
+  ],
+  "Total Protein": [
+    {
+      "date": "2024-09-18",
+      "value": 7.2,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 6.4,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    }
+  ],
+  "Globulin": [
+    {
+      "date": "2024-09-18",
+      "value": 3.4,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-12-09",
+      "value": 3.1,
+      "unit": "g/dL",
+      "referenceRange": ""
+    }
+  ],
+  "MCHC": [
+    {
+      "date": "2023-09-21",
+      "value": 32.0,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 32.6,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 31.7,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 31.7,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 32.0,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 31.5,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    }
+  ],
+  "Hemoglobin": [
+    {
+      "date": "2023-09-21",
+      "value": 13.3,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 13.3,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 14.7,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 13.8,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 13.6,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 12.3,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    }
+  ],
+  "MCH": [
+    {
+      "date": "2023-09-21",
+      "value": 31.1,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 31.2,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 31.5,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 31.0,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 31.1,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 30.8,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    }
+  ],
+  "Alkaline Phosphatase": [
+    {
+      "date": "2024-09-18",
+      "value": 48.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 32.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    }
+  ],
+  "ALT (SGPT)": [
+    {
+      "date": "2024-09-18",
+      "value": 43.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 12.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    }
+  ],
+  "AST (SGOT)": [
+    {
+      "date": "2024-09-18",
+      "value": 31.0,
+      "unit": "U/L",
+      "referenceRange": "7 - 34"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 22.0,
+      "unit": "U/L",
+      "referenceRange": "7 - 34"
+    }
+  ],
+  "eGFR (Non African-American)": [
+    {
+      "date": "2023-09-21",
+      "value": 56.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 61.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 73.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 64.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 70.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 66.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    }
+  ],
+  "eGFR (African-American)": [
+    {
+      "date": "2023-09-21",
+      "value": 68.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 73.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 88.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 78.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 84.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 80.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    }
+  ],
+  "Anion Gap": [
+    {
+      "date": "2024-09-18",
+      "value": 8.9,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 12.9,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    }
+  ],
+  "Sodium": [
+    {
+      "date": "2023-09-21",
+      "value": 139.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 139.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 141.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 144.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 140.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 142.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    }
+  ],
+  "Potassium": [
+    {
+      "date": "2023-09-21",
+      "value": 3.8,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 3.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 4.2,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 3.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 3.9,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 3.9,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    }
+  ],
+  "Chloride": [
+    {
+      "date": "2023-09-21",
+      "value": 105.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 108.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-02-26",
+      "value": 107.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-04-09",
+      "value": 109.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 105.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 110.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    }
+  ],
+  "Vitamin D": [
+    {
+      "date": "2024-09-18",
+      "value": 11.4,
+      "unit": "ng/mL",
+      "referenceRange": "20.0 - 50.5"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 29.7,
+      "unit": "ng/mL",
+      "referenceRange": "20.0 - 50.5"
+    }
+  ],
+  "Cholesterol": [
+    {
+      "date": "2024-09-18",
+      "value": 181.0,
+      "unit": "mg/dL",
+      "referenceRange": "0 - 200"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 209.0,
+      "unit": "mg/dL",
+      "referenceRange": "0 - 200"
+    }
+  ],
+  "Triglycerides": [
+    {
+      "date": "2024-09-18",
+      "value": 315.0,
+      "unit": "mg/dL",
+      "referenceRange": "<150"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 141.0,
+      "unit": "mg/dL",
+      "referenceRange": "<150"
+    }
+  ],
+  "HDL Cholesterol": [
+    {
+      "date": "2024-09-18",
+      "value": 45.0,
+      "unit": "mg/dL",
+      "referenceRange": ">40"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 47.0,
+      "unit": "mg/dL",
+      "referenceRange": ">40"
+    }
+  ],
+  "Calculated LDL": [
+    {
+      "date": "2024-09-18",
+      "value": 73.0,
+      "unit": "mg/dL",
+      "referenceRange": "<130"
+    },
+    {
+      "date": "2024-12-09",
+      "value": 134.0,
+      "unit": "mg/dL",
+      "referenceRange": "<130"
+    }
+  ],
+  "HA1C": [
+    {
+      "date": "2024-09-18",
+      "value": 5.5,
+      "unit": "%",
+      "referenceRange": "0.0 - 6.5"
+    }
+  ],
+  "Prealbumin": [
+    {
+      "date": "2024-09-18",
+      "value": 22.0,
+      "unit": "mg/dL",
+      "referenceRange": "14.0 - 37.0"
+    }
+  ],
+  "Magnesium": [
+    {
+      "date": "2023-09-21",
+      "value": 2.13,
+      "unit": "mg/dL",
+      "referenceRange": "1.60 - 2.60"
+    },
+    {
+      "date": "2023-09-27",
+      "value": 2.22,
+      "unit": "mg/dL",
+      "referenceRange": "1.60 - 2.60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 2.17,
+      "unit": "mg/dL",
+      "referenceRange": "1.60 - 2.60"
+    }
+  ],
+  "TSH": [
+    {
+      "date": "2024-09-18",
+      "value": 0.43,
+      "unit": "uIU/mL",
+      "referenceRange": "0.35 - 4.94"
+    }
+  ],
+  "Vitamin B12": [
+    {
+      "date": "2024-09-18",
+      "value": 259.0,
+      "unit": "pg/mL",
+      "referenceRange": "180 - 914"
+    }
+  ],
+  "Urobilinogen": [
+    {
+      "date": "2023-09-27",
+      "value": 1.0,
+      "unit": "",
+      "referenceRange": "0.2 - 1.0"
+    }
+  ],
+  "Leukocytes": [
+    {
+      "date": "2023-09-27",
+      "value": 1.0,
+      "unit": "",
+      "referenceRange": "Negative"
+    }
+  ],
+  "Specific Gravity": [
+    {
+      "date": "2023-09-27",
+      "value": 1.025,
+      "unit": "",
+      "referenceRange": "1.005 - 1.030"
+    }
+  ],
+  "pH": [
+    {
+      "date": "2023-09-27",
+      "value": 6.0,
+      "unit": "",
+      "referenceRange": "5.0 - 7.5"
+    }
+  ],
+  "Urine WBC": [
+    {
+      "date": "2023-09-27",
+      "value": 10.0,
+      "unit": "",
+      "referenceRange": "0 - 5"
+    }
+  ],
+  "Amorphous Sediment": [
+    {
+      "date": "2023-09-27",
+      "value": 3.0,
+      "unit": "",
+      "referenceRange": "None Seen"
+    }
+  ],
+  "Calcium Oxalate Crystals": [
+    {
+      "date": "2023-09-27",
+      "value": 1.0,
+      "unit": "",
+      "referenceRange": "None Seen"
+    }
+  ],
+  "Ammonia": [
+    {
+      "date": "2023-09-27",
+      "value": 49.0,
+      "unit": "ug/dl",
+      "referenceRange": "15.0 - 45.0"
+    }
+  ]
+}

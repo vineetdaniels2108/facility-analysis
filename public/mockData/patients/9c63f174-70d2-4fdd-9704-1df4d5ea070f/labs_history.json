@@ -1,0 +1,7558 @@
+{
+  "MPV": [
+    {
+      "date": "2023-03-20",
+      "value": 11.0,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 10.6,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 11.0,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 11.0,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 10.5,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 10.8,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 10.3,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 10.0,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 10.4,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 10.1,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 10.4,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 10.3,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 10.3,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 10.3,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 10.3,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 10.5,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 10.2,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 10.5,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 10.2,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 10.1,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 10.5,
+      "unit": "fL",
+      "referenceRange": "8.0 - 12.0"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 10.9,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 10.9,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 10.4,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 10.0,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 9.8,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 10.9,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 10.8,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 10.6,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 10.9,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 11.1,
+      "unit": "fL",
+      "referenceRange": "9.4-12.3"
+    }
+  ],
+  "MCV": [
+    {
+      "date": "2023-03-20",
+      "value": 98.2,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 98.8,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 93.6,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 97.1,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 95.4,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 96.6,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 98.0,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 96.7,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 97.0,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 94.9,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 95.2,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 96.0,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 93.0,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 96.7,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 96.8,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 96.6,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 95.7,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 96.2,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 94.9,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 96.6,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 97.1,
+      "unit": "fL",
+      "referenceRange": "79.0 - 102.0"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 98.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 97.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 96.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 98.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 97.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 98.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 94.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 93.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 92.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 89.0,
+      "unit": "fL",
+      "referenceRange": "79-95"
+    }
+  ],
+  "PLT": [
+    {
+      "date": "2025-07-07",
+      "value": 235.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 258.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 279.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 292.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 331.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 323.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 252.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 258.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 233.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 269.0,
+      "unit": "10S3/uL",
+      "referenceRange": "182-369"
+    }
+  ],
+  "NEUTRO#": [
+    {
+      "date": "2025-07-07",
+      "value": 4.9,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 9.3,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 4.1,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 5.1,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 4.6,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 6.8,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 3.0,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 4.1,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 4.4,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 4.5,
+      "unit": "10S3/uL",
+      "referenceRange": "1.6-6.1"
+    }
+  ],
+  "WBC": [
+    {
+      "date": "2023-03-20",
+      "value": 7.9,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 8.0,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 8.6,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 8.0,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 6.4,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 8.6,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 6.6,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 10.2,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 18.0,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 7.9,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 6.7,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 7.0,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 5.7,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 7.7,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 7.6,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 7.1,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 7.1,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 7.9,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 7.9,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 8.9,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 7.5,
+      "unit": "10^3/uL",
+      "referenceRange": "4.0 - 10.0"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 8.5,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 12.5,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 7.1,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 8.6,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 7.8,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 10.0,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 5.6,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 7.2,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 7.2,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 9.1,
+      "unit": "10S3/uL",
+      "referenceRange": "4.0-10.0"
+    }
+  ],
+  "BASO#": [
+    {
+      "date": "2025-07-07",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-10",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-14",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-16",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-21",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-08-25",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-10-09",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-11-21",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-12",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-29",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "EO#": [
+    {
+      "date": "2025-07-07",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-10",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-14",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-16",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-21",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-08-25",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-10-09",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-11-21",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-12",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-29",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "MONO#": [
+    {
+      "date": "2025-07-07",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-10",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-14",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-16",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-21",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-08-25",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-10-09",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-11-21",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-12",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-29",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "LYMPHO#": [
+    {
+      "date": "2025-07-07",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-10",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-14",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-16",
+      "value": 3.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-07-21",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-08-25",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-10-09",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-11-21",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-12",
+      "value": 2.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-29",
+      "value": 4.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "RBC": [
+    {
+      "date": "2023-03-20",
+      "value": 3.39,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 3.42,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 4.2,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 3.77,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 3.89,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 4.11,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 4.05,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 3.67,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 3.62,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 4.13,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 3.72,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 3.76,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 3.69,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 3.65,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 3.77,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 3.55,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 3.51,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 3.7,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 3.51,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 3.57,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 3.48,
+      "unit": "10^6/uL",
+      "referenceRange": "3.93 - 5.22"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 3.28,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 3.34,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 2.85,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 3.05,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 3.13,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 3.27,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 3.16,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 3.53,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 3.64,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 3.97,
+      "unit": "10S6/uL",
+      "referenceRange": "3.93-5.22"
+    }
+  ],
+  "MCHC": [
+    {
+      "date": "2023-03-20",
+      "value": 30.6,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 30.8,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 31.8,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 31.1,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 30.7,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 30.7,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 30.2,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 31.0,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 30.5,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 31.1,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 31.1,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 30.7,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 31.8,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 31.2,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 30.4,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 31.5,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 31.3,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 30.6,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 31.2,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 30.1,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 30.2,
+      "unit": "g/dL",
+      "referenceRange": "32.2 - 35.5"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 30.9,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 31.0,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 31.5,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 30.3,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 30.7,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 30.1,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 30.9,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 31.2,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 31.1,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 31.5,
+      "unit": "g/dL",
+      "referenceRange": "32.2-35.5"
+    }
+  ],
+  "HGB": [
+    {
+      "date": "2025-07-07",
+      "value": 9.9,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 10.0,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 8.6,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 9.1,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 9.3,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 9.6,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 9.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 10.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 10.4,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 11.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2-15.7"
+    }
+  ],
+  "Bun/Crea": [
+    {
+      "date": "2025-07-07",
+      "value": 13.8,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-10",
+      "value": 11.8,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-12",
+      "value": 12.9,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-14",
+      "value": 18.1,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-15",
+      "value": 17.1,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-16",
+      "value": 13.8,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-17",
+      "value": 13.1,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-18",
+      "value": 12.5,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-08-25",
+      "value": 22.5,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-10-09",
+      "value": 15.6,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-11-21",
+      "value": 16.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-12",
+      "value": 15.8,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-29",
+      "value": 15.6,
+      "unit": "",
+      "referenceRange": ""
+    }
+  ],
+  "BASO%": [
+    {
+      "date": "2025-07-07",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 0.1,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1-1.2"
+    }
+  ],
+  "NEUTRO%": [
+    {
+      "date": "2025-07-07",
+      "value": 58.2,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 74.3,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 57.2,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 58.9,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 59.1,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 67.6,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 53.2,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 57.3,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 61.3,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 49.3,
+      "unit": "%",
+      "referenceRange": "34.0-71.1"
+    }
+  ],
+  "LYMPHO%": [
+    {
+      "date": "2025-07-07",
+      "value": 29.0,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 15.9,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 29.7,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 29.6,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 30.3,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 22.0,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 36.2,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 31.8,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 30.5,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 40.0,
+      "unit": "%",
+      "referenceRange": "19.3-51.7"
+    }
+  ],
+  "MONO%": [
+    {
+      "date": "2025-07-07",
+      "value": 9.5,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 7.8,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 9.3,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 8.1,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 7.9,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 7.6,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 8.2,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 7.8,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 6.8,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 7.8,
+      "unit": "%",
+      "referenceRange": "4.7-12.5"
+    }
+  ],
+  "EO%": [
+    {
+      "date": "2025-07-07",
+      "value": 2.4,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 1.0,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 2.8,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 2.3,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 2.0,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 2.1,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 1.6,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 2.4,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 1.2,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 2.3,
+      "unit": "%",
+      "referenceRange": "0.7-5.8"
+    }
+  ],
+  "HCT": [
+    {
+      "date": "2025-07-07",
+      "value": 32.0,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 32.3,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 27.3,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 30.0,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 30.3,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 31.9,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 29.8,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 32.7,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 33.4,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 35.5,
+      "unit": "%",
+      "referenceRange": "34.1-44.9"
+    }
+  ],
+  "RDW": [
+    {
+      "date": "2023-03-20",
+      "value": 13.5,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 13.6,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 13.2,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 13.1,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 13.9,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 14.0,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 13.7,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 13.3,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 14.2,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 13.8,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 13.6,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 13.8,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 13.3,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 12.6,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 13.3,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 13.2,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 13.0,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 12.9,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 13.2,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 12.8,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 13.1,
+      "unit": "%",
+      "referenceRange": "11.6 - 14.4"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 13.0,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 13.2,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 13.1,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 13.2,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 13.2,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 13.5,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 13.6,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 13.3,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 13.7,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 13.5,
+      "unit": "%",
+      "referenceRange": "11.7-14.4"
+    }
+  ],
+  "Glucose": [
+    {
+      "date": "2023-03-20",
+      "value": 370.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 215.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 146.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 69.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-05-13",
+      "value": 3.0,
+      "unit": "",
+      "referenceRange": "Negative"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 261.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-06-06",
+      "value": 3.0,
+      "unit": "",
+      "referenceRange": "Negative"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 213.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 356.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 264.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 334.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 252.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 221.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 308.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 280.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 285.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 336.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-04-10",
+      "value": 1.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-04-26",
+      "value": 360.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 264.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 320.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 92.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 308.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 136.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 137.0,
+      "unit": "mg/dL",
+      "referenceRange": "82 - 115"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 256.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 105.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 74.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 265.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 135.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 50.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 71.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 122.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 193.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 174.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 120.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 272.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 149.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    }
+  ],
+  "Calcium": [
+    {
+      "date": "2023-03-20",
+      "value": 8.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 8.5,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 8.8,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 8.9,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 9.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 8.8,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 8.9,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 8.7,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 8.7,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 9.0,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 8.8,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 8.2,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 8.6,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 8.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 8.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 8.0,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 8.2,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 8.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 8.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 8.6,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 8.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 7.8,
+      "unit": "mg/dL",
+      "referenceRange": "8.4 - 10.2"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 7.8,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 8.2,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 7.9,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 7.7,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 7.7,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 8.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 8.5,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 8.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 8.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 8.0,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 8.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 8.2,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 8.3,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    }
+  ],
+  "BUN": [
+    {
+      "date": "2023-03-20",
+      "value": 12.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 14.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 23.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 29.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 20.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 22.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 19.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 20.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 20.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 24.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 15.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 21.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 14.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 24.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 20.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 27.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 21.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 26.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 24.0,
+      "unit": "mg/dL",
+      "referenceRange": "10 - 20"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 18.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 20.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 31.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 29.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 24.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 18.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 15.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 27.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 14.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 16.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 19.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 14.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    }
+  ],
+  "Creatinine": [
+    {
+      "date": "2023-03-20",
+      "value": 0.84,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 1.08,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 1.12,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 1.34,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 1.02,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.89,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 1.53,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 1.11,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 1.27,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 1.44,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 1.28,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 1.31,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 1.19,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 1.16,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 1.12,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.98,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 1.48,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 1.31,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 1.15,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 1.23,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 1.15,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 1.28,
+      "unit": "mg/dL",
+      "referenceRange": "0.57 - 1.11"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 1.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 1.7,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 2.4,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 1.6,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 1.4,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 1.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 1.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 1.2,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 1.2,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 0.9,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 1.0,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 1.2,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 0.9,
+      "unit": "mg/dL",
+      "referenceRange": "0.60-1.20"
+    }
+  ],
+  "MCH": [
+    {
+      "date": "2023-03-20",
+      "value": 30.1,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 30.4,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 29.8,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 30.2,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 29.3,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 29.7,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 29.6,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 30.0,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 29.6,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 29.5,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 29.6,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 29.5,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 29.5,
+      "unit": "pg",
+      "referenceRange": "25.6 - 32.3"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 30.1,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 29.4,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 30.4,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 29.9,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 29.5,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 29.6,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 29.1,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 29.3,
+      "unit": "pg",
+      "referenceRange": "27.0 - 34.0"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 30.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 30.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 30.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 30.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-07-21",
+      "value": 30.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 29.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 29.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 29.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 29.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 28.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    }
+  ],
+  "eGFR": [
+    {
+      "date": "2025-07-07",
+      "value": 41.0,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-10",
+      "value": 30.08,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-12",
+      "value": 20.21,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-14",
+      "value": 32.26,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-15",
+      "value": 37.64,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-16",
+      "value": 41.0,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-17",
+      "value": 41.0,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-18",
+      "value": 44.97,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-08-25",
+      "value": 44.95,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-10-09",
+      "value": 62.64,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-11-21",
+      "value": 55.45,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-12",
+      "value": 44.92,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-29",
+      "value": 62.61,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    }
+  ],
+  "eGFR (Black)": [
+    {
+      "date": "2025-07-07",
+      "value": 49.6,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-10",
+      "value": 36.4,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-12",
+      "value": 24.5,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-14",
+      "value": 39.0,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-15",
+      "value": 45.5,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-16",
+      "value": 49.6,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-17",
+      "value": 49.6,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-07-18",
+      "value": 54.4,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-08-25",
+      "value": 54.4,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-10-09",
+      "value": 75.8,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-11-21",
+      "value": 67.1,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-12",
+      "value": 54.4,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-29",
+      "value": 75.8,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    }
+  ],
+  "Sodium": [
+    {
+      "date": "2023-03-20",
+      "value": 135.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 139.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 140.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 141.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 137.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 138.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 134.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 139.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 138.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 137.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 138.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 133.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 135.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 138.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 137.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 139.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 141.0,
+      "unit": "mmol/L",
+      "referenceRange": "136 - 145"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 137.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 133.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 137.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 142.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 143.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 141.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 137.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 139.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 140.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 136.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 138.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    }
+  ],
+  "Potassium": [
+    {
+      "date": "2023-03-20",
+      "value": 4.2,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 4.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 4.0,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 4.4,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 4.7,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 4.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 4.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 4.3,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 4.3,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 4.3,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 4.4,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 3.9,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 4.7,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 4.8,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 4.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 4.8,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 4.9,
+      "unit": "mmol/L",
+      "referenceRange": "3.5 - 5.1"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 4.7,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 4.8,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 5.2,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 5.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 5.2,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 4.3,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 4.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 4.5,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 3.8,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 4.0,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 4.4,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 4.1,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    }
+  ],
+  "Chloride": [
+    {
+      "date": "2023-03-20",
+      "value": 102.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 101.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 106.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 105.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 109.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 102.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 103.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 107.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 110.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 103.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 103.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 103.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 98.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 102.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 107.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 107.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 109.0,
+      "unit": "mmol/L",
+      "referenceRange": "98.0 - 107.0"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 99.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 101.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 101.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 100.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 104.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 106.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 105.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 101.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 102.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 103.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 99.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 102.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    }
+  ],
+  "CO2": [
+    {
+      "date": "2023-03-20",
+      "value": 24.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 27.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 25.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 26.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 23.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 21.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 31.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 27.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 23.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 22.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 23.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 27.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 24.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 30.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 28.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 24.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 29.0,
+      "unit": "mEq/L",
+      "referenceRange": "23 - 31"
+    },
+    {
+      "date": "2025-07-07",
+      "value": 31.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-10",
+      "value": 31.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-12",
+      "value": 27.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-14",
+      "value": 27.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-15",
+      "value": 29.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 33.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-17",
+      "value": 33.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-07-18",
+      "value": 30.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 31.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 32.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 32.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 31.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-12-29",
+      "value": 31.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    }
+  ],
+  "Urobilinogen": [
+    {
+      "date": "2023-05-13",
+      "value": 0.2,
+      "unit": "",
+      "referenceRange": "0.2 - 1.0"
+    },
+    {
+      "date": "2023-06-06",
+      "value": 0.2,
+      "unit": "",
+      "referenceRange": "0.2 - 1.0"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 0.2,
+      "unit": "Eu/dL",
+      "referenceRange": "0.2 - 1.0"
+    },
+    {
+      "date": "2025-09-18",
+      "value": 0.2,
+      "unit": "Eu/dL",
+      "referenceRange": "0.2 - 1.0"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 0.2,
+      "unit": "Eu/dL",
+      "referenceRange": "0.2 - 1.0"
+    }
+  ],
+  "SG": [
+    {
+      "date": "2025-08-25",
+      "value": 1.015,
+      "unit": "",
+      "referenceRange": "1.000 -1.030"
+    },
+    {
+      "date": "2025-09-18",
+      "value": 1.025,
+      "unit": "",
+      "referenceRange": "1.000 -1.030"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 1.01,
+      "unit": "",
+      "referenceRange": "1.000 -1.030"
+    }
+  ],
+  "pH": [
+    {
+      "date": "2023-05-13",
+      "value": 6.0,
+      "unit": "",
+      "referenceRange": "5.0 - 7.5"
+    },
+    {
+      "date": "2023-06-06",
+      "value": 6.5,
+      "unit": "",
+      "referenceRange": "5.0 - 7.5"
+    },
+    {
+      "date": "2024-04-10",
+      "value": 6.0,
+      "unit": "",
+      "referenceRange": "5.0 - 7.5"
+    },
+    {
+      "date": "2024-09-13",
+      "value": 6.0,
+      "unit": "",
+      "referenceRange": "5.0 - 7.5"
+    },
+    {
+      "date": "2025-08-25",
+      "value": 8.5,
+      "unit": "",
+      "referenceRange": "5.0 - 8.5"
+    },
+    {
+      "date": "2025-09-18",
+      "value": 6.0,
+      "unit": "",
+      "referenceRange": "5.0 - 8.5"
+    },
+    {
+      "date": "2025-12-12",
+      "value": 6.0,
+      "unit": "",
+      "referenceRange": "5.0 - 8.5"
+    }
+  ],
+  "TP": [
+    {
+      "date": "2025-10-09",
+      "value": 5.3,
+      "unit": "g/dL",
+      "referenceRange": "6.4-8.9"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 5.2,
+      "unit": "g/dL",
+      "referenceRange": "6.4-8.9"
+    }
+  ],
+  "ALB": [
+    {
+      "date": "2025-10-09",
+      "value": 2.9,
+      "unit": "g/dL",
+      "referenceRange": "3.5-5.7"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 3.0,
+      "unit": "g/dL",
+      "referenceRange": "3.5-5.7"
+    }
+  ],
+  "Globulin": [
+    {
+      "date": "2023-03-20",
+      "value": 2.8,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-03-27",
+      "value": 2.7,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-05-15",
+      "value": 2.5,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-10-02",
+      "value": 2.8,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-12-18",
+      "value": 2.6,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-01-08",
+      "value": 2.9,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-01-23",
+      "value": 3.0,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-01-13",
+      "value": 2.8,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-10-09",
+      "value": 2.4,
+      "unit": "g/dL",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-11-21",
+      "value": 2.2,
+      "unit": "g/dL",
+      "referenceRange": ""
+    }
+  ],
+  "A/G Ratio": [
+    {
+      "date": "2023-03-20",
+      "value": 0.89,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 1.11,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 1.4,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 1.29,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 1.35,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 1.0,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 1.0,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 1.08,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 1.0,
+      "unit": "%",
+      "referenceRange": "0.80 - 2.00"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 1.21,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-11-21",
+      "value": 1.36,
+      "unit": "",
+      "referenceRange": ""
+    }
+  ],
+  "ALP": [
+    {
+      "date": "2025-10-09",
+      "value": 209.0,
+      "unit": "U/L",
+      "referenceRange": "34-104"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 117.0,
+      "unit": "U/L",
+      "referenceRange": "34-104"
+    }
+  ],
+  "AST": [
+    {
+      "date": "2025-10-09",
+      "value": 11.0,
+      "unit": "U/L",
+      "referenceRange": "13-39"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 11.0,
+      "unit": "U/L",
+      "referenceRange": "13-39"
+    }
+  ],
+  "ALT": [
+    {
+      "date": "2025-10-09",
+      "value": 8.0,
+      "unit": "IU/L",
+      "referenceRange": "7-52"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 7.0,
+      "unit": "IU/L",
+      "referenceRange": "7-52"
+    }
+  ],
+  "Bili Total": [
+    {
+      "date": "2025-10-09",
+      "value": 0.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.30-1.00"
+    },
+    {
+      "date": "2025-11-21",
+      "value": 0.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.30-1.00"
+    }
+  ],
+  "TSH": [
+    {
+      "date": "2023-03-20",
+      "value": 1.22,
+      "unit": "uIU/mL",
+      "referenceRange": "0.45 - 5.33"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 3.52,
+      "unit": "uIU/mL",
+      "referenceRange": "0.45 - 5.33"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 1.33,
+      "unit": "uIU/mL",
+      "referenceRange": "0.35 - 4.94"
+    },
+    {
+      "date": "2025-02-04",
+      "value": 6.76,
+      "unit": "uIU/mL",
+      "referenceRange": "0.35 - 4.94"
+    },
+    {
+      "date": "2025-04-16",
+      "value": 5.33,
+      "unit": "uIU/mL",
+      "referenceRange": "0.40-4.50"
+    },
+    {
+      "date": "2025-07-16",
+      "value": 4.87,
+      "unit": "uIU/mL",
+      "referenceRange": "0.40-4.50"
+    },
+    {
+      "date": "2025-10-09",
+      "value": 9.99,
+      "unit": "uIU/mL",
+      "referenceRange": "0.40-4.50"
+    }
+  ],
+  "WBC U.": [
+    {
+      "date": "2025-08-25",
+      "value": 5.0,
+      "unit": "/hpf",
+      "referenceRange": "None Seen"
+    },
+    {
+      "date": "2025-09-18",
+      "value": 0.0,
+      "unit": "/hpf",
+      "referenceRange": "None Seen"
+    }
+  ],
+  "Glu U": [
+    {
+      "date": "2025-09-18",
+      "value": 250.0,
+      "unit": "mg/dL",
+      "referenceRange": "Negative"
+    }
+  ],
+  "Protein U": [
+    {
+      "date": "2025-08-25",
+      "value": 30.0,
+      "unit": "mg/dL",
+      "referenceRange": "Negative"
+    },
+    {
+      "date": "2025-09-18",
+      "value": 30.0,
+      "unit": "mg/dL",
+      "referenceRange": "Negative"
+    }
+  ],
+  "Disposition:": [
+    {
+      "date": "2025-05-28",
+      "value": 2.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-05-29",
+      "value": 2.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-05-30",
+      "value": 3.0,
+      "unit": "",
+      "referenceRange": ""
+    }
+  ],
+  "%A1c": [
+    {
+      "date": "2025-04-30",
+      "value": 7.7,
+      "unit": "%",
+      "referenceRange": "4.30-5.70"
+    }
+  ],
+  "Free T4": [
+    {
+      "date": "2025-02-04",
+      "value": 1.2,
+      "unit": "ng/dL",
+      "referenceRange": "0.70 - 1.48"
+    }
+  ],
+  "HILref": [
+    {
+      "date": "2023-03-20",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-04-17",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-07-09",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-07-18",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-01-26",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-02-08",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-11-08",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": ""
+    }
+  ],
+  "Neutrophil #": [
+    {
+      "date": "2023-03-20",
+      "value": 4.81,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 5.09,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 4.34,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 5.35,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 4.07,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 5.79,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 4.19,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 7.76,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 14.65,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 5.04,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 3.97,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 4.53,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 2.81,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 5.05,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 4.86,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 3.79,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 4.12,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 4.89,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 4.35,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 6.14,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 5.06,
+      "unit": "10^3/uL",
+      "referenceRange": "1.56 - 6.13"
+    }
+  ],
+  "Lymphocyte #": [
+    {
+      "date": "2023-03-20",
+      "value": 2.2,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 1.71,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 3.37,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 1.99,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 1.76,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 1.95,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 1.79,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 1.63,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 2.21,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 2.07,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 1.98,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 1.88,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 2.23,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 1.9,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 2.01,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 2.4,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 2.13,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 2.26,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 2.61,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 2.05,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 1.72,
+      "unit": "10^3/uL",
+      "referenceRange": "1.18 - 3.74"
+    }
+  ],
+  "Monocyte #": [
+    {
+      "date": "2023-03-20",
+      "value": 0.59,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.81,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.61,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.53,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.39,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.6,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.46,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.55,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 1.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 0.56,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.52,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.47,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.43,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.59,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.55,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 0.71,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 0.6,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.61,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 0.7,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.54,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.51,
+      "unit": "10^3/uL",
+      "referenceRange": "0.24 - 0.86"
+    }
+  ],
+  "Eosinophil #": [
+    {
+      "date": "2023-03-20",
+      "value": 0.22,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.28,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.19,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.11,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.13,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.16,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.1,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.2,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 0.18,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.19,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.12,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.14,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.11,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.14,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 0.15,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 0.18,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.1,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 0.18,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.12,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.11,
+      "unit": "10^3/uL",
+      "referenceRange": "0.04 - 0.36"
+    }
+  ],
+  "Basophil #": [
+    {
+      "date": "2023-03-20",
+      "value": 0.05,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.06,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.05,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.05,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.01 - 0.08"
+    }
+  ],
+  "Immature Granulocyte #": [
+    {
+      "date": "2023-03-20",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.01,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 0.06,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.02,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.06,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.03,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 0.05,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.04,
+      "unit": "10^3/uL",
+      "referenceRange": "0.00 - 0.06"
+    }
+  ],
+  "Hematocrit": [
+    {
+      "date": "2023-03-20",
+      "value": 33.3,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 33.8,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 39.3,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 36.6,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 37.1,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 39.7,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 39.7,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 35.5,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 35.1,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 39.2,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 35.4,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 36.1,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 34.3,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 35.3,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 36.5,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 34.3,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 33.6,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 35.6,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 33.3,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 34.5,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 33.8,
+      "unit": "%",
+      "referenceRange": "34.1 - 44.9"
+    }
+  ],
+  "HA1C": [
+    {
+      "date": "2023-03-27",
+      "value": 9.2,
+      "unit": "%",
+      "referenceRange": "0.0 - 6.5"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 9.8,
+      "unit": "%",
+      "referenceRange": "0.0 - 6.5"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 7.9,
+      "unit": "%",
+      "referenceRange": "0.0 - 6.5"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 9.1,
+      "unit": "%",
+      "referenceRange": "0.0 - 6.5"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 8.1,
+      "unit": "%",
+      "referenceRange": "0.0 - 6.5"
+    }
+  ],
+  "Neutrophil %": [
+    {
+      "date": "2023-03-20",
+      "value": 60.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 63.7,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 50.7,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 66.5,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 63.6,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 67.7,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 63.7,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 75.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 81.4,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 63.4,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 59.2,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 64.3,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 49.2,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 65.4,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 63.8,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 53.3,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 57.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 61.7,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 54.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 68.9,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 67.7,
+      "unit": "%",
+      "referenceRange": "34.0 - 71.1"
+    }
+  ],
+  "Lymphocyte %": [
+    {
+      "date": "2023-03-20",
+      "value": 27.8,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 21.4,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 39.3,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 24.8,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 27.5,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 22.8,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 27.2,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 16.0,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 12.3,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 26.1,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 29.5,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 26.7,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 39.2,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 24.6,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 26.4,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 33.8,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 30.0,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 28.5,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 33.0,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 23.0,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 23.0,
+      "unit": "%",
+      "referenceRange": "19.3 - 51.7"
+    }
+  ],
+  "Monocyte %": [
+    {
+      "date": "2023-03-20",
+      "value": 7.5,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 10.2,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 7.1,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 6.6,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 6.1,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 7.0,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 7.0,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 5.4,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 5.7,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 7.1,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 7.7,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 6.7,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 7.6,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 7.6,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 7.2,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 10.0,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 8.4,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 7.7,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 8.8,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 6.1,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 6.8,
+      "unit": "%",
+      "referenceRange": "4.7 - 12.5"
+    }
+  ],
+  "Eosinophil %": [
+    {
+      "date": "2023-03-20",
+      "value": 2.8,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 3.5,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 2.2,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 1.4,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 2.0,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 1.9,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 1.5,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 2.0,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.1,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 2.3,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 2.8,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 1.7,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 2.5,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 1.4,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 1.8,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 2.1,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 2.5,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 1.3,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 2.3,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 1.3,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 1.5,
+      "unit": "%",
+      "referenceRange": "0.7 - 5.8"
+    }
+  ],
+  "Basophil %": [
+    {
+      "date": "2023-03-20",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.8,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.1 - 1.2"
+    }
+  ],
+  "Immature Granulocyte %": [
+    {
+      "date": "2023-03-20",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.1,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.1,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 0.8,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 1.1,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 0.6,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 0.4,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.5,
+      "unit": "%",
+      "referenceRange": "0.00 - 0.60"
+    }
+  ],
+  "BUN/Creatinine Ratio": [
+    {
+      "date": "2023-03-20",
+      "value": 14.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 13.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 21.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 22.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 20.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 19.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 14.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 15.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 15.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 14.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 16.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 18.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 13.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 15.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 19.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 14.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 16.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 15.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 23.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 17.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 23.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 19.0,
+      "unit": "%",
+      "referenceRange": "6 - 25"
+    }
+  ],
+  "Platelet": [
+    {
+      "date": "2023-03-20",
+      "value": 253.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 313.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 277.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 230.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 233.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 199.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 243.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 313.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 204.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 272.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 181.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 190.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 198.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 264.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 227.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 235.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 248.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 238.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 213.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 243.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 230.0,
+      "unit": "10^3/uL",
+      "referenceRange": "182 - 369"
+    }
+  ],
+  "Anion Gap": [
+    {
+      "date": "2024-09-18",
+      "value": 9.7,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 9.8,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 6.5,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 8.8,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 12.6,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 7.9,
+      "unit": "mmol/L",
+      "referenceRange": "12.00 - 21.00"
+    }
+  ],
+  "eGFR (Non African-American)": [
+    {
+      "date": "2023-03-20",
+      "value": 68.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 51.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 49.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 40.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 55.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 64.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 34.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 50.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 42.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 37.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 42.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 41.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 46.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 47.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 49.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 57.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 35.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 41.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 47.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 44.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 47.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 42.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    }
+  ],
+  "eGFR (African-American)": [
+    {
+      "date": "2023-03-20",
+      "value": 83.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 62.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-04-17",
+      "value": 59.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 48.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 66.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 77.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-07-09",
+      "value": 41.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-07-18",
+      "value": 60.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 51.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 44.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 51.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 49.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-01-26",
+      "value": 55.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 57.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 59.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 69.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 43.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 49.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-11-08",
+      "value": 57.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 53.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 57.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 51.0,
+      "unit": "ml/min/1.73 m^2",
+      "referenceRange": ">60"
+    }
+  ],
+  "Magnesium": [
+    {
+      "date": "2025-01-13",
+      "value": 2.13,
+      "unit": "mg/dL",
+      "referenceRange": "1.60 - 2.60"
+    }
+  ],
+  "Prealbumin": [
+    {
+      "date": "2025-01-13",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "14.0 - 37.0"
+    }
+  ],
+  "Total Bilirubin": [
+    {
+      "date": "2023-03-20",
+      "value": 0.29,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 0.37,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 0.35,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 0.65,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 0.35,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 0.18,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 0.5,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 0.46,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 0.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.20 - 1.20"
+    }
+  ],
+  "Cholesterol": [
+    {
+      "date": "2024-02-08",
+      "value": 109.0,
+      "unit": "mg/dL",
+      "referenceRange": "0 - 200"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 149.0,
+      "unit": "mg/dL",
+      "referenceRange": "0 - 200"
+    }
+  ],
+  "Triglycerides": [
+    {
+      "date": "2024-02-08",
+      "value": 84.0,
+      "unit": "mg/dL",
+      "referenceRange": "<150"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 142.0,
+      "unit": "mg/dL",
+      "referenceRange": "<150"
+    }
+  ],
+  "HDL Cholesterol": [
+    {
+      "date": "2024-02-08",
+      "value": 41.0,
+      "unit": "mg/dL",
+      "referenceRange": ">40"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 38.0,
+      "unit": "mg/dL",
+      "referenceRange": ">40"
+    }
+  ],
+  "Calculated LDL": [
+    {
+      "date": "2024-02-08",
+      "value": 51.0,
+      "unit": "mg/dL",
+      "referenceRange": "<130"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 83.0,
+      "unit": "mg/dL",
+      "referenceRange": "<130"
+    }
+  ],
+  "Albumin": [
+    {
+      "date": "2023-03-20",
+      "value": 2.5,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 3.0,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 3.5,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 3.6,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 3.5,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 2.9,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 3.0,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 2.8,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 2.8,
+      "unit": "g/dL",
+      "referenceRange": "3.40 - 5.00"
+    }
+  ],
+  "Total Protein": [
+    {
+      "date": "2023-03-20",
+      "value": 5.3,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 5.7,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 6.0,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 6.4,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 6.1,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 5.8,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 6.0,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 5.4,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 5.6,
+      "unit": "g/dL",
+      "referenceRange": "6.0 - 8.3"
+    }
+  ],
+  "Hemoglobin": [
+    {
+      "date": "2023-03-20",
+      "value": 10.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 10.4,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-05-11",
+      "value": 12.5,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 11.4,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-06-26",
+      "value": 11.4,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 12.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 12.0,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 11.0,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 10.7,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-01-30",
+      "value": 12.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-02-21",
+      "value": 11.0,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-03-01",
+      "value": 11.1,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-04-26",
+      "value": 10.9,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-09-18",
+      "value": 11.0,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-10-28",
+      "value": 11.1,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-11-06",
+      "value": 10.8,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-11-21",
+      "value": 10.5,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-12-02",
+      "value": 10.9,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2024-12-10",
+      "value": 10.4,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2025-01-08",
+      "value": 10.4,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 10.2,
+      "unit": "g/dL",
+      "referenceRange": "11.2 - 15.7"
+    }
+  ],
+  "Vitamin B12": [
+    {
+      "date": "2025-01-13",
+      "value": 265.0,
+      "unit": "pg/mL",
+      "referenceRange": "180 - 914"
+    }
+  ],
+  "Alkaline Phosphatase": [
+    {
+      "date": "2023-03-20",
+      "value": 77.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 85.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 78.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 101.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 88.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 84.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 78.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 71.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 92.0,
+      "unit": "U/L",
+      "referenceRange": "40 - 150"
+    }
+  ],
+  "ALT (SGPT)": [
+    {
+      "date": "2023-03-20",
+      "value": 27.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 14.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 13.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 18.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 15.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 7.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 5.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 7.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 15.0,
+      "unit": "U/L",
+      "referenceRange": "0 - 55"
+    }
+  ],
+  "AST (SGOT)": [
+    {
+      "date": "2023-03-20",
+      "value": 21.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2023-03-27",
+      "value": 17.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2023-05-15",
+      "value": 19.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2023-10-02",
+      "value": 16.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2023-12-18",
+      "value": 15.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2024-01-08",
+      "value": 11.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2024-01-23",
+      "value": 9.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2024-02-08",
+      "value": 12.0,
+      "unit": "U/L",
+      "referenceRange": "5 - 34"
+    },
+    {
+      "date": "2025-01-13",
+      "value": 18.0,
+      "unit": "U/L",
+      "referenceRange": "7 - 34"
+    }
+  ],
+  "Vitamin D": [
+    {
+      "date": "2025-01-13",
+      "value": 11.5,
+      "unit": "ng/mL",
+      "referenceRange": "20.0 - 50.5"
+    }
+  ],
+  "Leukocytes": [
+    {
+      "date": "2024-09-13",
+      "value": 3.0,
+      "unit": "",
+      "referenceRange": "Negative"
+    }
+  ],
+  "Specific Gravity": [
+    {
+      "date": "2023-05-13",
+      "value": 1.005,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2023-06-06",
+      "value": 1.01,
+      "unit": "",
+      "referenceRange": "1.005 - 1.030"
+    },
+    {
+      "date": "2024-04-10",
+      "value": 1.005,
+      "unit": "",
+      "referenceRange": "1.005 - 1.030"
+    },
+    {
+      "date": "2024-09-13",
+      "value": 1.012,
+      "unit": "",
+      "referenceRange": "1.005 - 1.030"
+    }
+  ],
+  "Urine WBC": [
+    {
+      "date": "2023-05-13",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": "0 - 5"
+    },
+    {
+      "date": "2024-04-10",
+      "value": 3.0,
+      "unit": "",
+      "referenceRange": "0 - 5"
+    },
+    {
+      "date": "2024-09-13",
+      "value": 50.0,
+      "unit": "",
+      "referenceRange": "0 - 1"
+    }
+  ],
+  "Urine RBC": [
+    {
+      "date": "2023-05-13",
+      "value": 0.0,
+      "unit": "",
+      "referenceRange": "0 - 5"
+    },
+    {
+      "date": "2024-04-10",
+      "value": 2.0,
+      "unit": "",
+      "referenceRange": "0 - 5"
+    },
+    {
+      "date": "2024-09-13",
+      "value": 5.0,
+      "unit": "",
+      "referenceRange": "0 - 5"
+    }
+  ],
+  "Epithelial Cells (non renal)": [
+    {
+      "date": "2024-04-10",
+      "value": 1.0,
+      "unit": "",
+      "referenceRange": "0 - 10"
+    }
+  ],
+  "Direct Bilirubin": [
+    {
+      "date": "2024-02-08",
+      "value": 0.19,
+      "unit": "mg/dL",
+      "referenceRange": "0.00 - 0.50"
+    }
+  ],
+  "Indirect Bilirubin": [
+    {
+      "date": "2024-02-08",
+      "value": 0.3,
+      "unit": "mg/dL",
+      "referenceRange": "0.3 - 1.6"
+    }
+  ]
+}

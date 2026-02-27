@@ -1,0 +1,452 @@
+{
+  "HGB": [
+    {
+      "date": "2025-11-21",
+      "value": 6.8,
+      "unit": "g/dL",
+      "referenceRange": "13.7-17.5"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 10.3,
+      "unit": "g/dL",
+      "referenceRange": "13.7-17.5"
+    }
+  ],
+  "MPV": [
+    {
+      "date": "2025-11-21",
+      "value": 9.9,
+      "unit": "fL",
+      "referenceRange": "9.4-12.4"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 10.2,
+      "unit": "fL",
+      "referenceRange": "9.4-12.4"
+    }
+  ],
+  "MCV": [
+    {
+      "date": "2025-11-21",
+      "value": 87.0,
+      "unit": "fL",
+      "referenceRange": "79-92"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 88.0,
+      "unit": "fL",
+      "referenceRange": "79-92"
+    }
+  ],
+  "MCHC": [
+    {
+      "date": "2025-11-21",
+      "value": 33.0,
+      "unit": "g/dL",
+      "referenceRange": "32.3-36.5"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 33.0,
+      "unit": "g/dL",
+      "referenceRange": "32.3-36.5"
+    }
+  ],
+  "Sodium": [
+    {
+      "date": "2025-11-21",
+      "value": 138.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 134.0,
+      "unit": "mmol/L",
+      "referenceRange": "136-145"
+    }
+  ],
+  "Potassium": [
+    {
+      "date": "2025-11-21",
+      "value": 3.8,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 4.0,
+      "unit": "mmol/L",
+      "referenceRange": "3.6-5.2"
+    }
+  ],
+  "Chloride": [
+    {
+      "date": "2025-11-21",
+      "value": 101.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 100.0,
+      "unit": "mmol/L",
+      "referenceRange": "98-107"
+    }
+  ],
+  "CO2": [
+    {
+      "date": "2025-11-21",
+      "value": 31.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 28.0,
+      "unit": "mmol/L",
+      "referenceRange": "21.0-31.0"
+    }
+  ],
+  "MCH": [
+    {
+      "date": "2025-11-21",
+      "value": 29.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 29.0,
+      "unit": "pg",
+      "referenceRange": "26-32"
+    }
+  ],
+  "BUN": [
+    {
+      "date": "2025-11-21",
+      "value": 8.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 17.0,
+      "unit": "mg/dL",
+      "referenceRange": "3-23"
+    }
+  ],
+  "Creatinine": [
+    {
+      "date": "2025-11-21",
+      "value": 0.8,
+      "unit": "mg/dL",
+      "referenceRange": "0.70-1.30"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 0.7,
+      "unit": "mg/dL",
+      "referenceRange": "0.70-1.30"
+    }
+  ],
+  "Glucose": [
+    {
+      "date": "2025-11-21",
+      "value": 32.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 109.0,
+      "unit": "mg/dL",
+      "referenceRange": "65-110"
+    }
+  ],
+  "Calcium": [
+    {
+      "date": "2025-11-21",
+      "value": 8.1,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 8.9,
+      "unit": "mg/dL",
+      "referenceRange": "8.4-10.2"
+    }
+  ],
+  "eGFR": [
+    {
+      "date": "2025-11-21",
+      "value": 100.31,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-17",
+      "value": 117.0,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    }
+  ],
+  "eGFR (Black)": [
+    {
+      "date": "2025-11-21",
+      "value": 121.4,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-17",
+      "value": 141.6,
+      "unit": "mL/min/1.73mS2",
+      "referenceRange": ""
+    }
+  ],
+  "Bun/Crea": [
+    {
+      "date": "2025-11-21",
+      "value": 10.0,
+      "unit": "",
+      "referenceRange": ""
+    },
+    {
+      "date": "2025-12-17",
+      "value": 24.3,
+      "unit": "",
+      "referenceRange": ""
+    }
+  ],
+  "BASO%": [
+    {
+      "date": "2025-11-21",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.2-1.2"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 0.3,
+      "unit": "%",
+      "referenceRange": "0.2-1.2"
+    }
+  ],
+  "EO%": [
+    {
+      "date": "2025-11-21",
+      "value": 0.2,
+      "unit": "%",
+      "referenceRange": "0.8-7.0"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 3.1,
+      "unit": "%",
+      "referenceRange": "0.8-7.0"
+    }
+  ],
+  "HCT": [
+    {
+      "date": "2025-11-21",
+      "value": 20.6,
+      "unit": "%",
+      "referenceRange": "40.1-51.0"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 31.2,
+      "unit": "%",
+      "referenceRange": "40.1-51.0"
+    }
+  ],
+  "%A1c": [
+    {
+      "date": "2025-12-17",
+      "value": 7.0,
+      "unit": "%",
+      "referenceRange": "4.30-5.70"
+    }
+  ],
+  "RDW": [
+    {
+      "date": "2025-11-21",
+      "value": 15.1,
+      "unit": "%",
+      "referenceRange": "11.6-14.4"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 16.6,
+      "unit": "%",
+      "referenceRange": "11.6-14.4"
+    }
+  ],
+  "NEUTRO%": [
+    {
+      "date": "2025-11-21",
+      "value": 78.8,
+      "unit": "%",
+      "referenceRange": "34.0-67.9"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 74.1,
+      "unit": "%",
+      "referenceRange": "34.0-67.9"
+    }
+  ],
+  "LYMPHO%": [
+    {
+      "date": "2025-11-21",
+      "value": 9.9,
+      "unit": "%",
+      "referenceRange": "21.8-53.1"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 12.8,
+      "unit": "%",
+      "referenceRange": "21.8-53.1"
+    }
+  ],
+  "MONO%": [
+    {
+      "date": "2025-11-21",
+      "value": 10.2,
+      "unit": "%",
+      "referenceRange": "5.3-12.2"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 9.4,
+      "unit": "%",
+      "referenceRange": "5.3-12.2"
+    }
+  ],
+  "WBC": [
+    {
+      "date": "2025-11-21",
+      "value": 12.5,
+      "unit": "10S3/uL",
+      "referenceRange": "4.2-9.1"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 11.5,
+      "unit": "10S3/uL",
+      "referenceRange": "4.2-9.1"
+    }
+  ],
+  "EO#": [
+    {
+      "date": "2025-11-21",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-17",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "MONO#": [
+    {
+      "date": "2025-11-21",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-17",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "LYMPHO#": [
+    {
+      "date": "2025-11-21",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-17",
+      "value": 1.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "PLT": [
+    {
+      "date": "2025-11-21",
+      "value": 304.0,
+      "unit": "10S3/uL",
+      "referenceRange": "163-337"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 222.0,
+      "unit": "10S3/uL",
+      "referenceRange": "163-337"
+    }
+  ],
+  "NEUTRO#": [
+    {
+      "date": "2025-11-21",
+      "value": 9.8,
+      "unit": "10S3/uL",
+      "referenceRange": "1.8-5.4"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 8.5,
+      "unit": "10S3/uL",
+      "referenceRange": "1.8-5.4"
+    }
+  ],
+  "BASO#": [
+    {
+      "date": "2025-11-21",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    },
+    {
+      "date": "2025-12-17",
+      "value": 0.0,
+      "unit": "10S3/uL",
+      "referenceRange": " "
+    }
+  ],
+  "RBC": [
+    {
+      "date": "2025-11-21",
+      "value": 2.37,
+      "unit": "10S6/uL",
+      "referenceRange": "4.63-6.08"
+    },
+    {
+      "date": "2025-12-17",
+      "value": 3.53,
+      "unit": "10S6/uL",
+      "referenceRange": "4.63-6.08"
+    }
+  ],
+  "Magnesium": [
+    {
+      "date": "2025-11-21",
+      "value": 1.6,
+      "unit": "mg/dL",
+      "referenceRange": "1.9-2.7"
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+{
+  "HGB": {
+    "date": "2025-12-01",
+    "value": 11.5,
+    "unit": "g/dL",
+    "referenceRange": "13.7-17.5"
+  },
+  "BUN": {
+    "date": "2025-12-01",
+    "value": 40.0,
+    "unit": "mg/dL",
+    "referenceRange": "3-23"
+  },
+  "Creatinine": {
+    "date": "2025-12-01",
+    "value": 1.8,
+    "unit": "mg/dL",
+    "referenceRange": "0.70-1.30"
+  },
+  "Glucose": {
+    "date": "2025-12-01",
+    "value": 91.0,
+    "unit": "mg/dL",
+    "referenceRange": "65-110"
+  },
+  "Calcium": {
+    "date": "2025-12-01",
+    "value": 8.2,
+    "unit": "mg/dL",
+    "referenceRange": "8.4-10.2"
+  },
+  "Bun/Crea": {
+    "date": "2025-12-01",
+    "value": 22.2,
+    "unit": "",
+    "referenceRange": ""
+  },
+  "EO%": {
+    "date": "2025-12-01",
+    "value": 1.4,
+    "unit": "%",
+    "referenceRange": "0.8-7.0"
+  },
+  "eGFR": {
+    "date": "2025-12-01",
+    "value": 37.77,
+    "unit": "mL/min/1.73mS2",
+    "referenceRange": ""
+  },
+  "eGFR (Black)": {
+    "date": "2025-12-01",
+    "value": 45.7,
+    "unit": "mL/min/1.73mS2",
+    "referenceRange": ""
+  },
+  "Sodium": {
+    "date": "2025-12-01",
+    "value": 147.0,
+    "unit": "mmol/L",
+    "referenceRange": "136-145"
+  },
+  "Potassium": {
+    "date": "2025-12-01",
+    "value": 4.2,
+    "unit": "mmol/L",
+    "referenceRange": "3.6-5.2"
+  },
+  "Chloride": {
+    "date": "2025-12-01",
+    "value": 109.0,
+    "unit": "mmol/L",
+    "referenceRange": "98-107"
+  },
+  "CO2": {
+    "date": "2025-12-01",
+    "value": 28.0,
+    "unit": "mmol/L",
+    "referenceRange": "21.0-31.0"
+  },
+  "MCH": {
+    "date": "2025-12-01",
+    "value": 29.0,
+    "unit": "pg",
+    "referenceRange": "26-32"
+  },
+  "MCHC": {
+    "date": "2025-12-01",
+    "value": 30.5,
+    "unit": "g/dL",
+    "referenceRange": "32.3-36.5"
+  },
+  "MCV": {
+    "date": "2025-12-01",
+    "value": 94.0,
+    "unit": "fL",
+    "referenceRange": "79-92"
+  },
+  "WBC": {
+    "date": "2025-12-01",
+    "value": 5.6,
+    "unit": "10S3/uL",
+    "referenceRange": "4.2-9.1"
+  },
+  "EO#": {
+    "date": "2025-12-01",
+    "value": 0.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "MONO#": {
+    "date": "2025-12-01",
+    "value": 1.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "LYMPHO#": {
+    "date": "2025-12-01",
+    "value": 1.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "PLT": {
+    "date": "2025-12-01",
+    "value": 283.0,
+    "unit": "10S3/uL",
+    "referenceRange": "163-337"
+  },
+  "NEUTRO#": {
+    "date": "2025-12-01",
+    "value": 3.8,
+    "unit": "10S3/uL",
+    "referenceRange": "1.8-5.4"
+  },
+  "BASO#": {
+    "date": "2025-12-01",
+    "value": 0.0,
+    "unit": "10S3/uL",
+    "referenceRange": " "
+  },
+  "RBC": {
+    "date": "2025-12-01",
+    "value": 4.0,
+    "unit": "10S6/uL",
+    "referenceRange": "4.63-6.08"
+  },
+  "MPV": {
+    "date": "2025-12-01",
+    "value": 11.0,
+    "unit": "fL",
+    "referenceRange": "9.4-12.4"
+  },
+  "RDW": {
+    "date": "2025-12-01",
+    "value": 16.9,
+    "unit": "%",
+    "referenceRange": "11.6-14.4"
+  },
+  "NEUTRO%": {
+    "date": "2025-12-01",
+    "value": 67.5,
+    "unit": "%",
+    "referenceRange": "34.0-67.9"
+  },
+  "LYMPHO%": {
+    "date": "2025-12-01",
+    "value": 13.4,
+    "unit": "%",
+    "referenceRange": "21.8-53.1"
+  },
+  "MONO%": {
+    "date": "2025-12-01",
+    "value": 15.2,
+    "unit": "%",
+    "referenceRange": "5.3-12.2"
+  },
+  "BASO%": {
+    "date": "2025-12-01",
+    "value": 0.9,
+    "unit": "%",
+    "referenceRange": "0.2-1.2"
+  },
+  "HCT": {
+    "date": "2025-12-01",
+    "value": 37.7,
+    "unit": "%",
+    "referenceRange": "40.1-51.0"
+  },
+  "Uric Acid": {
+    "date": "2025-11-04",
+    "value": 7.5,
+    "unit": "mg/dL",
+    "referenceRange": "2.5-8.5"
+  },
+  "INR": {
+    "date": "2025-08-27",
+    "value": 1.1,
+    "unit": "",
+    "referenceRange": "0.8-1.2"
+  },
+  "APTT": {
+    "date": "2025-08-27",
+    "value": 28.5,
+    "unit": "sec",
+    "referenceRange": "20.9-31.7"
+  },
+  "PT": {
+    "date": "2025-08-27",
+    "value": 11.6,
+    "unit": "sec",
+    "referenceRange": "9.9-11.0"
+  },
+  "SG": {
+    "date": "2025-04-24",
+    "value": 1.02,
+    "unit": "",
+    "referenceRange": "1.000 -1.030"
+  },
+  "pH": {
+    "date": "2025-04-24",
+    "value": 6.0,
+    "unit": "",
+    "referenceRange": "5.0 - 8.5"
+  },
+  "Urobilinogen": {
+    "date": "2025-04-24",
+    "value": 1.0,
+    "unit": "Eu/dL",
+    "referenceRange": "0.2 - 1.0"
+  },
+  "RBC - U": {
+    "date": "2025-04-24",
+    "value": 20.0,
+    "unit": "/HPF",
+    "referenceRange": " 0-2"
+  },
+  "WBC U.": {
+    "date": "2025-04-24",
+    "value": 20.0,
+    "unit": "/hpf",
+    "referenceRange": "None Seen"
+  },
+  "eGFR (Non African-American)": {
+    "date": "2025-02-10",
+    "value": 71.0,
+    "unit": "ml/min/1.73 m^2",
+    "referenceRange": ">60"
+  },
+  "eGFR (African-American)": {
+    "date": "2025-02-10",
+    "value": 85.0,
+    "unit": "ml/min/1.73 m^2",
+    "referenceRange": ">60"
+  },
+  "Anion Gap": {
+    "date": "2025-02-10",
+    "value": 8.4,
+    "unit": "mmol/L",
+    "referenceRange": "12.00 - 21.00"
+  },
+  "Hemoglobin": {
+    "date": "2025-02-10",
+    "value": 11.5,
+    "unit": "g/dL",
+    "referenceRange": "13.7 - 17.5"
+  },
+  "HILref": {
+    "date": "2025-02-10",
+    "value": 0.0,
+    "unit": "",
+    "referenceRange": ""
+  },
+  "BUN/Creatinine Ratio": {
+    "date": "2025-02-10",
+    "value": 15.0,
+    "unit": "%",
+    "referenceRange": "6 - 25"
+  },
+  "Hematocrit": {
+    "date": "2025-02-10",
+    "value": 37.4,
+    "unit": "%",
+    "referenceRange": "40.1 - 51.0"
+  },
+  "Neutrophil %": {
+    "date": "2025-02-10",
+    "value": 73.0,
+    "unit": "%",
+    "referenceRange": "34.0 - 67.9"
+  },
+  "Lymphocyte %": {
+    "date": "2025-02-10",
+    "value": 8.6,
+    "unit": "%",
+    "referenceRange": "21.8 - 53.1"
+  },
+  "Monocyte %": {
+    "date": "2025-02-10",
+    "value": 15.0,
+    "unit": "%",
+    "referenceRange": "5.3 - 12.2"
+  },
+  "Eosinophil %": {
+    "date": "2025-02-10",
+    "value": 1.5,
+    "unit": "%",
+    "referenceRange": "0.8 - 7.0"
+  },
+  "Basophil %": {
+    "date": "2025-02-10",
+    "value": 0.4,
+    "unit": "%",
+    "referenceRange": "0.2 - 1.2"
+  },
+  "Immature Granulocyte %": {
+    "date": "2025-02-10",
+    "value": 1.5,
+    "unit": "%",
+    "referenceRange": "0.00 - 0.60"
+  },
+  "Neutrophil #": {
+    "date": "2025-02-10",
+    "value": 4.95,
+    "unit": "10^3/uL",
+    "referenceRange": "1.78 - 5.38"
+  },
+  "Lymphocyte #": {
+    "date": "2025-02-10",
+    "value": 0.58,
+    "unit": "10^3/uL",
+    "referenceRange": "1.32 - 3.57"
+  },
+  "Monocyte #": {
+    "date": "2025-02-10",
+    "value": 1.02,
+    "unit": "10^3/uL",
+    "referenceRange": "0.30 - 0.82"
+  },
+  "Eosinophil #": {
+    "date": "2025-02-10",
+    "value": 0.1,
+    "unit": "10^3/uL",
+    "referenceRange": "0.04 - 0.54"
+  },
+  "Basophil #": {
+    "date": "2025-02-10",
+    "value": 0.03,
+    "unit": "10^3/uL",
+    "referenceRange": "0.01 - 0.08"
+  },
+  "Immature Granulocyte #": {
+    "date": "2025-02-10",
+    "value": 0.1,
+    "unit": "10^3/uL",
+    "referenceRange": "0.00 - 0.06"
+  },
+  "Platelet": {
+    "date": "2025-02-10",
+    "value": 225.0,
+    "unit": "10^3/uL",
+    "referenceRange": "163 - 337"
+  },
+  "Hemolysis": {
+    "date": "2025-02-03",
+    "value": 1.0,
+    "unit": "Index",
+    "referenceRange": ""
+  },
+  "HA1C": {
+    "date": "2024-12-09",
+    "value": 5.7,
+    "unit": "%",
+    "referenceRange": "0.0 - 6.5"
+  },
+  "eGFR_iSTAT (African-American)": {
+    "date": "2024-09-24",
+    "value": 73.0,
+    "unit": "ml/min/1.73 m^2",
+    "referenceRange": ">60"
+  },
+  "eGFR_iSTAT (Non African-American)": {
+    "date": "2024-09-24",
+    "value": 61.0,
+    "unit": "ml/min/1.73 m^2",
+    "referenceRange": ">60"
+  }
+}
