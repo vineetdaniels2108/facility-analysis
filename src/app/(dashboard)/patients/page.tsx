@@ -227,7 +227,7 @@ function LabTrendChart({ name, history, refRange }: { name: string; history: Arr
 
 // ─── Sort / filter types ──────────────────────────────────────────────────────
 
-type FilterType = "all" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "no-labs"
+type FilterType = "all" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "no-labs" | "discharged"
 type SortType = "urgency" | "name-az" | "name-za" | "days-long" | "days-short" | "hgb-low" | "alb-low"
 
 interface AnalyzedPatient {
@@ -567,15 +567,19 @@ function PatientsView() {
         return { patient: p, inf, tran, hasLabs, effectiveSeverity, urgencyScore }
     })
 
+    const isActive = (p: PatientSummary) =>
+        !p.patient_status || p.patient_status === 'Current'
+
     const counts = {
         all: analyzed.length,
-        critical: analyzed.filter(a => a.effectiveSeverity === "critical").length,
-        high: analyzed.filter(a => a.effectiveSeverity === "high").length,
-        medium: analyzed.filter(a => a.effectiveSeverity === "medium").length,
-        low: analyzed.filter(a => a.effectiveSeverity === "low").length,
-        infusion: analyzed.filter(a => a.inf.priority !== "none").length,
-        transfusion: analyzed.filter(a => a.tran.priority !== "none").length,
-        "no-labs": analyzed.filter(a => !a.hasLabs).length,
+        critical: analyzed.filter(a => a.effectiveSeverity === "critical" && isActive(a.patient)).length,
+        high: analyzed.filter(a => a.effectiveSeverity === "high" && isActive(a.patient)).length,
+        medium: analyzed.filter(a => a.effectiveSeverity === "medium" && isActive(a.patient)).length,
+        low: analyzed.filter(a => a.effectiveSeverity === "low" && isActive(a.patient)).length,
+        infusion: analyzed.filter(a => a.inf.priority !== "none" && isActive(a.patient)).length,
+        transfusion: analyzed.filter(a => a.tran.priority !== "none" && isActive(a.patient)).length,
+        "no-labs": analyzed.filter(a => !a.hasLabs && isActive(a.patient)).length,
+        discharged: analyzed.filter(a => !isActive(a.patient)).length,
     }
 
     const searched = searchQuery.trim()
@@ -590,19 +594,20 @@ function PatientsView() {
 
     const filtered = searched.filter(a => {
         switch (activeFilter) {
-            case "critical":    return a.effectiveSeverity === "critical"
-            case "high":        return a.effectiveSeverity === "high"
-            case "medium":      return a.effectiveSeverity === "medium"
-            case "low":         return a.effectiveSeverity === "low"
-            case "infusion":    return a.inf.priority !== "none"
-            case "transfusion": return a.tran.priority !== "none"
-            case "no-labs":     return !a.hasLabs
+            case "critical":    return a.effectiveSeverity === "critical" && isActive(a.patient)
+            case "high":        return a.effectiveSeverity === "high" && isActive(a.patient)
+            case "medium":      return a.effectiveSeverity === "medium" && isActive(a.patient)
+            case "low":         return a.effectiveSeverity === "low" && isActive(a.patient)
+            case "infusion":    return a.inf.priority !== "none" && isActive(a.patient)
+            case "transfusion": return a.tran.priority !== "none" && isActive(a.patient)
+            case "no-labs":     return !a.hasLabs && isActive(a.patient)
+            case "discharged":  return !isActive(a.patient)
             default:            return true
         }
     })
 
     const sorted = sortPatients(filtered, sortBy)
-    const COL_SPAN = 11
+    const COL_SPAN = 12
 
     if (!facilityName) {
         return (
@@ -615,12 +620,13 @@ function PatientsView() {
     }
 
     const FILTERS: { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
-        { key: "all",         label: "All",         icon: <Users className="w-3 h-3" />,         color: "text-slate-600 border-slate-200 hover:bg-slate-50",  activeColor: "text-white bg-slate-700 border-slate-700" },
-        { key: "critical",    label: "Critical",    icon: <AlertTriangle className="w-3 h-3" />,  color: "text-red-600 border-red-200 hover:bg-red-50",        activeColor: "text-white bg-red-600 border-red-600" },
-        { key: "high",        label: "High",        icon: <TrendingDown className="w-3 h-3" />,   color: "text-red-500 border-red-200 hover:bg-red-50",        activeColor: "text-white bg-red-500 border-red-500" },
-        { key: "medium",      label: "Monitor",     icon: <Eye className="w-3 h-3" />,            color: "text-amber-600 border-amber-200 hover:bg-amber-50",  activeColor: "text-white bg-amber-500 border-amber-500" },
-        { key: "infusion",    label: "Infusion",    icon: <Droplets className="w-3 h-3" />,       color: "text-blue-600 border-blue-200 hover:bg-blue-50",     activeColor: "text-white bg-blue-600 border-blue-600" },
-        { key: "transfusion", label: "Transfusion", icon: <FlaskConical className="w-3 h-3" />,   color: "text-rose-600 border-rose-200 hover:bg-rose-50",     activeColor: "text-white bg-rose-600 border-rose-600" },
+        { key: "all",         label: "All",         icon: <Users className="w-3 h-3" />,         color: "text-slate-600 border-slate-200 hover:bg-slate-50",   activeColor: "text-white bg-slate-700 border-slate-700" },
+        { key: "critical",    label: "Critical",    icon: <AlertTriangle className="w-3 h-3" />,  color: "text-red-600 border-red-200 hover:bg-red-50",         activeColor: "text-white bg-red-600 border-red-600" },
+        { key: "high",        label: "High",        icon: <TrendingDown className="w-3 h-3" />,   color: "text-red-500 border-red-200 hover:bg-red-50",         activeColor: "text-white bg-red-500 border-red-500" },
+        { key: "medium",      label: "Monitor",     icon: <Eye className="w-3 h-3" />,            color: "text-amber-600 border-amber-200 hover:bg-amber-50",   activeColor: "text-white bg-amber-500 border-amber-500" },
+        { key: "infusion",    label: "Infusion",    icon: <Droplets className="w-3 h-3" />,       color: "text-blue-600 border-blue-200 hover:bg-blue-50",      activeColor: "text-white bg-blue-600 border-blue-600" },
+        { key: "transfusion", label: "Transfusion", icon: <FlaskConical className="w-3 h-3" />,   color: "text-rose-600 border-rose-200 hover:bg-rose-50",      activeColor: "text-white bg-rose-600 border-rose-600" },
+        { key: "discharged",  label: "Discharged",  icon: <UserX className="w-3 h-3" />,          color: "text-slate-400 border-slate-200 hover:bg-slate-50",   activeColor: "text-white bg-slate-500 border-slate-500" },
     ]
 
     return (
@@ -710,6 +716,7 @@ function PatientsView() {
                             <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                 <th className="text-left pl-4 pr-1 py-2.5 w-5"></th>
                                 <th className="text-left px-2 py-2.5">Patient</th>
+                                <th className="text-center px-2 py-2.5">Status</th>
                                 <th className="text-center px-2 py-2.5">Severity</th>
                                 <th className="text-center px-2 py-2.5 hidden sm:table-cell">Room</th>
                                 <th className="text-center px-2 py-2.5 hidden md:table-cell">Age / DOB</th>
@@ -729,8 +736,10 @@ function PatientsView() {
                                 const hct = tran.hematocrit ?? labLookup(labs, "Hematocrit")?.value
                                 const isExpanded = expandedId === patient.simpl_id
                                 const age = calcAge(patient.date_of_birth)
+                                const active = isActive(patient)
 
-                                const rowAccent = effectiveSeverity === "critical" ? "border-l-[3px] border-l-red-500"
+                                const rowAccent = !active ? "border-l-[3px] border-l-slate-200 opacity-60"
+                                    : effectiveSeverity === "critical" ? "border-l-[3px] border-l-red-500"
                                     : effectiveSeverity === "high" ? "border-l-[3px] border-l-red-300"
                                     : effectiveSeverity === "medium" ? "border-l-[3px] border-l-amber-400"
                                     : "border-l-[3px] border-l-transparent"
@@ -739,48 +748,50 @@ function PatientsView() {
 
                                 return (
                                     <Fragment key={patient.simpl_id}>
-                                        <tr className={`border-b border-slate-50 hover:bg-slate-50/60 cursor-pointer transition-colors ${rowAccent} ${isExpanded ? "bg-teal-50/40 !border-b-0" : ""}`}
+                                        <tr className={`border-b border-slate-50 hover:bg-slate-50/60 cursor-pointer transition-colors ${rowAccent} ${isExpanded ? "bg-teal-50/40 !border-b-0" : ""} ${!active ? "bg-slate-50/30" : ""}`}
                                             onClick={() => expandPatient(patient.simpl_id)}>
                                             <td className="pl-4 pr-1 py-2.5">
-                                                {effectiveSeverity === "critical" ? (
+                                                {active && effectiveSeverity === "critical" ? (
                                                     <span className="relative flex h-2.5 w-2.5">
                                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                                         <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
                                                     </span>
-                                                ) : effectiveSeverity === "high" ? <span className="inline-flex rounded-full h-2.5 w-2.5 bg-red-400"></span>
-                                                : effectiveSeverity === "medium" ? <span className="inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
+                                                ) : active && effectiveSeverity === "high" ? <span className="inline-flex rounded-full h-2.5 w-2.5 bg-red-400"></span>
+                                                : active && effectiveSeverity === "medium" ? <span className="inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
                                                 : <span className="inline-flex rounded-full h-2 w-2 bg-slate-200"></span>}
                                             </td>
                                             <td className="px-2 py-2.5">
-                                                <div className="flex items-center gap-1.5">
-                                                    {patient.patient_status === 'Current'
-                                                        ? <UserCheck className="w-3 h-3 text-emerald-500 shrink-0" />
-                                                        : <UserX className="w-3 h-3 text-slate-300 shrink-0" />}
-                                                    <p className={`text-sm leading-tight ${effectiveSeverity === "critical" || effectiveSeverity === "high" ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>
-                                                        {patient.last_name}, {patient.first_name}
-                                                    </p>
-                                                </div>
+                                                <p className={`text-sm leading-tight ${!active ? "text-slate-400 line-through" : effectiveSeverity === "critical" || effectiveSeverity === "high" ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>
+                                                    {patient.last_name}, {patient.first_name}
+                                                </p>
                                             </td>
                                             <td className="px-2 py-2.5 text-center">
-                                                {hasLabs
+                                                {active
+                                                    ? <span className="flex items-center justify-center gap-1 px-1.5 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-700 border border-emerald-200"><UserCheck className="w-2.5 h-2.5" />Active</span>
+                                                    : <span className="flex items-center justify-center gap-1 px-1.5 py-0.5 text-[9px] font-bold rounded bg-slate-100 text-slate-400 border border-slate-200"><UserX className="w-2.5 h-2.5" />Discharged</span>}
+                                            </td>
+                                            <td className="px-2 py-2.5 text-center">
+                                                {active && hasLabs
                                                     ? <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${badge.className}`}>{badge.label}</span>
-                                                    : <span className="px-1.5 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-400 rounded">NO DATA</span>}
+                                                    : active
+                                                    ? <span className="px-1.5 py-0.5 text-[9px] font-bold bg-slate-100 text-slate-400 rounded">NO DATA</span>
+                                                    : <span className="text-slate-300 text-[9px]">—</span>}
                                             </td>
                                             <td className="px-2 py-2.5 text-center text-xs text-slate-500 hidden sm:table-cell">
                                                 {patient.room ? <span className="flex items-center justify-center gap-0.5"><Bed className="w-3 h-3 text-slate-300" />{patient.room}{patient.bed ?? ''}</span> : '—'}
                                             </td>
                                             <td className="px-2 py-2.5 text-center hidden md:table-cell">
-                                                <div className="text-xs font-semibold text-slate-600 tabular-nums">{age != null ? `${age}y` : '—'}</div>
+                                                <div className={`text-xs font-semibold tabular-nums ${active ? "text-slate-600" : "text-slate-400"}`}>{age != null ? `${age}y` : '—'}</div>
                                                 {patient.date_of_birth && <div className="text-[9px] text-slate-400">{formatDOB(patient.date_of_birth)}</div>}
                                             </td>
                                             <td className="px-2 py-2.5 text-center hidden md:table-cell">
-                                                <div className="text-xs font-semibold text-slate-600">{formatDays(patient.days_in_facility)}</div>
+                                                <div className={`text-xs font-semibold ${active ? "text-slate-600" : "text-slate-400"}`}>{formatDays(patient.days_in_facility)}</div>
                                             </td>
-                                            <td className="px-2 py-2.5 text-center"><LabPill value={hgb} low={11} high={16} /></td>
-                                            <td className="px-2 py-2.5 text-center"><LabPill value={alb} low={3.4} high={5} /></td>
-                                            <td className="px-2 py-2.5 text-center hidden lg:table-cell"><LabPill value={hct} low={34} high={45} unit="%" /></td>
+                                            <td className="px-2 py-2.5 text-center">{active ? <LabPill value={hgb} low={11} high={16} /> : <span className="text-slate-200 text-xs">—</span>}</td>
+                                            <td className="px-2 py-2.5 text-center">{active ? <LabPill value={alb} low={3.4} high={5} /> : <span className="text-slate-200 text-xs">—</span>}</td>
+                                            <td className="px-2 py-2.5 text-center hidden lg:table-cell">{active ? <LabPill value={hct} low={34} high={45} unit="%" /> : <span className="text-slate-200 text-xs">—</span>}</td>
                                             <td className="px-2 py-2.5 hidden md:table-cell">
-                                                <div className="flex gap-1 flex-wrap">
+                                                {active && <div className="flex gap-1 flex-wrap">
                                                     {tran.priority !== "none" && (
                                                         <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${tran.priority === "critical" || tran.priority === "high" ? "bg-rose-600 text-white" : "bg-rose-100 text-rose-700"}`}>
                                                             {tran.priority === "critical" ? "TRANSFUSE" : "Transfusion"}
@@ -791,7 +802,7 @@ function PatientsView() {
                                                             {inf.priority === "high" ? "INFUSE" : "Infusion"}
                                                         </span>
                                                     )}
-                                                </div>
+                                                </div>}
                                             </td>
                                             <td className="pr-3 py-2.5">{isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-teal-500" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}</td>
                                         </tr>

@@ -80,9 +80,11 @@ async function getPatientsFromDb(facilityFilter?: string) {
          LEFT JOIN facilities f ON f.fac_id = p.fac_id
          LEFT JOIN analysis_results inf ON inf.simpl_id = p.simpl_id AND inf.analysis_type = 'infusion' AND inf.is_current = TRUE
          LEFT JOIN analysis_results tra ON tra.simpl_id = p.simpl_id AND tra.analysis_type = 'transfusion' AND tra.is_current = TRUE
-         WHERE (p.patient_status = 'Current' OR p.patient_status IS NULL)
+         WHERE 1=1
          ${facilityClause}
-         ORDER BY combined_urgency DESC NULLS LAST, p.last_name`,
+         ORDER BY
+           CASE WHEN (p.patient_status = 'Current' OR p.patient_status IS NULL) THEN 0 ELSE 1 END,
+           combined_urgency DESC NULLS LAST, p.last_name`,
         param
     );
 
