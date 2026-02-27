@@ -19,10 +19,14 @@ import { syncProgressNotes } from '@/lib/sync/resources/progressnotes';
 import { syncAdtRecords, extractCurrentLocation } from '@/lib/sync/resources/adtrecords';
 import { syncAllergies, syncImmunizations, syncCoverages } from '@/lib/sync/resources/allergies';
 
-// Vercel cron calls this with GET, secured by CRON_SECRET header
-// vercel.json configures schedule: every 2 hours
+// Runs once daily at 3am UTC (vercel.json schedule: "0 3 * * *")
+// Scoped to Baywood (fac_id=121) for now.
+// Only syncs patients whose PCC summary shows data newer than our last sync.
+
+const BAYWOOD_FAC_ID = 121;
+
 export async function GET(req: NextRequest) {
-    // Verify cron secret
+    // Vercel Cron automatically sends Authorization: Bearer <CRON_SECRET>
     const cronSecret = process.env.CRON_SECRET;
     const authHeader = req.headers.get('authorization');
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
@@ -34,28 +38,24 @@ export async function GET(req: NextRequest) {
     }
 
     const startTime = Date.now();
-    const facIdParam = req.nextUrl.searchParams.get('fac_id');
-    const facId = facIdParam ? parseInt(facIdParam) : null;
 
-    // Get all patients from PostgreSQL that need syncing
-    // Only re-sync patients whose last_synced_at is null or >2 hours old
-    const patientsRes = await query<{ simpl_id: string; first_name: string; last_name: string; fac_id: number }>(
-        `SELECT simpl_id, first_name, last_name, fac_id FROM patients
-         WHERE (last_synced_at IS NULL OR last_synced_at < NOW() - INTERVAL '2 hours')
-         ${facId ? 'AND fac_id = $1' : ''}
-         ORDER BY last_synced_at ASC NULLS FIRST
-         LIMIT 50`,
-        facId ? [facId] : []
+    // Get all Baywood patients from PostgreSQL
+    const patientsRes = await query<{
+        simpl_id: string;
+        first_name: string;
+        last_name: string;
+        last_synced_at: Date | null;
+    }>(
+        `SELECT simpl_id, first_name, last_name, last_synced_at
+         FROM patients
+         WHERE fac_id = $1
+         ORDER BY last_synced_at ASC NULLS FIRST`,
+        [BAYWOOD_FAC_ID]
     );
 
     const patients = patientsRes.rows;
-
     if (patients.length === 0) {
-        return NextResponse.json({
-            ok: true,
-            message: 'All patients are up to date',
-            durationMs: Date.now() - startTime,
-        });
+        return NextResponse.json({ ok: true, message: 'No Baywood patients found' });
     }
 
     const token = await getPccToken();
@@ -63,62 +63,83 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to get PCC auth token' }, { status: 502 });
     }
 
-    const results = { synced: 0, analyzed: 0, errors: 0, skipped: 0 };
+    const results = { checked: 0, synced: 0, skipped: 0, errors: 0 };
 
     for (const patient of patients) {
+        results.checked++;
         try {
-            await syncAndAnalyzePatient(patient.simpl_id, token);
+            // Fetch PCC summary — this tells us what resources exist and their counts.
+            // We use it as a lightweight "has anything changed?" check before doing
+            // the full sync. If PCC has no data for this patient we skip them.
+            const summary = await fetchSummary(patient.simpl_id, token);
+
+            if (!summary || Object.keys(summary).length === 0) {
+                results.skipped++;
+                continue;
+            }
+
+            // If patient was synced in the last 20 hours, skip unless never synced
+            if (patient.last_synced_at) {
+                const hoursSinceSync = (Date.now() - new Date(patient.last_synced_at).getTime()) / 36e5;
+                if (hoursSinceSync < 20) {
+                    results.skipped++;
+                    continue;
+                }
+            }
+
+            await syncAndAnalyzePatient(patient.simpl_id, summary, token);
             results.synced++;
-            results.analyzed++;
         } catch (err) {
-            console.error(`[cron/sync] Failed for ${patient.simpl_id}:`, err);
+            console.error(`[cron] Failed for ${patient.simpl_id} (${patient.first_name} ${patient.last_name}):`, err);
             results.errors++;
         }
     }
 
-    const totalMs = Date.now() - startTime;
-    console.log(`[cron/sync] Done in ${totalMs}ms:`, results);
+    const durationMs = Date.now() - startTime;
+    console.log(`[cron/sync] Baywood complete in ${Math.round(durationMs / 1000)}s:`, results);
 
     return NextResponse.json({
         ok: true,
-        processed: patients.length,
+        facility: 'Baywood',
+        fac_id: BAYWOOD_FAC_ID,
+        patients: patients.length,
         ...results,
-        durationMs: totalMs,
-        nextBatch: patients.length === 50 ? 'more patients remain' : 'all caught up',
+        durationMs,
     });
 }
 
-async function syncAndAnalyzePatient(simplId: string, token: string) {
-    // Fetch summary to know which resources are available
-    const available = await fetchSummary(simplId, token);
-
+async function syncAndAnalyzePatient(
+    simplId: string,
+    available: Record<string, number>,
+    token: string
+) {
     await withTransaction(async (client) => {
-        // Parallel batch 1: Labs + Conditions + Medications
+        // Batch 1: Labs + Conditions + Medications
         const [labs, conditions, medications] = await Promise.all([
-            available?.DIAGNOSTICREPORTS
+            available.DIAGNOSTICREPORTS
                 ? fetchResource<PccDiagnosticReport>(simplId, 'DIAGNOSTICREPORTS', token)
                 : null,
-            available?.CONDITIONS
+            available.CONDITIONS
                 ? fetchResource<PccCondition>(simplId, 'CONDITIONS', token)
                 : null,
-            available?.MEDICATIONS
+            available.MEDICATIONS
                 ? fetchResource<PccMedication>(simplId, 'MEDICATIONS', token)
                 : null,
         ]);
 
-        if (labs?.length)       await syncLabs(client, simplId, labs);
-        if (conditions?.length) await syncConditions(client, simplId, conditions);
+        if (labs?.length)        await syncLabs(client, simplId, labs);
+        if (conditions?.length)  await syncConditions(client, simplId, conditions);
         if (medications?.length) await syncMedications(client, simplId, medications);
 
-        // Parallel batch 2: Observations + Assessments + CarePlans
+        // Batch 2: Observations + Assessments + CarePlans
         const [observations, assessments, careplans] = await Promise.all([
-            available?.OBSERVATIONS
+            available.OBSERVATIONS
                 ? fetchResource<PccObservation>(simplId, 'OBSERVATIONS', token)
                 : null,
-            available?.ASSESSMENTS
+            available.ASSESSMENTS
                 ? fetchResource<PccAssessment>(simplId, 'ASSESSMENTS', token)
                 : null,
-            available?.CAREPLANS
+            available.CAREPLANS
                 ? fetchResource<PccCarePlan>(simplId, 'CAREPLANS', token)
                 : null,
         ]);
@@ -127,21 +148,21 @@ async function syncAndAnalyzePatient(simplId: string, token: string) {
         if (assessments?.length)  await syncAssessments(client, simplId, assessments);
         if (careplans?.length)    await syncCarePlans(client, simplId, careplans);
 
-        // Parallel batch 3: Notes + ADT + Allergies + Immunizations + Coverages
+        // Batch 3: Notes + ADT + Allergies + Immunizations + Coverages
         const [notes, adtRecords, allergies, immunizations, coverages] = await Promise.all([
-            available?.PROGRESSNOTES
+            available.PROGRESSNOTES
                 ? fetchResource<PccProgressNote>(simplId, 'PROGRESSNOTES', token)
                 : null,
-            available?.ADTRECORD
+            available.ADTRECORD
                 ? fetchResource<PccAdtRecord>(simplId, 'ADTRECORD', token)
                 : null,
-            available?.ALLERGIES
+            available.ALLERGIES
                 ? fetchResource<PccAllergy>(simplId, 'ALLERGIES', token)
                 : null,
-            available?.IMMUNIZATIONS
+            available.IMMUNIZATIONS
                 ? fetchResource<PccImmunization>(simplId, 'IMMUNIZATIONS', token)
                 : null,
-            available?.COVERAGES
+            available.COVERAGES
                 ? fetchResource<PccCoverage>(simplId, 'COVERAGES', token)
                 : null,
         ]);
@@ -163,11 +184,11 @@ async function syncAndAnalyzePatient(simplId: string, token: string) {
         }
 
         await client.query(
-            `UPDATE patients SET last_synced_at=NOW() WHERE simpl_id=$1`,
+            `UPDATE patients SET last_synced_at = NOW() WHERE simpl_id = $1`,
             [simplId]
         );
     });
 
-    // Run analysis after sync
+    // Run all analysis modules — results written to analysis_results table
     await runAnalysis(simplId);
 }
