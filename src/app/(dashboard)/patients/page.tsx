@@ -224,7 +224,7 @@ const LabTrendChart = dynamic(
 // ─── Sort / filter types ──────────────────────────────────────────────────────
 
 type FilterType = "all" | "active" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "foley" | "gtube" | "mtn" | "no-labs" | "discharged"
-type SortType = "urgency" | "name-az" | "name-za" | "days-long" | "days-short" | "hgb-low" | "alb-low"
+type SortType = "urgency" | "name-az" | "name-za" | "status" | "severity" | "room-asc" | "room-desc" | "days-long" | "days-short" | "hgb-low" | "alb-low"
 
 interface AnalyzedPatient {
     patient: PatientSummary
@@ -237,6 +237,10 @@ interface AnalyzedPatient {
 
 const SORT_OPTIONS: { value: SortType; label: string }[] = [
     { value: "urgency",    label: "Most Urgent" },
+    { value: "severity",   label: "Severity" },
+    { value: "status",     label: "Status" },
+    { value: "room-asc",   label: "Room ↑" },
+    { value: "room-desc",  label: "Room ↓" },
     { value: "days-long",  label: "Longest Stay" },
     { value: "days-short", label: "Newest Admit" },
     { value: "hgb-low",   label: "Lowest Hgb" },
@@ -245,14 +249,31 @@ const SORT_OPTIONS: { value: SortType; label: string }[] = [
     { value: "name-za",   label: "Name Z→A" },
 ]
 
+function parseRoom(room?: string | null): number {
+    if (!room) return 99999
+    const n = parseInt(room.replace(/\D/g, ''), 10)
+    return isNaN(n) ? 99999 : n
+}
+
 function sortPatients(list: AnalyzedPatient[], sort: SortType): AnalyzedPatient[] {
     return [...list].sort((a, b) => {
+        const sevOrder: Record<Severity, number> = { critical: 4, high: 3, medium: 2, low: 1, normal: 0 }
         switch (sort) {
             case "urgency": {
-                const sevOrder = { critical: 4, high: 3, medium: 2, low: 1, normal: 0 }
                 const diff = sevOrder[b.effectiveSeverity] - sevOrder[a.effectiveSeverity]
                 return diff !== 0 ? diff : b.urgencyScore - a.urgencyScore
             }
+            case "severity": {
+                const diff = sevOrder[b.effectiveSeverity] - sevOrder[a.effectiveSeverity]
+                return diff !== 0 ? diff : a.patient.last_name.localeCompare(b.patient.last_name)
+            }
+            case "status": {
+                const aActive = (!a.patient.patient_status || a.patient.patient_status === 'Current') ? 0 : 1
+                const bActive = (!b.patient.patient_status || b.patient.patient_status === 'Current') ? 0 : 1
+                return aActive !== bActive ? aActive - bActive : a.patient.last_name.localeCompare(b.patient.last_name)
+            }
+            case "room-asc":  return parseRoom(a.patient.room) - parseRoom(b.patient.room)
+            case "room-desc": return parseRoom(b.patient.room) - parseRoom(a.patient.room)
             case "name-az":   return a.patient.last_name.localeCompare(b.patient.last_name)
             case "name-za":   return b.patient.last_name.localeCompare(a.patient.last_name)
             case "days-long": return (b.patient.days_in_facility ?? 0) - (a.patient.days_in_facility ?? 0)
@@ -268,6 +289,36 @@ const KEY_LABS = ["Hemoglobin", "Hematocrit", "Albumin", "BUN", "Creatinine", "S
 const NORMAL: Record<string, [number, number]> = {
     Hemoglobin: [11.0, 16.0], Hematocrit: [34, 45], Albumin: [3.4, 5.0],
     BUN: [7, 23], Creatinine: [0.6, 1.2], Sodium: [136, 145], Potassium: [3.5, 5.0], CO2: [23, 29],
+}
+
+// ─── Sortable column header ──────────────────────────────────────────────────
+
+function SortTh({ label, sortAsc, sortDesc, current, onSort, align = "center", className = "" }: {
+    label: string
+    sortAsc: SortType
+    sortDesc?: SortType
+    current: SortType
+    onSort: (s: SortType) => void
+    align?: "left" | "center"
+    className?: string
+}) {
+    const isActive = current === sortAsc || current === sortDesc
+    const handleClick = () => {
+        if (current === sortAsc && sortDesc) onSort(sortDesc)
+        else if (current === sortDesc) onSort(sortAsc)
+        else onSort(sortAsc)
+    }
+    const arrow = current === sortAsc ? "↑" : current === sortDesc ? "↓" : ""
+    return (
+        <th className={`text-${align} px-2 py-2.5 ${className}`}>
+            <button onClick={handleClick}
+                className={`inline-flex items-center gap-0.5 hover:text-teal-600 transition-colors ${isActive ? "text-teal-600" : ""}`}>
+                {label}
+                {arrow && <span className="text-teal-500 text-[9px]">{arrow}</span>}
+                {!arrow && <ArrowUpDown className="w-2.5 h-2.5 opacity-30" />}
+            </button>
+        </th>
+    )
 }
 
 // ─── Analysis card (shared for overview tab) ────────────────────────────────
@@ -810,14 +861,14 @@ function PatientsView() {
                         <thead>
                             <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                 <th className="text-left pl-4 pr-1 py-2.5 w-5"></th>
-                                <th className="text-left px-2 py-2.5">Patient</th>
-                                <th className="text-center px-2 py-2.5">Status</th>
-                                <th className="text-center px-2 py-2.5">Severity</th>
-                                <th className="text-center px-2 py-2.5 hidden sm:table-cell">Room</th>
+                                <SortTh label="Patient" sortAsc="name-az" sortDesc="name-za" current={sortBy} onSort={setSortBy} align="left" />
+                                <SortTh label="Status" sortAsc="status" current={sortBy} onSort={setSortBy} />
+                                <SortTh label="Severity" sortAsc="severity" sortDesc="urgency" current={sortBy} onSort={setSortBy} />
+                                <SortTh label="Room" sortAsc="room-asc" sortDesc="room-desc" current={sortBy} onSort={setSortBy} className="hidden sm:table-cell" />
                                 <th className="text-center px-2 py-2.5 hidden md:table-cell">Age / DOB</th>
-                                <th className="text-center px-2 py-2.5 hidden md:table-cell">Days In</th>
-                                <th className="text-center px-2 py-2.5">Hgb</th>
-                                <th className="text-center px-2 py-2.5">Alb</th>
+                                <SortTh label="Days In" sortAsc="days-short" sortDesc="days-long" current={sortBy} onSort={setSortBy} className="hidden md:table-cell" />
+                                <SortTh label="Hgb" sortAsc="hgb-low" current={sortBy} onSort={setSortBy} />
+                                <SortTh label="Alb" sortAsc="alb-low" current={sortBy} onSort={setSortBy} />
                                 <th className="text-center px-2 py-2.5 hidden lg:table-cell">Hct</th>
                                 <th className="text-left px-2 py-2.5 hidden md:table-cell">Flags</th>
                                 <th className="w-6 pr-3"></th>
