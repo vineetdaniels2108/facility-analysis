@@ -412,8 +412,14 @@ function OverviewTab({ patient, dbAnalysis, onAnalysisUpdate }: {
             const data = await res.json()
             if (data.ok && data.results) {
                 const updated = { ...dbAnalysis }
-                for (const r of data.results) {
-                    updated[r.type] = { severity: r.severity, score: r.score, priority: r.type, reasoning: r.reasoning, indicators: r.indicators }
+                for (const r of data.results as Array<{ type: string; severity: string; score: number; reasoning: string; indicators: Record<string, unknown> }>) {
+                    updated[r.type] = {
+                        severity: r.severity,
+                        score: r.score,
+                        priority: r.severity === 'critical' || r.severity === 'high' ? 'action_needed' : r.severity === 'medium' ? 'monitor' : 'none',
+                        reasoning: r.reasoning,
+                        indicators: r.indicators ?? {},
+                    }
                 }
                 onAnalysisUpdate(patient.simpl_id, updated)
             }
@@ -699,23 +705,36 @@ function PatientsView() {
         const tran = analyzeTransfusion(labs)
         const hasLabs = Object.keys(labs).length > 0 || !!p.db_analysis?.infusion || !!p.db_analysis?.transfusion || !!p.db_analysis?.mtn_risk
 
-        let effectiveSeverity: Severity = "normal"
-        if (p.db_analysis?.infusion || p.db_analysis?.transfusion) {
-            const sevOrder = { critical: 4, high: 3, medium: 2, low: 1, normal: 0 }
-            const dbInfSev = dbSeverityToSeverity(p.db_analysis?.infusion?.severity)
-            const dbTraSev = dbSeverityToSeverity(p.db_analysis?.transfusion?.severity)
-            effectiveSeverity = sevOrder[dbTraSev] >= sevOrder[dbInfSev] ? dbTraSev : dbInfSev
+        const sevOrder: Record<Severity, number> = { critical: 4, high: 3, medium: 2, low: 1, normal: 0 }
 
-            if (p.db_analysis.infusion) {
-                inf.albumin = indicatorValue(p.db_analysis.infusion.indicators?.albumin)
-                inf.priority = p.db_analysis.infusion.priority === 'infuse' ? 'high' : p.db_analysis.infusion.priority === 'monitor' ? 'medium' : 'none'
+        // Compute effective severity from ALL analysis modules (rule-based only, not ai_ prefixed)
+        let effectiveSeverity: Severity = "normal"
+        if (p.db_analysis) {
+            const ruleTypes = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
+            for (const t of ruleTypes) {
+                const a = p.db_analysis[t]
+                if (a) {
+                    const s = dbSeverityToSeverity(a.severity)
+                    if (sevOrder[s] > sevOrder[effectiveSeverity]) effectiveSeverity = s
+                }
             }
-            if (p.db_analysis.transfusion) {
-                tran.hemoglobin = indicatorValue(p.db_analysis.transfusion.indicators?.hemoglobin)
-                tran.hematocrit = indicatorValue(p.db_analysis.transfusion.indicators?.hematocrit)
-                tran.priority = p.db_analysis.transfusion.priority === 'transfuse' ? 'critical' : p.db_analysis.transfusion.priority === 'monitor' ? 'medium' : 'none'
-            }
-        } else {
+        }
+
+        // Pull key indicator values for display in the table row
+        if (p.db_analysis?.infusion) {
+            inf.albumin = indicatorValue(p.db_analysis.infusion.indicators?.albumin)
+            const s = dbSeverityToSeverity(p.db_analysis.infusion.severity)
+            inf.priority = s === 'critical' || s === 'high' ? 'high' : s === 'medium' ? 'medium' : s === 'low' ? 'low' : 'none'
+        }
+        if (p.db_analysis?.transfusion) {
+            tran.hemoglobin = indicatorValue(p.db_analysis.transfusion.indicators?.hemoglobin)
+            tran.hematocrit = indicatorValue(p.db_analysis.transfusion.indicators?.hematocrit)
+            const s = dbSeverityToSeverity(p.db_analysis.transfusion.severity)
+            tran.priority = s === 'critical' ? 'critical' : s === 'high' ? 'high' : s === 'medium' ? 'medium' : 'none'
+        }
+
+        // Fall back to client-side analysis if no DB analysis exists
+        if (!p.db_analysis || Object.keys(p.db_analysis).length === 0) {
             if (tran.priority === "critical") effectiveSeverity = "critical"
             else if (tran.priority === "high") effectiveSeverity = "high"
             else if (inf.priority === "high") effectiveSeverity = "high"
