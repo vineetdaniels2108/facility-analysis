@@ -1,35 +1,12 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { isDbConfigured, query } from '@/lib/db/client';
 
-const INDEX_PATH = path.join(process.cwd(), 'public', 'mockData', 'patients', '_facility_index.json');
-
-let cachedIndex: Record<string, unknown[]> | null = null;
-let cachedAt = 0;
-let fileModifiedAt: string | null = null;
-const CACHE_TTL = 60_000;
-
-function loadIndex(): Record<string, unknown[]> {
-    const now = Date.now();
-    if (cachedIndex && now - cachedAt < CACHE_TTL) return cachedIndex;
-    try {
-        const stat = fs.statSync(INDEX_PATH);
-        fileModifiedAt = stat.mtime.toISOString();
-        cachedIndex = JSON.parse(fs.readFileSync(INDEX_PATH, 'utf-8'));
-        cachedAt = now;
-        return cachedIndex!;
-    } catch {
-        return {};
-    }
-}
-
 async function getPatientsFromDb(facilityFilter?: string) {
-    // Match by facility name (partial, case-insensitive) OR fac_id
     const facilityClause = facilityFilter
-        ? `AND (LOWER(f.name) LIKE LOWER($1) OR CAST(p.fac_id AS TEXT) = $1)`
+        ? `AND (LOWER(COALESCE(f.name,'')) LIKE LOWER($1) OR CAST(p.fac_id AS TEXT) = $2)`
         : '';
-    const param = facilityFilter ? [`%${facilityFilter}%`] : [];
+    const rawId = facilityFilter ? facilityFilter.replace(/\D/g, '') : '';
+    const param = facilityFilter ? [`%${facilityFilter}%`, rawId || '-1'] : [];
 
     const res = await query<{
         simpl_id: string;
@@ -41,7 +18,6 @@ async function getPatientsFromDb(facilityFilter?: string) {
         room: string;
         bed: string;
         unit: string;
-        floor: string;
         admit_date: string;
         last_synced_at: string;
         facility_name: string;
@@ -59,7 +35,7 @@ async function getPatientsFromDb(facilityFilter?: string) {
     }>(
         `SELECT
             p.simpl_id, p.first_name, p.last_name, p.date_of_birth,
-            p.patient_status, p.fac_id, p.room, p.bed, p.unit, p.floor,
+            p.patient_status, p.fac_id, p.room, p.bed, p.unit,
             p.admit_date, p.last_synced_at,
             f.name AS facility_name,
             inf.severity      AS infusion_severity,
@@ -141,33 +117,17 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const facilityFilter = searchParams.get('facility')?.trim();
 
-        if (isDbConfigured()) {
-            try {
-                const dbResult = await getPatientsFromDb(facilityFilter ?? undefined);
-                if (dbResult.patients.length > 0) {
-                    return NextResponse.json({ ...dbResult, data_source: 'live_db' });
-                }
-            } catch (dbErr) {
-                console.warn('[/api/patients] DB query failed, falling back to local:', dbErr);
-            }
-        }
-
-        // Fallback: local facility index JSON
-        const index = loadIndex();
-        const lastRefreshed = fileModifiedAt ?? new Date().toISOString();
-
-        if (facilityFilter) {
-            const key = Object.keys(index).find(k =>
-                k.trim().toLowerCase().includes(facilityFilter.toLowerCase())
+        if (!isDbConfigured()) {
+            return NextResponse.json(
+                { error: 'Database not configured', patients: [], lastRefreshed: null },
+                { status: 503 }
             );
-            const patients = key ? index[key] : [];
-            return NextResponse.json({ patients, lastRefreshed, data_source: 'local_cache' });
         }
 
-        const patients = Object.values(index).flat();
-        return NextResponse.json({ patients, lastRefreshed, data_source: 'local_cache' });
+        const dbResult = await getPatientsFromDb(facilityFilter ?? undefined);
+        return NextResponse.json({ ...dbResult, data_source: 'live_db' });
     } catch (error) {
         console.error('[/api/patients] Error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error', patients: [] }, { status: 500 });
     }
 }
