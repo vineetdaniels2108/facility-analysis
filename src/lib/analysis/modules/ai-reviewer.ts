@@ -94,28 +94,6 @@ For each, consider factors the rule-based system may have missed:
 Respond with JSON only. No markdown, no explanation outside the JSON.`;
 }
 
-const RESPONSE_SCHEMA = {
-    type: 'object' as const,
-    properties: {
-        assessments: {
-            type: 'array' as const,
-            items: {
-                type: 'object' as const,
-                properties: {
-                    type: { type: 'string' as const, enum: ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'] },
-                    severity: { type: 'string' as const, enum: ['critical', 'high', 'medium', 'low', 'normal'] },
-                    confidence: { type: 'number' as const },
-                    reasoning: { type: 'string' as const },
-                    recommendations: { type: 'array' as const, items: { type: 'string' as const } },
-                    missed_factors: { type: 'array' as const, items: { type: 'string' as const } },
-                },
-                required: ['type', 'severity', 'confidence', 'reasoning'],
-            },
-        },
-    },
-    required: ['assessments'],
-};
-
 export async function runAIReview(input: AIReviewInput): Promise<AnalysisResult[]> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
@@ -138,17 +116,13 @@ export async function runAIReview(input: AIReviewInput): Promise<AnalysisResult[
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
-                { role: 'system', content: 'You are a clinical decision support system. Respond only with valid JSON matching the requested schema.' },
+                { role: 'system', content: `You are a clinical decision support system for skilled nursing facilities. Respond ONLY with a JSON object in this exact format:
+{"assessments":[{"type":"infusion","severity":"critical","confidence":0.95,"reasoning":"...","recommendations":["..."],"missed_factors":["..."]}]}
+Each assessment must have: type (one of infusion/transfusion/foley_risk/gtube_risk/mtn_risk), severity (critical/high/medium/low/normal), confidence (0-1), reasoning (string), recommendations (array of strings), missed_factors (array of strings).
+Only include assessments where you have something meaningful to add beyond the rule-based analysis. Skip normal/unchanged ones.` },
                 { role: 'user', content: prompt },
             ],
-            response_format: {
-                type: 'json_schema',
-                json_schema: {
-                    name: 'clinical_assessment',
-                    schema: RESPONSE_SCHEMA,
-                    strict: true,
-                },
-            },
+            response_format: { type: 'json_object' },
             temperature: 0.1,
             max_tokens: 1500,
         });

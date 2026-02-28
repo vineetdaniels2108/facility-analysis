@@ -16,15 +16,41 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'DATABASE_URL not configured' }, { status: 503 });
     }
 
+    const simplId = req.nextUrl.searchParams.get('simplId');
     const facId = parseInt(req.nextUrl.searchParams.get('facId') ?? '121');
+    const limit = parseInt(req.nextUrl.searchParams.get('limit') ?? '200');
     const start = Date.now();
 
+    // Single patient mode
+    if (simplId) {
+        try {
+            const results = await runAnalysis(simplId);
+            return NextResponse.json({
+                ok: true,
+                simplId,
+                results: results.map(r => ({
+                    type: r.analysisType,
+                    severity: r.severity,
+                    score: r.score,
+                    reasoning: r.reasoning,
+                    indicators: r.keyIndicators,
+                })),
+                durationMs: Date.now() - start,
+            });
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+        }
+    }
+
+    // Facility batch mode
     const patientsRes = await query<{ simpl_id: string; first_name: string; last_name: string }>(
         `SELECT p.simpl_id, p.first_name, p.last_name
          FROM patients p
          WHERE p.fac_id = $1
-         AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)`,
-        [facId]
+         AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+         LIMIT $2`,
+        [facId, limit]
     );
 
     const patients = patientsRes.rows;
@@ -32,6 +58,7 @@ export async function GET(req: NextRequest) {
     let errors = 0;
 
     for (const p of patients) {
+        if (Date.now() - start > 250_000) break;
         try {
             await runAnalysis(p.simpl_id);
             completed++;
