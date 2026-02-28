@@ -2,12 +2,23 @@ import { NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 
 const KEY_LAB_NAMES = ['HGB','HCT','ALB','BUN','CREAT','NA','K','CO2','GLU','WBC','PLATELET','INR','CA','MG','FE','FERRITIN'];
+const ANALYSIS_TYPES = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'] as const;
 
 interface LabValue {
     date: string;
     value: number;
     unit: string;
     referenceRange: string;
+}
+
+interface AnalysisRow {
+    simpl_id: string;
+    analysis_type: string;
+    severity: string;
+    score: number;
+    priority: string;
+    reasoning: string;
+    key_indicators: Record<string, unknown>;
 }
 
 async function getLatestLabsForPatients(simplIds: string[]): Promise<Record<string, Record<string, LabValue>>> {
@@ -47,6 +58,34 @@ async function getLatestLabsForPatients(simplIds: string[]): Promise<Record<stri
     return result;
 }
 
+async function getAnalysisForPatients(simplIds: string[]): Promise<Record<string, Record<string, AnalysisRow>>> {
+    if (simplIds.length === 0) return {};
+
+    const res = await query<AnalysisRow>(
+        `SELECT simpl_id, analysis_type, severity, score, priority, reasoning, key_indicators
+         FROM analysis_results
+         WHERE simpl_id = ANY($1) AND is_current = TRUE`,
+        [simplIds]
+    );
+
+    const result: Record<string, Record<string, AnalysisRow>> = {};
+    for (const row of res.rows) {
+        if (!result[row.simpl_id]) result[row.simpl_id] = {};
+        result[row.simpl_id][row.analysis_type] = row;
+    }
+    return result;
+}
+
+function severityToNum(s?: string): number {
+    switch (s) {
+        case 'critical': return 4;
+        case 'high': return 3;
+        case 'medium': return 2;
+        case 'low': return 1;
+        default: return 0;
+    }
+}
+
 async function getPatientsFromDb(facilityFilter?: string) {
     const facilityClause = facilityFilter
         ? `AND (LOWER(COALESCE(f.name,'')) LIKE LOWER($1) OR CAST(p.fac_id AS TEXT) = $2)`
@@ -67,51 +106,27 @@ async function getPatientsFromDb(facilityFilter?: string) {
         admit_date: string;
         last_synced_at: string;
         facility_name: string;
-        infusion_severity: string;
-        infusion_score: number;
-        infusion_priority: string;
-        infusion_reasoning: string;
-        infusion_indicators: Record<string, unknown>;
-        transfusion_severity: string;
-        transfusion_score: number;
-        transfusion_priority: string;
-        transfusion_reasoning: string;
-        transfusion_indicators: Record<string, unknown>;
-        combined_urgency: number;
     }>(
         `SELECT
             p.simpl_id, p.first_name, p.last_name, p.date_of_birth,
             p.patient_status, p.fac_id, p.room, p.bed, p.unit,
             p.admit_date, p.last_synced_at,
-            f.name AS facility_name,
-            inf.severity      AS infusion_severity,
-            inf.score         AS infusion_score,
-            inf.priority      AS infusion_priority,
-            inf.reasoning     AS infusion_reasoning,
-            inf.key_indicators AS infusion_indicators,
-            tra.severity      AS transfusion_severity,
-            tra.score         AS transfusion_score,
-            tra.priority      AS transfusion_priority,
-            tra.reasoning     AS transfusion_reasoning,
-            tra.key_indicators AS transfusion_indicators,
-            GREATEST(
-                CASE inf.severity WHEN 'critical' THEN 4 WHEN 'high' THEN 3 WHEN 'medium' THEN 2 WHEN 'low' THEN 1 ELSE 0 END,
-                CASE tra.severity WHEN 'critical' THEN 4 WHEN 'high' THEN 3 WHEN 'medium' THEN 2 WHEN 'low' THEN 1 ELSE 0 END
-            ) AS combined_urgency
+            f.name AS facility_name
          FROM patients p
          LEFT JOIN facilities f ON f.fac_id = p.fac_id
-         LEFT JOIN analysis_results inf ON inf.simpl_id = p.simpl_id AND inf.analysis_type = 'infusion' AND inf.is_current = TRUE
-         LEFT JOIN analysis_results tra ON tra.simpl_id = p.simpl_id AND tra.analysis_type = 'transfusion' AND tra.is_current = TRUE
          WHERE 1=1
          ${facilityClause}
          ORDER BY
            CASE WHEN (p.patient_status = 'Current' OR p.patient_status IS NULL) THEN 0 ELSE 1 END,
-           combined_urgency DESC NULLS LAST, p.last_name`,
+           p.last_name`,
         param
     );
 
     const simplIds = res.rows.map(r => r.simpl_id);
-    const labsMap = await getLatestLabsForPatients(simplIds);
+    const [labsMap, analysisMap] = await Promise.all([
+        getLatestLabsForPatients(simplIds),
+        getAnalysisForPatients(simplIds),
+    ]);
 
     const now = Date.now();
     const patients = res.rows.map(r => {
@@ -119,6 +134,24 @@ async function getPatientsFromDb(facilityFilter?: string) {
         const daysInFacility = admitDate
             ? Math.floor((now - admitDate.getTime()) / 86400000)
             : null;
+
+        const patAnalysis = analysisMap[r.simpl_id] ?? {};
+        const dbAnalysis: Record<string, { severity: string; score: number; priority: string; reasoning: string; indicators: Record<string, unknown> } | null> = {};
+        for (const t of ANALYSIS_TYPES) {
+            const a = patAnalysis[t];
+            dbAnalysis[t] = a ? {
+                severity: a.severity,
+                score: a.score,
+                priority: a.priority,
+                reasoning: a.reasoning,
+                indicators: a.key_indicators,
+            } : null;
+        }
+
+        const combinedUrgency = Math.max(
+            ...ANALYSIS_TYPES.map(t => severityToNum(patAnalysis[t]?.severity)),
+            0
+        );
 
         return {
             simpl_id: r.simpl_id,
@@ -135,25 +168,19 @@ async function getPatientsFromDb(facilityFilter?: string) {
             days_in_facility: daysInFacility,
             last_synced_at: r.last_synced_at ?? null,
             labs_latest: labsMap[r.simpl_id] ?? {},
-            db_analysis: {
-                infusion: r.infusion_severity ? {
-                    severity: r.infusion_severity,
-                    score: r.infusion_score,
-                    priority: r.infusion_priority,
-                    reasoning: r.infusion_reasoning,
-                    indicators: r.infusion_indicators,
-                } : null,
-                transfusion: r.transfusion_severity ? {
-                    severity: r.transfusion_severity,
-                    score: r.transfusion_score,
-                    priority: r.transfusion_priority,
-                    reasoning: r.transfusion_reasoning,
-                    indicators: r.transfusion_indicators,
-                } : null,
-            },
-            combined_urgency: r.combined_urgency ?? 0,
+            db_analysis: dbAnalysis,
+            combined_urgency: combinedUrgency,
             data_source: 'live_db',
         };
+    });
+
+    // Sort: active first, then by urgency desc, then name
+    patients.sort((a, b) => {
+        const aActive = (!a.patient_status || a.patient_status === 'Current') ? 0 : 1;
+        const bActive = (!b.patient_status || b.patient_status === 'Current') ? 0 : 1;
+        if (aActive !== bActive) return aActive - bActive;
+        if (b.combined_urgency !== a.combined_urgency) return b.combined_urgency - a.combined_urgency;
+        return a.last_name.localeCompare(b.last_name);
     });
 
     const lastRefreshed = res.rows.find(r => r.last_synced_at)?.last_synced_at

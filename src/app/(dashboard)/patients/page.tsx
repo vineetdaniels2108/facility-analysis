@@ -9,6 +9,7 @@ import {
     FileText, X, AlertCircle,
     Search, ArrowUpDown, ChevronUp, TrendingDown, Eye,
     Bed, Clock, UserCheck, UserX,
+    Syringe, Utensils, Apple, ShieldAlert,
 } from "lucide-react"
 
 const ResourceDataRenderer = dynamic(
@@ -48,10 +49,13 @@ interface PatientSummary {
     admit_date?: string
     days_in_facility?: number
     last_synced_at?: string
-    // DB pre-computed analysis
+    // DB pre-computed analysis (all 5 modules)
     db_analysis?: {
         infusion: DbAnalysis | null
         transfusion: DbAnalysis | null
+        foley_risk: DbAnalysis | null
+        gtube_risk: DbAnalysis | null
+        mtn_risk: DbAnalysis | null
     }
     combined_urgency?: number
     data_source?: string
@@ -225,7 +229,7 @@ const LabTrendChart = dynamic(
 
 // ─── Sort / filter types ──────────────────────────────────────────────────────
 
-type FilterType = "all" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "no-labs" | "discharged"
+type FilterType = "all" | "active" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "foley" | "gtube" | "mtn" | "no-labs" | "discharged"
 type SortType = "urgency" | "name-az" | "name-za" | "days-long" | "days-short" | "hgb-low" | "alb-low"
 
 interface AnalyzedPatient {
@@ -270,6 +274,25 @@ const KEY_LABS = ["Hemoglobin", "Hematocrit", "Albumin", "BUN", "Creatinine", "S
 const NORMAL: Record<string, [number, number]> = {
     Hemoglobin: [11.0, 16.0], Hematocrit: [34, 45], Albumin: [3.4, 5.0],
     BUN: [7, 23], Creatinine: [0.6, 1.2], Sodium: [136, 145], Potassium: [3.5, 5.0], CO2: [23, 29],
+}
+
+// ─── Analysis card (shared for overview tab) ────────────────────────────────
+
+function AnalysisCard({ icon, title, analysis }: { icon: React.ReactNode; title: string; analysis: DbAnalysis }) {
+    const sev = dbSeverityToSeverity(analysis.severity)
+    const bg = sev === 'critical' ? 'bg-red-50 border-red-200' : sev === 'high' ? 'bg-red-50/50 border-red-100' : sev === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-100'
+    return (
+        <div className={`rounded-lg border p-3 ${bg}`}>
+            <div className="flex items-center gap-1.5 mb-1.5">
+                {icon}
+                <span className="text-xs font-bold text-slate-700">{title}</span>
+                <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[sev].className}`}>
+                    {(analysis.severity ?? 'normal').toUpperCase()}
+                </span>
+            </div>
+            <p className="text-[10px] text-slate-600 leading-relaxed">{analysis.reasoning ?? ''}</p>
+        </div>
+    )
 }
 
 // ─── Inline detail panel ─────────────────────────────────────────────────────
@@ -382,7 +405,16 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                                         )}
                                     </div>
                                 )}
-                                {!dbAnalysis?.infusion && !dbAnalysis?.transfusion && (
+                                {dbAnalysis?.foley_risk && dbSeverityToSeverity(dbAnalysis.foley_risk.severity) !== "normal" && (
+                                    <AnalysisCard icon={<Syringe className="w-3.5 h-3.5 text-purple-500" />} title="Foley Tube Risk" analysis={dbAnalysis.foley_risk} />
+                                )}
+                                {dbAnalysis?.gtube_risk && dbSeverityToSeverity(dbAnalysis.gtube_risk.severity) !== "normal" && (
+                                    <AnalysisCard icon={<Utensils className="w-3.5 h-3.5 text-orange-500" />} title="G-Tube Risk" analysis={dbAnalysis.gtube_risk} />
+                                )}
+                                {dbAnalysis?.mtn_risk && dbSeverityToSeverity(dbAnalysis.mtn_risk.severity) !== "normal" && (
+                                    <AnalysisCard icon={<Apple className="w-3.5 h-3.5 text-lime-600" />} title="MTN Risk" analysis={dbAnalysis.mtn_risk} />
+                                )}
+                                {!dbAnalysis?.infusion && !dbAnalysis?.transfusion && !dbAnalysis?.foley_risk && !dbAnalysis?.gtube_risk && !dbAnalysis?.mtn_risk && (
                                     <div className="col-span-2 text-center py-6 text-xs text-slate-400">
                                         No analysis data yet — sync pending for this patient.
                                     </div>
@@ -535,7 +567,7 @@ function PatientsView() {
         const labs = p.labs_latest ?? {}
         const inf = analyzeInfusion(labs)
         const tran = analyzeTransfusion(labs)
-        const hasLabs = Object.keys(labs).length > 0 || !!p.db_analysis?.infusion || !!p.db_analysis?.transfusion
+        const hasLabs = Object.keys(labs).length > 0 || !!p.db_analysis?.infusion || !!p.db_analysis?.transfusion || !!p.db_analysis?.mtn_risk
 
         let effectiveSeverity: Severity = "normal"
         if (p.db_analysis?.infusion || p.db_analysis?.transfusion) {
@@ -570,14 +602,25 @@ function PatientsView() {
     const isActive = (p: PatientSummary) =>
         !p.patient_status || p.patient_status === 'Current'
 
-    const counts = {
+    const hasPrediction = (p: PatientSummary, type: string, minSev = "low") => {
+        const a = p.db_analysis?.[type as keyof typeof p.db_analysis]
+        if (!a) return false
+        const sevMap: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1, normal: 0 }
+        return (sevMap[a.severity] ?? 0) >= (sevMap[minSev] ?? 1)
+    }
+
+    const counts: Record<FilterType, number> = {
         all: analyzed.length,
+        active: analyzed.filter(a => isActive(a.patient)).length,
         critical: analyzed.filter(a => a.effectiveSeverity === "critical" && isActive(a.patient)).length,
         high: analyzed.filter(a => a.effectiveSeverity === "high" && isActive(a.patient)).length,
         medium: analyzed.filter(a => a.effectiveSeverity === "medium" && isActive(a.patient)).length,
         low: analyzed.filter(a => a.effectiveSeverity === "low" && isActive(a.patient)).length,
         infusion: analyzed.filter(a => a.inf.priority !== "none" && isActive(a.patient)).length,
         transfusion: analyzed.filter(a => a.tran.priority !== "none" && isActive(a.patient)).length,
+        foley: analyzed.filter(a => hasPrediction(a.patient, "foley_risk") && isActive(a.patient)).length,
+        gtube: analyzed.filter(a => hasPrediction(a.patient, "gtube_risk") && isActive(a.patient)).length,
+        mtn: analyzed.filter(a => hasPrediction(a.patient, "mtn_risk") && isActive(a.patient)).length,
         "no-labs": analyzed.filter(a => !a.hasLabs && isActive(a.patient)).length,
         discharged: analyzed.filter(a => !isActive(a.patient)).length,
     }
@@ -594,12 +637,16 @@ function PatientsView() {
 
     const filtered = searched.filter(a => {
         switch (activeFilter) {
+            case "active":      return isActive(a.patient)
             case "critical":    return a.effectiveSeverity === "critical" && isActive(a.patient)
             case "high":        return a.effectiveSeverity === "high" && isActive(a.patient)
             case "medium":      return a.effectiveSeverity === "medium" && isActive(a.patient)
             case "low":         return a.effectiveSeverity === "low" && isActive(a.patient)
             case "infusion":    return a.inf.priority !== "none" && isActive(a.patient)
             case "transfusion": return a.tran.priority !== "none" && isActive(a.patient)
+            case "foley":       return hasPrediction(a.patient, "foley_risk") && isActive(a.patient)
+            case "gtube":       return hasPrediction(a.patient, "gtube_risk") && isActive(a.patient)
+            case "mtn":         return hasPrediction(a.patient, "mtn_risk") && isActive(a.patient)
             case "no-labs":     return !a.hasLabs && isActive(a.patient)
             case "discharged":  return !isActive(a.patient)
             default:            return true
@@ -620,12 +667,16 @@ function PatientsView() {
     }
 
     const FILTERS: { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
-        { key: "all",         label: "All",         icon: <Users className="w-3 h-3" />,         color: "text-slate-600 border-slate-200 hover:bg-slate-50",   activeColor: "text-white bg-slate-700 border-slate-700" },
+        { key: "all",         label: "All",         icon: <Users className="w-3 h-3" />,          color: "text-slate-600 border-slate-200 hover:bg-slate-50",    activeColor: "text-white bg-slate-700 border-slate-700" },
+        { key: "active",      label: "Active",      icon: <UserCheck className="w-3 h-3" />,      color: "text-emerald-600 border-emerald-200 hover:bg-emerald-50", activeColor: "text-white bg-emerald-600 border-emerald-600" },
         { key: "critical",    label: "Critical",    icon: <AlertTriangle className="w-3 h-3" />,  color: "text-red-600 border-red-200 hover:bg-red-50",         activeColor: "text-white bg-red-600 border-red-600" },
         { key: "high",        label: "High",        icon: <TrendingDown className="w-3 h-3" />,   color: "text-red-500 border-red-200 hover:bg-red-50",         activeColor: "text-white bg-red-500 border-red-500" },
         { key: "medium",      label: "Monitor",     icon: <Eye className="w-3 h-3" />,            color: "text-amber-600 border-amber-200 hover:bg-amber-50",   activeColor: "text-white bg-amber-500 border-amber-500" },
         { key: "infusion",    label: "Infusion",    icon: <Droplets className="w-3 h-3" />,       color: "text-blue-600 border-blue-200 hover:bg-blue-50",      activeColor: "text-white bg-blue-600 border-blue-600" },
         { key: "transfusion", label: "Transfusion", icon: <FlaskConical className="w-3 h-3" />,   color: "text-rose-600 border-rose-200 hover:bg-rose-50",      activeColor: "text-white bg-rose-600 border-rose-600" },
+        { key: "foley",       label: "Foley Risk",  icon: <Syringe className="w-3 h-3" />,        color: "text-purple-600 border-purple-200 hover:bg-purple-50", activeColor: "text-white bg-purple-600 border-purple-600" },
+        { key: "gtube",       label: "G-Tube Risk", icon: <Utensils className="w-3 h-3" />,       color: "text-orange-600 border-orange-200 hover:bg-orange-50", activeColor: "text-white bg-orange-600 border-orange-600" },
+        { key: "mtn",         label: "MTN Risk",    icon: <Apple className="w-3 h-3" />,          color: "text-lime-700 border-lime-200 hover:bg-lime-50",      activeColor: "text-white bg-lime-700 border-lime-700" },
         { key: "discharged",  label: "Discharged",  icon: <UserX className="w-3 h-3" />,          color: "text-slate-400 border-slate-200 hover:bg-slate-50",   activeColor: "text-white bg-slate-500 border-slate-500" },
     ]
 
@@ -801,6 +852,15 @@ function PatientsView() {
                                                         <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${inf.priority === "high" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>
                                                             {inf.priority === "high" ? "INFUSE" : "Infusion"}
                                                         </span>
+                                                    )}
+                                                    {patient.db_analysis?.foley_risk && dbSeverityToSeverity(patient.db_analysis.foley_risk.severity) !== "normal" && (
+                                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-purple-100 text-purple-700">Foley</span>
+                                                    )}
+                                                    {patient.db_analysis?.gtube_risk && dbSeverityToSeverity(patient.db_analysis.gtube_risk.severity) !== "normal" && (
+                                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-orange-100 text-orange-700">G-Tube</span>
+                                                    )}
+                                                    {patient.db_analysis?.mtn_risk && dbSeverityToSeverity(patient.db_analysis.mtn_risk.severity) !== "normal" && (
+                                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-lime-100 text-lime-700">MTN</span>
                                                     )}
                                                 </div>}
                                             </td>
