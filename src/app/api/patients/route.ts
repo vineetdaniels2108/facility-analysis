@@ -1,6 +1,52 @@
 import { NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 
+const KEY_LAB_NAMES = ['HGB','HCT','ALB','BUN','CREAT','NA','K','CO2','GLU','WBC','PLATELET','INR','CA','MG','FE','FERRITIN'];
+
+interface LabValue {
+    date: string;
+    value: number;
+    unit: string;
+    referenceRange: string;
+}
+
+async function getLatestLabsForPatients(simplIds: string[]): Promise<Record<string, Record<string, LabValue>>> {
+    if (simplIds.length === 0) return {};
+
+    const res = await query<{
+        simpl_id: string;
+        observation_name: string;
+        value_numeric: string;
+        unit: string;
+        reference_range: string;
+        effective_at: string;
+    }>(
+        `SELECT DISTINCT ON (simpl_id, observation_name)
+            simpl_id, observation_name, value_numeric, unit, reference_range,
+            effective_at::text
+         FROM lab_results
+         WHERE simpl_id = ANY($1)
+           AND observation_name = ANY($2)
+           AND value_numeric IS NOT NULL
+         ORDER BY simpl_id, observation_name, effective_at DESC`,
+        [simplIds, KEY_LAB_NAMES]
+    );
+
+    const result: Record<string, Record<string, LabValue>> = {};
+    for (const row of res.rows) {
+        const val = parseFloat(String(row.value_numeric));
+        if (isNaN(val)) continue;
+        if (!result[row.simpl_id]) result[row.simpl_id] = {};
+        result[row.simpl_id][row.observation_name] = {
+            date: row.effective_at,
+            value: val,
+            unit: row.unit ?? '',
+            referenceRange: row.reference_range ?? '',
+        };
+    }
+    return result;
+}
+
 async function getPatientsFromDb(facilityFilter?: string) {
     const facilityClause = facilityFilter
         ? `AND (LOWER(COALESCE(f.name,'')) LIKE LOWER($1) OR CAST(p.fac_id AS TEXT) = $2)`
@@ -64,6 +110,9 @@ async function getPatientsFromDb(facilityFilter?: string) {
         param
     );
 
+    const simplIds = res.rows.map(r => r.simpl_id);
+    const labsMap = await getLatestLabsForPatients(simplIds);
+
     const now = Date.now();
     const patients = res.rows.map(r => {
         const admitDate = r.admit_date ? new Date(r.admit_date) : null;
@@ -85,6 +134,7 @@ async function getPatientsFromDb(facilityFilter?: string) {
             admit_date: r.admit_date ?? null,
             days_in_facility: daysInFacility,
             last_synced_at: r.last_synced_at ?? null,
+            labs_latest: labsMap[r.simpl_id] ?? {},
             db_analysis: {
                 infusion: r.infusion_severity ? {
                     severity: r.infusion_severity,

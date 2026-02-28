@@ -8,9 +8,10 @@ function getPool(): Pool {
         if (!connectionString) {
             throw new Error('[db] DATABASE_URL environment variable is not set');
         }
+        const isRds = connectionString.includes('.rds.amazonaws.com');
         pool = new Pool({
             connectionString,
-            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+            ssl: isRds ? { rejectUnauthorized: false } : false,
             max: 10,
             idleTimeoutMillis: 30000,
             connectionTimeoutMillis: 5000,

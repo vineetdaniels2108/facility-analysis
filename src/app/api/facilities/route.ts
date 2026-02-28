@@ -1,39 +1,31 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const INDEX_PATH = path.join(process.cwd(), 'public', 'mockData', 'patients', '_facility_index.json');
-
-function isValidFacilityName(name: string): boolean {
-    if (!name || name.length < 5) return false;
-    if (/^[\s\d\|]/.test(name)) return false;
-    if (name.includes('|')) return false;
-    if (name.includes('(512)')) return false;
-    if (/^\s*[A-Z]{2,5}\s*$/.test(name)) return false;
-    if (/^\d/.test(name.trim())) return false;
-    // Single-word names are OK if they pass other filters (patient count filter handles noise)
-    if (name.includes('<') || name.includes('>')) return false;
-    if (name.includes(':') && /\d/.test(name)) return false;
-    if (/Toxin|Phase|coli|Kidney|Disease/i.test(name)) return false;
-    return true;
-}
+import { isDbConfigured, query } from '@/lib/db/client';
 
 export async function GET() {
+    if (!isDbConfigured()) {
+        return NextResponse.json({ facilities: [] });
+    }
+
     try {
-        if (!fs.existsSync(INDEX_PATH)) {
-            return NextResponse.json({ facilities: [] });
-        }
+        const res = await query<{ fac_id: number; name: string; patient_count: number }>(
+            `SELECT f.fac_id, f.name,
+                    COUNT(p.simpl_id)::int AS patient_count
+             FROM facilities f
+             LEFT JOIN patients p ON p.fac_id = f.fac_id
+             GROUP BY f.fac_id, f.name
+             HAVING COUNT(p.simpl_id) > 0
+             ORDER BY f.name`
+        );
 
-        const index: Record<string, unknown[]> = JSON.parse(fs.readFileSync(INDEX_PATH, 'utf-8'));
-
-        const facilities = Object.entries(index)
-            .filter(([name, patients]) => isValidFacilityName(name) && patients.length >= 5)
-            .map(([name, patients]) => ({ name, patient_count: patients.length }))
-            .sort((a, b) => a.name.localeCompare(b.name));
+        const facilities = res.rows.map(r => ({
+            fac_id: r.fac_id,
+            name: r.name,
+            patient_count: r.patient_count,
+        }));
 
         return NextResponse.json({ facilities });
     } catch (error) {
-        console.error('[/api/facilities] Error:', error);
-        return NextResponse.json({ error: 'Failed to load facilities' }, { status: 500 });
+        console.error('[/api/facilities] DB error:', error);
+        return NextResponse.json({ facilities: [] });
     }
 }

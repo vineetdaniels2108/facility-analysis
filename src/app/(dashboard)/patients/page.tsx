@@ -82,17 +82,26 @@ interface ResourceState {
 // ─── Lab alias resolver ──────────────────────────────────────────────────────
 
 const LAB_ALIASES: Record<string, string[]> = {
-    Hemoglobin: ["Hemoglobin", "HGB", "HEMOGLOBIN"],
-    Hematocrit: ["Hematocrit", "HCT", "HEMATOCRIT"],
-    Albumin: ["Albumin", "ALB", "ALBUMIN"],
-    Ferritin: ["Ferritin", "FERRITIN"],
+    Hemoglobin: ["HGB", "Hemoglobin", "HEMOGLOBIN"],
+    Hematocrit: ["HCT", "Hematocrit", "HEMATOCRIT"],
+    Albumin: ["ALB", "Albumin", "ALBUMIN"],
+    Ferritin: ["FERRITIN", "Ferritin", "FE"],
     BUN: ["BUN", "Blood Urea Nitrogen"],
-    Creatinine: ["Creatinine", "CREATININE"],
-    Sodium: ["Sodium", "SODIUM", "Na"],
-    Potassium: ["Potassium", "POTASSIUM", "K"],
+    Creatinine: ["CREAT", "Creatinine", "CREATININE"],
+    Sodium: ["NA", "Sodium", "SODIUM", "Na"],
+    Potassium: ["K", "Potassium", "POTASSIUM"],
     CO2: ["CO2", "Carbon Dioxide", "Bicarbonate"],
-    Chloride: ["Chloride", "CHLORIDE"],
-    "Anion Gap": ["Anion Gap", "ANION GAP"],
+    Chloride: ["CHLORIDE", "Chloride"],
+    "Anion Gap": ["ANION_GAP", "Anion Gap", "ANION GAP"],
+    Calcium: ["CA", "Calcium", "CALCIUM"],
+    Magnesium: ["MG", "Magnesium", "MAGNESIUM"],
+    Phosphorus: ["PHOS", "Phosphorus", "PHOSPHORUS"],
+    Glucose: ["GLU", "Glucose", "GLUCOSE"],
+    Platelets: ["PLATELET", "PLT", "Platelets", "PLATELETS"],
+    WBC: ["WBC", "White Blood Cell"],
+    RBC: ["RBC"],
+    INR: ["INR"],
+    Iron: ["FE", "Iron", "IRON"],
 }
 
 function labLookup(labs: Record<string, LabValue>, canonical: string): LabValue | undefined {
@@ -198,7 +207,9 @@ function LabPill({ value, low, high, unit }: { value?: number; low: number; high
 // ─── Trend chart ──────────────────────────────────────────────────────────────
 
 function LabTrendChart({ name, history, refRange }: { name: string; history: Array<{ date: string; value: number }>; refRange?: string }) {
-    const data = history.map(h => ({ date: h.date.slice(5), value: h.value, fullDate: h.date }))
+    const data = history
+        .filter(h => h.date && h.value != null)
+        .map(h => ({ date: (h.date ?? '').slice(5), value: h.value, fullDate: h.date ?? '' }))
     let refLow: number | undefined, refHigh: number | undefined
     if (refRange) {
         const m = refRange.match(/([\d.]+)\s*[-–]\s*([\d.]+)/)
@@ -305,7 +316,9 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
         const key = aliases.find(a => histMap[a] && histMap[a].length >= 2)
         if (!key) return null
         const latestLab = labLookup(labs, canonical)
-        return { canonical, history: histMap[key], refRange: histMap[key][0]?.referenceRange ?? latestLab?.referenceRange }
+        const rawHistory = histMap[key].filter(h => h.value != null && h.date)
+        const sorted = [...rawHistory].sort((a, b) => a.date.localeCompare(b.date))
+        return { canonical, history: sorted, refRange: rawHistory[0]?.referenceRange ?? latestLab?.referenceRange }
     }).filter(Boolean) as Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string }>
 
     const age = calcAge(patient.date_of_birth)
@@ -358,10 +371,10 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                                             <Droplets className="w-3.5 h-3.5 text-blue-500" />
                                             <span className="text-xs font-bold text-slate-700">Infusion</span>
                                             <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[dbSeverityToSeverity(dbAnalysis.infusion.severity)].className}`}>
-                                                {dbAnalysis.infusion.severity.toUpperCase()}
+                                                {(dbAnalysis.infusion.severity ?? 'normal').toUpperCase()}
                                             </span>
                                         </div>
-                                        <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.infusion.reasoning}</p>
+                                        <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.infusion.reasoning ?? ''}</p>
                                         {dbAnalysis.infusion.indicators?.albumin != null && (
                                             <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Albumin: {String(dbAnalysis.infusion.indicators.albumin)} g/dL</p>
                                         )}
@@ -373,10 +386,10 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                                             <FlaskConical className="w-3.5 h-3.5 text-rose-500" />
                                             <span className="text-xs font-bold text-slate-700">Transfusion</span>
                                             <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[dbSeverityToSeverity(dbAnalysis.transfusion.severity)].className}`}>
-                                                {dbAnalysis.transfusion.severity.toUpperCase()}
+                                                {(dbAnalysis.transfusion.severity ?? 'normal').toUpperCase()}
                                             </span>
                                         </div>
-                                        <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.transfusion.reasoning}</p>
+                                        <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.transfusion.reasoning ?? ''}</p>
                                         {dbAnalysis.transfusion.indicators?.hemoglobin != null && (
                                             <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Hemoglobin: {String(dbAnalysis.transfusion.indicators.hemoglobin)} g/dL</p>
                                         )}

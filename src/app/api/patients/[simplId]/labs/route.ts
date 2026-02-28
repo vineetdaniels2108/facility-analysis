@@ -4,7 +4,7 @@ import { isDbConfigured, query } from '@/lib/db/client';
 async function getLabsFromDb(simplId: string) {
     const res = await query<{
         observation_name: string;
-        value_numeric: number;
+        value_numeric: string | null;
         unit: string;
         reference_range: string;
         effective_at: string;
@@ -13,7 +13,7 @@ async function getLabsFromDb(simplId: string) {
         `SELECT observation_name, value_numeric, unit, reference_range,
                 effective_at::text, is_abnormal
          FROM lab_results
-         WHERE simpl_id = $1
+         WHERE simpl_id = $1 AND value_numeric IS NOT NULL
          ORDER BY observation_name, effective_at DESC`,
         [simplId]
     );
@@ -24,10 +24,13 @@ async function getLabsFromDb(simplId: string) {
     const latest: Record<string, { date: string; value: number; unit: string; referenceRange: string }> = {};
 
     for (const row of res.rows) {
+        const numVal = parseFloat(String(row.value_numeric));
+        if (isNaN(numVal)) continue;
+
         const name = row.observation_name;
         const entry = {
             date: row.effective_at,
-            value: row.value_numeric,
+            value: numVal,
             unit: row.unit ?? '',
             referenceRange: row.reference_range ?? '',
         };
