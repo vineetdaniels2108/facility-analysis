@@ -467,6 +467,52 @@ function OverviewTab({ patient, dbAnalysis }: {
     )
 }
 
+// ─── Trends tab with grouped + abnormal-first view ──────────────────────────
+
+function TrendsTab({ loading, chartGroups, totalCharts, abnormalCount }: {
+    loading: boolean
+    chartGroups: Array<{ label: string; charts: Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string; isAbnormal: boolean }> }>
+    totalCharts: number
+    abnormalCount: number
+}) {
+    const [showAll, setShowAll] = useState(false)
+
+    if (loading) return <div className="py-4 text-center text-slate-400 text-xs"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading trends...</div>
+    if (totalCharts === 0) return <div className="py-4 text-center text-xs text-slate-400">Not enough historical data for trend charts.</div>
+
+    return (
+        <div className="p-3 space-y-3">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                    {abnormalCount > 0 && <span className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded font-bold border border-red-100">{abnormalCount} abnormal</span>}
+                    <span>{totalCharts} total labs</span>
+                </div>
+                <button onClick={() => setShowAll(v => !v)}
+                    className="text-[10px] font-semibold text-teal-600 hover:text-teal-700 transition-colors">
+                    {showAll ? "Show critical only" : `Show all ${totalCharts}`}
+                </button>
+            </div>
+            {chartGroups.map(group => {
+                const visible = showAll ? group.charts : group.charts.filter(c => c.isAbnormal)
+                if (visible.length === 0) return null
+                return (
+                    <div key={group.label}>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">{group.label}</p>
+                        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                            {visible.map(c => <LabTrendChart key={c.canonical} name={c.canonical} history={c.history} refRange={c.refRange} />)}
+                        </div>
+                    </div>
+                )
+            })}
+            {!showAll && abnormalCount === 0 && (
+                <div className="text-center py-4 text-xs text-slate-400">
+                    All labs are within normal range. <button onClick={() => setShowAll(true)} className="text-teal-600 font-semibold">Show all trends</button>
+                </div>
+            )}
+        </div>
+    )
+}
+
 // ─── Inline detail panel ─────────────────────────────────────────────────────
 
 function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResources, onFetchResource, onCloseResource, colSpan }: {
@@ -494,29 +540,53 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
 
     const histMap = (labHistory ?? {}) as Record<string, Array<{ date: string; value: number; referenceRange?: string }>>
 
-    // Build charts: prioritize KEY_LABS first, then all other labs with 2+ data points
-    const usedKeys = new Set<string>()
-    const keyLabCharts = KEY_LABS.map(canonical => {
-        const aliases = LAB_ALIASES[canonical] ?? [canonical]
-        const key = aliases.find(a => histMap[a] && histMap[a].length >= 2)
-        if (!key) return null
-        usedKeys.add(key)
-        const latestLab = labLookup(labs, canonical)
-        const rawHistory = histMap[key].filter(h => h.value != null && h.date)
+    // Clinically relevant labs grouped by risk area
+    const CLINICAL_LABS: Record<string, { label: string; labs: string[] }> = {
+        transfusion: { label: "Transfusion", labs: ["HGB", "HCT", "RBC", "PLATELET", "INR", "FERRITIN", "FE"] },
+        infusion:    { label: "Infusion / Nutrition", labs: ["ALB", "PREALB", "TPROT", "A/G_RATIO"] },
+        renal:       { label: "Renal", labs: ["BUN", "CREAT", "EGFR_(NON_AFRICAN-AMERICAN)", "BUN/CREATININE_RATIO"] },
+        metabolic:   { label: "Metabolic", labs: ["NA", "K", "CO2", "CHLORIDE", "CA", "MG", "PHOS", "ANION_GAP", "GLU", "HA1C"] },
+        hepatic:     { label: "Hepatic", labs: ["TOTAL_BILIRUBIN", "ALKALINE_PHOSPHATASE", "ALT_(SGPT)", "AST_(SGOT)"] },
+        lipids:      { label: "Lipids", labs: ["CHOLESTEROL", "TRIGLYCERIDES", "HDL_CHOLESTEROL", "CALCULATED_LDL"] },
+        other:       { label: "Other", labs: [] },
+    }
+    const allGroupedLabs = new Set(Object.values(CLINICAL_LABS).flatMap(g => g.labs))
+
+    type ChartData = { canonical: string; history: Array<{ date: string; value: number }>; refRange?: string; isAbnormal: boolean }
+    function buildChart(key: string): ChartData | null {
+        const arr = histMap[key]
+        if (!arr) return null
+        const rawHistory = arr.filter(h => h.value != null && h.date)
+        if (rawHistory.length < 2) return null
         const sorted = [...rawHistory].sort((a, b) => a.date.localeCompare(b.date))
-        return { canonical, history: sorted, refRange: rawHistory[0]?.referenceRange ?? latestLab?.referenceRange }
-    }).filter(Boolean) as Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string }>
+        const refRange = rawHistory[0]?.referenceRange
+        let isAbnormal = false
+        if (refRange) {
+            const m = refRange.match(/([\d.]+)\s*[-–]\s*([\d.]+)/)
+            if (m) {
+                const latest = sorted[sorted.length - 1].value
+                isAbnormal = latest < parseFloat(m[1]) || latest > parseFloat(m[2])
+            }
+        }
+        return { canonical: key, history: sorted, refRange, isAbnormal }
+    }
 
-    const otherCharts = Object.entries(histMap)
-        .filter(([key, arr]) => !usedKeys.has(key) && arr.filter(h => h.value != null && h.date).length >= 2)
-        .map(([key, arr]) => {
-            const rawHistory = arr.filter(h => h.value != null && h.date)
-            const sorted = [...rawHistory].sort((a, b) => a.date.localeCompare(b.date))
-            return { canonical: key, history: sorted, refRange: rawHistory[0]?.referenceRange }
-        })
-        .sort((a, b) => a.canonical.localeCompare(b.canonical))
+    const chartGroups = Object.entries(CLINICAL_LABS).map(([, group]) => {
+        const groupCharts = group.labs.map(buildChart).filter(Boolean) as ChartData[]
+        return { label: group.label, charts: groupCharts }
+    }).filter(g => g.charts.length > 0)
 
-    const charts = [...keyLabCharts, ...otherCharts]
+    // Ungrouped labs
+    const ungroupedCharts = Object.keys(histMap)
+        .filter(k => !allGroupedLabs.has(k))
+        .map(buildChart)
+        .filter(Boolean) as ChartData[]
+    if (ungroupedCharts.length > 0) {
+        chartGroups.push({ label: "Other", charts: ungroupedCharts.sort((a, b) => a.canonical.localeCompare(b.canonical)) })
+    }
+
+    const totalCharts = chartGroups.reduce((sum, g) => sum + g.charts.length, 0)
+    const abnormalCount = chartGroups.reduce((sum, g) => sum + g.charts.filter(c => c.isAbnormal).length, 0)
 
     const age = calcAge(patient.date_of_birth)
     const resources = patient.resources ?? []
@@ -525,7 +595,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
     const tabs = [
         { id: "overview" as const, label: "Overview" },
         { id: "labs" as const, label: "Labs", count: keyLabs.length },
-        { id: "trends" as const, label: "Trends", count: labHistoryLoading ? -1 : charts.length },
+        { id: "trends" as const, label: "Trends", count: labHistoryLoading ? -1 : totalCharts },
         ...(resources.length > 0 ? [{ id: "data" as const, label: "Raw Data", count: resources.length }] : []),
     ]
 
@@ -596,17 +666,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
 
                         {/* Trends tab */}
                         {activeTab === "trends" && (
-                            <div className="p-3">
-                                {labHistoryLoading && <div className="py-4 text-center text-slate-400 text-xs"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading trends...</div>}
-                                {!labHistoryLoading && charts.length > 0 && (
-                                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                                        {charts.map(c => <LabTrendChart key={c.canonical} name={c.canonical} history={c.history} refRange={c.refRange} />)}
-                                    </div>
-                                )}
-                                {!labHistoryLoading && charts.length === 0 && (
-                                    <div className="py-4 text-center text-xs text-slate-400">Not enough historical data for trend charts.</div>
-                                )}
-                            </div>
+                            <TrendsTab loading={labHistoryLoading} chartGroups={chartGroups} totalCharts={totalCharts} abnormalCount={abnormalCount} />
                         )}
 
                         {/* Raw data tab */}
