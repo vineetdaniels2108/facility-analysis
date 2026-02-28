@@ -493,15 +493,30 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
     }).filter(Boolean) as Array<{ canonical: string; lab: LabValue }>
 
     const histMap = (labHistory ?? {}) as Record<string, Array<{ date: string; value: number; referenceRange?: string }>>
-    const charts = KEY_LABS.map(canonical => {
+
+    // Build charts: prioritize KEY_LABS first, then all other labs with 2+ data points
+    const usedKeys = new Set<string>()
+    const keyLabCharts = KEY_LABS.map(canonical => {
         const aliases = LAB_ALIASES[canonical] ?? [canonical]
         const key = aliases.find(a => histMap[a] && histMap[a].length >= 2)
         if (!key) return null
+        usedKeys.add(key)
         const latestLab = labLookup(labs, canonical)
         const rawHistory = histMap[key].filter(h => h.value != null && h.date)
         const sorted = [...rawHistory].sort((a, b) => a.date.localeCompare(b.date))
         return { canonical, history: sorted, refRange: rawHistory[0]?.referenceRange ?? latestLab?.referenceRange }
     }).filter(Boolean) as Array<{ canonical: string; history: Array<{ date: string; value: number }>; refRange?: string }>
+
+    const otherCharts = Object.entries(histMap)
+        .filter(([key, arr]) => !usedKeys.has(key) && arr.filter(h => h.value != null && h.date).length >= 2)
+        .map(([key, arr]) => {
+            const rawHistory = arr.filter(h => h.value != null && h.date)
+            const sorted = [...rawHistory].sort((a, b) => a.date.localeCompare(b.date))
+            return { canonical: key, history: sorted, refRange: rawHistory[0]?.referenceRange }
+        })
+        .sort((a, b) => a.canonical.localeCompare(b.canonical))
+
+    const charts = [...keyLabCharts, ...otherCharts]
 
     const age = calcAge(patient.date_of_birth)
     const resources = patient.resources ?? []
