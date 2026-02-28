@@ -321,21 +321,141 @@ function SortTh({ label, sortAsc, sortDesc, current, onSort, align = "center", c
     )
 }
 
-// ─── Analysis card (shared for overview tab) ────────────────────────────────
+// ─── Unified analysis card (merges rule-based + AI) ─────────────────────────
 
-function AnalysisCard({ icon, title, analysis }: { icon: React.ReactNode; title: string; analysis: DbAnalysis }) {
-    const sev = dbSeverityToSeverity(analysis.severity)
-    const bg = sev === 'critical' ? 'bg-red-50 border-red-200' : sev === 'high' ? 'bg-red-50/50 border-red-100' : sev === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-100'
+const RISK_META: Record<string, { icon: React.ReactNode; label: string; keyIndicatorLabel?: string; keyIndicatorField?: string; unit?: string }> = {
+    infusion:    { icon: <Droplets className="w-3.5 h-3.5 text-blue-500" />,    label: "Infusion Need",    keyIndicatorLabel: "Albumin",    keyIndicatorField: "albumin",    unit: "g/dL" },
+    transfusion: { icon: <FlaskConical className="w-3.5 h-3.5 text-rose-500" />, label: "Transfusion Need", keyIndicatorLabel: "Hemoglobin", keyIndicatorField: "hemoglobin", unit: "g/dL" },
+    foley_risk:  { icon: <Syringe className="w-3.5 h-3.5 text-purple-500" />,    label: "Foley Tube Risk" },
+    gtube_risk:  { icon: <Utensils className="w-3.5 h-3.5 text-orange-500" />,   label: "G-Tube Risk" },
+    mtn_risk:    { icon: <Apple className="w-3.5 h-3.5 text-lime-600" />,         label: "MTN / Nutrition Risk" },
+}
+
+function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAnalysis | null; ai: DbAnalysis | null }) {
+    const meta = RISK_META[riskType]
+    if (!meta) return null
+    const primary = rule ?? ai
+    if (!primary) return null
+    const sev = dbSeverityToSeverity(primary.severity)
+    if (sev === "normal" && !ai) return null
+
+    const bg = sev === 'critical' ? 'bg-red-50 border-red-200'
+        : sev === 'high' ? 'bg-red-50/50 border-red-100'
+        : sev === 'medium' ? 'bg-amber-50 border-amber-200'
+        : 'bg-slate-50 border-slate-100'
+
+    const keyVal = meta.keyIndicatorField && rule ? indicatorValue(rule.indicators?.[meta.keyIndicatorField]) : undefined
+    const recs = (ai?.indicators?.recommendations ?? []) as string[]
+    const missed = (ai?.indicators?.missed_factors ?? []) as string[]
+
     return (
         <div className={`rounded-lg border p-3 ${bg}`}>
             <div className="flex items-center gap-1.5 mb-1.5">
-                {icon}
-                <span className="text-xs font-bold text-slate-700">{title}</span>
+                {meta.icon}
+                <span className="text-xs font-bold text-slate-700">{meta.label}</span>
                 <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[sev].className}`}>
-                    {(analysis.severity ?? 'normal').toUpperCase()}
+                    {(primary.severity ?? 'normal').toUpperCase()}
                 </span>
             </div>
-            <p className="text-[10px] text-slate-600 leading-relaxed">{analysis.reasoning ?? ''}</p>
+            <p className="text-[10px] text-slate-600 leading-relaxed">{rule?.reasoning ?? ai?.reasoning ?? ''}</p>
+            {keyVal != null && (
+                <p className="text-[10px] font-semibold text-slate-500 mt-1">{meta.keyIndicatorLabel}: {keyVal} {meta.unit}</p>
+            )}
+            {ai && (
+                <div className="mt-2 pt-2 border-t border-slate-200/60">
+                    {ai.reasoning && rule && (
+                        <p className="text-[10px] text-indigo-600 leading-relaxed mb-1">
+                            <span className="font-semibold">AI:</span> {ai.reasoning}
+                        </p>
+                    )}
+                    {recs.length > 0 && (
+                        <div className="mb-1">
+                            <p className="text-[9px] font-bold text-teal-700 mb-0.5">Recommendations</p>
+                            <ul className="text-[9px] text-slate-600 space-y-0.5">
+                                {recs.map((r, i) => <li key={i} className="flex gap-1"><span className="text-teal-400">&#8250;</span>{r}</li>)}
+                            </ul>
+                        </div>
+                    )}
+                    {missed.length > 0 && (
+                        <div>
+                            <p className="text-[9px] font-bold text-amber-600 mb-0.5">Additional Factors</p>
+                            <ul className="text-[9px] text-slate-600 space-y-0.5">
+                                {missed.map((m, i) => <li key={i} className="flex gap-1"><span className="text-amber-400">&#8250;</span>{m}</li>)}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    )
+}
+
+// ─── Overview tab with unified cards + manual AI trigger ─────────────────────
+
+function OverviewTab({ patient, dbAnalysis }: { patient: PatientSummary; dbAnalysis: Record<string, DbAnalysis | null> }) {
+    const [aiLoading, setAiLoading] = useState(false)
+    const [localAnalysis, setLocalAnalysis] = useState(dbAnalysis)
+
+    const riskTypes = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'] as const
+    const hasAnyRuleData = riskTypes.some(t => localAnalysis[t])
+    const hasAiData = riskTypes.some(t => localAnalysis[`ai_${t}`])
+
+    const triggerAI = async () => {
+        setAiLoading(true)
+        try {
+            const res = await fetch(`/api/admin/reanalyze?simplId=${patient.simpl_id}`, {
+                headers: { Authorization: `Bearer simpl-cron-s3cur3-xK9mP2026` },
+            })
+            const data = await res.json()
+            if (data.ok && data.results) {
+                const updated = { ...localAnalysis }
+                for (const r of data.results) {
+                    updated[r.type] = { severity: r.severity, score: r.score, priority: r.type, reasoning: r.reasoning, indicators: r.indicators }
+                }
+                setLocalAnalysis(updated)
+            }
+        } catch (err) {
+            console.error('[AI trigger] failed:', err)
+        } finally {
+            setAiLoading(false)
+        }
+    }
+
+    const visibleCards = riskTypes
+        .map(t => ({ type: t, rule: localAnalysis[t] ?? null, ai: localAnalysis[`ai_${t}`] ?? null }))
+        .filter(c => {
+            if (!c.rule && !c.ai) return false
+            const sev = dbSeverityToSeverity(c.rule?.severity ?? c.ai?.severity)
+            return sev !== "normal"
+        })
+
+    return (
+        <div className="p-4">
+            {/* AI trigger button */}
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                    {hasAiData && <span className="flex items-center gap-1 text-[9px] text-teal-600 font-medium"><ShieldAlert className="w-3 h-3" />AI analysis included</span>}
+                </div>
+                <button onClick={triggerAI} disabled={aiLoading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors disabled:opacity-50">
+                    {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <ShieldAlert className="w-3 h-3" />}
+                    {aiLoading ? "Running AI Analysis..." : hasAiData ? "Refresh AI Insights" : "Run AI Analysis"}
+                </button>
+            </div>
+
+            {visibleCards.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {visibleCards.map(c => (
+                        <UnifiedRiskCard key={c.type} riskType={c.type} rule={c.rule} ai={c.ai} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-8 text-xs text-slate-400">
+                    {hasAnyRuleData
+                        ? "All risk assessments are normal for this patient."
+                        : "No analysis data yet — sync pending for this patient."}
+                </div>
+            )}
         </div>
     )
 }
@@ -419,102 +539,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                     <div className="max-h-[400px] overflow-y-auto">
                         {/* Overview tab */}
                         {activeTab === "overview" && (
-                            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {dbAnalysis?.infusion && (
-                                    <div className={`rounded-lg border p-3 ${dbAnalysis.infusion.severity === 'critical' ? 'bg-red-50 border-red-200' : dbAnalysis.infusion.severity === 'high' ? 'bg-red-50/50 border-red-100' : dbAnalysis.infusion.severity === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-100'}`}>
-                                        <div className="flex items-center gap-1.5 mb-1.5">
-                                            <Droplets className="w-3.5 h-3.5 text-blue-500" />
-                                            <span className="text-xs font-bold text-slate-700">Infusion</span>
-                                            <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[dbSeverityToSeverity(dbAnalysis.infusion.severity)].className}`}>
-                                                {(dbAnalysis.infusion.severity ?? 'normal').toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.infusion.reasoning ?? ''}</p>
-                                        {indicatorValue(dbAnalysis.infusion.indicators?.albumin) != null && (
-                                            <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Albumin: {indicatorValue(dbAnalysis.infusion.indicators?.albumin)} g/dL</p>
-                                        )}
-                                    </div>
-                                )}
-                                {dbAnalysis?.transfusion && (
-                                    <div className={`rounded-lg border p-3 ${dbAnalysis.transfusion.severity === 'critical' ? 'bg-red-50 border-red-200' : dbAnalysis.transfusion.severity === 'high' ? 'bg-red-50/50 border-red-100' : dbAnalysis.transfusion.severity === 'medium' ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-100'}`}>
-                                        <div className="flex items-center gap-1.5 mb-1.5">
-                                            <FlaskConical className="w-3.5 h-3.5 text-rose-500" />
-                                            <span className="text-xs font-bold text-slate-700">Transfusion</span>
-                                            <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[dbSeverityToSeverity(dbAnalysis.transfusion.severity)].className}`}>
-                                                {(dbAnalysis.transfusion.severity ?? 'normal').toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.transfusion.reasoning ?? ''}</p>
-                                        {indicatorValue(dbAnalysis.transfusion.indicators?.hemoglobin) != null && (
-                                            <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Hemoglobin: {indicatorValue(dbAnalysis.transfusion.indicators?.hemoglobin)} g/dL</p>
-                                        )}
-                                    </div>
-                                )}
-                                {dbAnalysis?.foley_risk && dbSeverityToSeverity(dbAnalysis.foley_risk.severity) !== "normal" && (
-                                    <AnalysisCard icon={<Syringe className="w-3.5 h-3.5 text-purple-500" />} title="Foley Tube Risk" analysis={dbAnalysis.foley_risk} />
-                                )}
-                                {dbAnalysis?.gtube_risk && dbSeverityToSeverity(dbAnalysis.gtube_risk.severity) !== "normal" && (
-                                    <AnalysisCard icon={<Utensils className="w-3.5 h-3.5 text-orange-500" />} title="G-Tube Risk" analysis={dbAnalysis.gtube_risk} />
-                                )}
-                                {dbAnalysis?.mtn_risk && dbSeverityToSeverity(dbAnalysis.mtn_risk.severity) !== "normal" && (
-                                    <AnalysisCard icon={<Apple className="w-3.5 h-3.5 text-lime-600" />} title="MTN Risk" analysis={dbAnalysis.mtn_risk} />
-                                )}
-                                {!dbAnalysis?.infusion && !dbAnalysis?.transfusion && !dbAnalysis?.foley_risk && !dbAnalysis?.gtube_risk && !dbAnalysis?.mtn_risk && (
-                                    <div className="col-span-2 text-center py-6 text-xs text-slate-400">
-                                        No analysis data yet — sync pending for this patient.
-                                    </div>
-                                )}
-
-                                {/* AI Insights */}
-                                {(() => {
-                                    const aiTypes = ['ai_infusion', 'ai_transfusion', 'ai_foley_risk', 'ai_gtube_risk', 'ai_mtn_risk'] as const
-                                    const aiResults = aiTypes.map(t => dbAnalysis?.[t]).filter((a): a is DbAnalysis => !!a && dbSeverityToSeverity(a.severity) !== 'normal')
-                                    if (aiResults.length === 0) return null
-                                    return (
-                                        <div className="col-span-2 mt-1">
-                                            <div className="flex items-center gap-1.5 mb-2">
-                                                <ShieldAlert className="w-3.5 h-3.5 text-indigo-500" />
-                                                <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wide">AI Clinical Insights</span>
-                                                <span className="text-[9px] text-indigo-400 ml-1">GPT-4o-mini</span>
-                                            </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                {aiResults.map(a => {
-                                                    const label = a.indicators?.type ? String(a.indicators.type).replace('ai_', '').replace('_', ' ') : a.severity
-                                                    const recs = (a.indicators?.recommendations ?? []) as string[]
-                                                    const missed = (a.indicators?.missed_factors ?? []) as string[]
-                                                    return (
-                                                        <div key={label} className="rounded-lg border border-indigo-100 bg-indigo-50/30 p-2.5">
-                                                            <div className="flex items-center justify-between mb-1">
-                                                                <span className="text-[10px] font-bold text-indigo-700 capitalize">{label}</span>
-                                                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[dbSeverityToSeverity(a.severity)].className}`}>
-                                                                    {(a.severity ?? 'normal').toUpperCase()}
-                                                                </span>
-                                                            </div>
-                                                            <p className="text-[10px] text-slate-600 leading-relaxed">{a.reasoning ?? ''}</p>
-                                                            {recs.length > 0 && (
-                                                                <div className="mt-1.5">
-                                                                    <p className="text-[9px] font-semibold text-indigo-600 mb-0.5">Recommendations:</p>
-                                                                    <ul className="text-[9px] text-slate-500 space-y-0.5">
-                                                                        {recs.map((r, i) => <li key={i} className="flex gap-1"><span className="text-indigo-400">•</span>{r}</li>)}
-                                                                    </ul>
-                                                                </div>
-                                                            )}
-                                                            {missed.length > 0 && (
-                                                                <div className="mt-1">
-                                                                    <p className="text-[9px] font-semibold text-amber-600 mb-0.5">Factors rules may have missed:</p>
-                                                                    <ul className="text-[9px] text-slate-500 space-y-0.5">
-                                                                        {missed.map((m, i) => <li key={i} className="flex gap-1"><span className="text-amber-400">•</span>{m}</li>)}
-                                                                    </ul>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                    )
-                                })()}
-                            </div>
+                            <OverviewTab patient={patient} dbAnalysis={dbAnalysis ?? {}} />
                         )}
 
                         {/* Labs tab */}
