@@ -186,6 +186,14 @@ function calcAge(dob?: string | null): number | null {
     return Math.floor((Date.now() - d.getTime()) / (365.25 * 86400000))
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function indicatorValue(ind: any): number | undefined {
+    if (ind == null) return undefined
+    if (typeof ind === "number") return ind
+    if (typeof ind === "object" && "value" in ind) return typeof ind.value === "number" ? ind.value : undefined
+    return undefined
+}
+
 function formatDays(days?: number | null): string {
     if (days == null || days < 0) return "—"
     if (days === 0) return "Today"
@@ -354,8 +362,8 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                                             </span>
                                         </div>
                                         <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.infusion.reasoning ?? ''}</p>
-                                        {dbAnalysis.infusion.indicators?.albumin != null && (
-                                            <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Albumin: {String(dbAnalysis.infusion.indicators.albumin)} g/dL</p>
+                                        {indicatorValue(dbAnalysis.infusion.indicators?.albumin) != null && (
+                                            <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Albumin: {indicatorValue(dbAnalysis.infusion.indicators?.albumin)} g/dL</p>
                                         )}
                                     </div>
                                 )}
@@ -369,8 +377,8 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                                             </span>
                                         </div>
                                         <p className="text-[10px] text-slate-600 leading-relaxed">{dbAnalysis.transfusion.reasoning ?? ''}</p>
-                                        {dbAnalysis.transfusion.indicators?.hemoglobin != null && (
-                                            <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Hemoglobin: {String(dbAnalysis.transfusion.indicators.hemoglobin)} g/dL</p>
+                                        {indicatorValue(dbAnalysis.transfusion.indicators?.hemoglobin) != null && (
+                                            <p className="text-[10px] font-semibold text-slate-500 mt-1.5">Hemoglobin: {indicatorValue(dbAnalysis.transfusion.indicators?.hemoglobin)} g/dL</p>
                                         )}
                                     </div>
                                 )}
@@ -537,12 +545,12 @@ function PatientsView() {
             effectiveSeverity = sevOrder[dbTraSev] >= sevOrder[dbInfSev] ? dbTraSev : dbInfSev
 
             if (p.db_analysis.infusion) {
-                inf.albumin = (p.db_analysis.infusion.indicators?.albumin as number) ?? undefined
+                inf.albumin = indicatorValue(p.db_analysis.infusion.indicators?.albumin)
                 inf.priority = p.db_analysis.infusion.priority === 'infuse' ? 'high' : p.db_analysis.infusion.priority === 'monitor' ? 'medium' : 'none'
             }
             if (p.db_analysis.transfusion) {
-                tran.hemoglobin = (p.db_analysis.transfusion.indicators?.hemoglobin as number) ?? undefined
-                tran.hematocrit = (p.db_analysis.transfusion.indicators?.hematocrit as number) ?? undefined
+                tran.hemoglobin = indicatorValue(p.db_analysis.transfusion.indicators?.hemoglobin)
+                tran.hematocrit = indicatorValue(p.db_analysis.transfusion.indicators?.hematocrit)
                 tran.priority = p.db_analysis.transfusion.priority === 'transfuse' ? 'critical' : p.db_analysis.transfusion.priority === 'monitor' ? 'medium' : 'none'
             }
         } else {
