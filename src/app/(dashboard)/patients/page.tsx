@@ -806,18 +806,27 @@ function PatientsView() {
         )
     }
 
-    const FILTERS: { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }[] = [
-        { key: "all",         label: "All",         icon: <Users className="w-3 h-3" />,          color: "text-slate-600 border-slate-200 hover:bg-slate-50",    activeColor: "text-white bg-slate-700 border-slate-700" },
-        { key: "active",      label: "Active",      icon: <UserCheck className="w-3 h-3" />,      color: "text-emerald-600 border-emerald-200 hover:bg-emerald-50", activeColor: "text-white bg-emerald-600 border-emerald-600" },
-        { key: "critical",    label: "Critical",    icon: <AlertTriangle className="w-3 h-3" />,  color: "text-red-600 border-red-200 hover:bg-red-50",         activeColor: "text-white bg-red-600 border-red-600" },
-        { key: "high",        label: "High",        icon: <TrendingDown className="w-3 h-3" />,   color: "text-red-500 border-red-200 hover:bg-red-50",         activeColor: "text-white bg-red-500 border-red-500" },
-        { key: "medium",      label: "Monitor",     icon: <Eye className="w-3 h-3" />,            color: "text-amber-600 border-amber-200 hover:bg-amber-50",   activeColor: "text-white bg-amber-500 border-amber-500" },
-        { key: "infusion",    label: "Infusion",    icon: <Droplets className="w-3 h-3" />,       color: "text-blue-600 border-blue-200 hover:bg-blue-50",      activeColor: "text-white bg-blue-600 border-blue-600" },
-        { key: "transfusion", label: "Transfusion", icon: <FlaskConical className="w-3 h-3" />,   color: "text-rose-600 border-rose-200 hover:bg-rose-50",      activeColor: "text-white bg-rose-600 border-rose-600" },
-        { key: "foley",       label: "Foley Risk",  icon: <Syringe className="w-3 h-3" />,        color: "text-purple-600 border-purple-200 hover:bg-purple-50", activeColor: "text-white bg-purple-600 border-purple-600" },
-        { key: "gtube",       label: "G-Tube Risk", icon: <Utensils className="w-3 h-3" />,       color: "text-orange-600 border-orange-200 hover:bg-orange-50", activeColor: "text-white bg-orange-600 border-orange-600" },
-        { key: "mtn",         label: "MTN Risk",    icon: <Apple className="w-3 h-3" />,          color: "text-lime-700 border-lime-200 hover:bg-lime-50",      activeColor: "text-white bg-lime-700 border-lime-700" },
-        { key: "discharged",  label: "Discharged",  icon: <UserX className="w-3 h-3" />,          color: "text-slate-400 border-slate-200 hover:bg-slate-50",   activeColor: "text-white bg-slate-500 border-slate-500" },
+    type FilterDef = { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }
+    const FILTER_GROUPS: { label: string; filters: FilterDef[] }[] = [
+        { label: "Status", filters: [
+            { key: "all",         label: "All",        icon: <Users className="w-3 h-3" />,         color: "text-slate-600 border-slate-200 hover:bg-slate-50",        activeColor: "text-white bg-slate-700 border-slate-700" },
+            { key: "active",      label: "Active",     icon: <UserCheck className="w-3 h-3" />,     color: "text-emerald-600 border-emerald-200 hover:bg-emerald-50",  activeColor: "text-white bg-emerald-600 border-emerald-600" },
+            { key: "discharged",  label: "Discharged", icon: <UserX className="w-3 h-3" />,         color: "text-slate-400 border-slate-200 hover:bg-slate-50",        activeColor: "text-white bg-slate-500 border-slate-500" },
+        ]},
+        { label: "Severity", filters: [
+            { key: "critical",    label: "Critical",   icon: <AlertTriangle className="w-3 h-3" />, color: "text-red-600 border-red-200 hover:bg-red-50",             activeColor: "text-white bg-red-600 border-red-600" },
+            { key: "high",        label: "High",       icon: <TrendingDown className="w-3 h-3" />,  color: "text-red-500 border-red-200 hover:bg-red-50",             activeColor: "text-white bg-red-500 border-red-500" },
+            { key: "medium",      label: "Monitor",    icon: <Eye className="w-3 h-3" />,           color: "text-amber-600 border-amber-200 hover:bg-amber-50",       activeColor: "text-white bg-amber-500 border-amber-500" },
+        ]},
+        { label: "Needs", filters: [
+            { key: "infusion",    label: "Infusion",   icon: <Droplets className="w-3 h-3" />,      color: "text-blue-600 border-blue-200 hover:bg-blue-50",          activeColor: "text-white bg-blue-600 border-blue-600" },
+            { key: "transfusion", label: "Transfusion",icon: <FlaskConical className="w-3 h-3" />,  color: "text-rose-600 border-rose-200 hover:bg-rose-50",          activeColor: "text-white bg-rose-600 border-rose-600" },
+        ]},
+        { label: "Predictions", filters: [
+            { key: "foley",       label: "Foley",      icon: <Syringe className="w-3 h-3" />,       color: "text-purple-600 border-purple-200 hover:bg-purple-50",    activeColor: "text-white bg-purple-600 border-purple-600" },
+            { key: "gtube",       label: "G-Tube",     icon: <Utensils className="w-3 h-3" />,      color: "text-orange-600 border-orange-200 hover:bg-orange-50",    activeColor: "text-white bg-orange-600 border-orange-600" },
+            { key: "mtn",         label: "MTN",        icon: <Apple className="w-3 h-3" />,         color: "text-lime-700 border-lime-200 hover:bg-lime-50",          activeColor: "text-white bg-lime-700 border-lime-700" },
+        ]},
     ]
 
     return (
@@ -851,42 +860,51 @@ function PatientsView() {
                 </div>
             </div>
 
-            {/* Search + Filter + Sort */}
+            {/* Search + Filters + Sort */}
             {!loading && patients.length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap">
-                    <div className="relative flex-1 min-w-[200px] max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                        <input type="text" placeholder="Search name or room…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-8 pr-7 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 shadow-sm" />
-                        {searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600"><X className="w-3 h-3" /></button>}
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <div className="relative flex-1 min-w-[200px] max-w-xs">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            <input type="text" placeholder="Search name or room…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                                className="w-full pl-8 pr-7 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 shadow-sm" />
+                            {searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-600"><X className="w-3 h-3" /></button>}
+                        </div>
+                        <div className="ml-auto flex items-center gap-2">
+                            <div className="relative">
+                                <button onClick={() => setShowSortMenu(v => !v)} className="flex items-center gap-1 px-2 py-1.5 text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors">
+                                    <ArrowUpDown className="w-3 h-3" />{SORT_OPTIONS.find(s => s.value === sortBy)?.label}
+                                    {showSortMenu ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                                </button>
+                                {showSortMenu && (
+                                    <><div className="fixed inset-0 z-40" onClick={() => setShowSortMenu(false)} />
+                                    <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-xl border border-slate-200 py-1 z-50">
+                                        {SORT_OPTIONS.map(s => (
+                                            <button key={s.value} onClick={() => { setSortBy(s.value); setShowSortMenu(false) }}
+                                                className={`w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-50 transition-colors ${sortBy === s.value ? "font-bold text-teal-700 bg-teal-50/50" : "text-slate-600"}`}>
+                                                {s.label}
+                                            </button>
+                                        ))}
+                                    </div></>
+                                )}
+                            </div>
+                            {(searchQuery || activeFilter !== "all") && <span className="text-[10px] text-slate-400">{sorted.length}/{patients.length}</span>}
+                        </div>
                     </div>
-                    <div className="h-5 w-px bg-slate-200" />
-                    {FILTERS.map(f => (
-                        <button key={f.key} onClick={() => setActiveFilter(f.key)}
-                            className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-semibold border transition-all ${activeFilter === f.key ? f.activeColor : f.color}`}>
-                            {f.icon}{f.label}
-                            {counts[f.key] > 0 && <span className={`ml-0.5 px-1 py-0 rounded text-[9px] font-bold ${activeFilter === f.key ? "bg-white/25 text-white" : "bg-slate-100 text-slate-500"}`}>{counts[f.key]}</span>}
-                        </button>
-                    ))}
-                    <div className="h-5 w-px bg-slate-200" />
-                    <div className="relative">
-                        <button onClick={() => setShowSortMenu(v => !v)} className="flex items-center gap-1 px-2 py-1.5 text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors">
-                            <ArrowUpDown className="w-3 h-3" />{SORT_OPTIONS.find(s => s.value === sortBy)?.label}
-                            {showSortMenu ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
-                        </button>
-                        {showSortMenu && (
-                            <><div className="fixed inset-0 z-40" onClick={() => setShowSortMenu(false)} />
-                            <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-xl border border-slate-200 py-1 z-50">
-                                {SORT_OPTIONS.map(s => (
-                                    <button key={s.value} onClick={() => { setSortBy(s.value); setShowSortMenu(false) }}
-                                        className={`w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-50 transition-colors ${sortBy === s.value ? "font-bold text-teal-700 bg-teal-50/50" : "text-slate-600"}`}>
-                                        {s.label}
+                    <div className="flex items-center gap-1 flex-wrap">
+                        {FILTER_GROUPS.map((group, gi) => (
+                            <Fragment key={group.label}>
+                                {gi > 0 && <div className="h-4 w-px bg-slate-200 mx-0.5" />}
+                                {group.filters.map(f => (
+                                    <button key={f.key} onClick={() => setActiveFilter(f.key)}
+                                        className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold border transition-all ${activeFilter === f.key ? f.activeColor : f.color}`}>
+                                        {f.icon}{f.label}
+                                        {counts[f.key] > 0 && <span className={`ml-0.5 px-1 rounded text-[9px] font-bold ${activeFilter === f.key ? "bg-white/25 text-white" : "bg-slate-100 text-slate-500"}`}>{counts[f.key]}</span>}
                                     </button>
                                 ))}
-                            </div></>
-                        )}
+                            </Fragment>
+                        ))}
                     </div>
-                    {(searchQuery || activeFilter !== "all") && <span className="text-[10px] text-slate-400">{sorted.length}/{patients.length}</span>}
                 </div>
             )}
 
