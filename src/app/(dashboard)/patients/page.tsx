@@ -831,7 +831,7 @@ function PatientsView() {
                     <div>
                         <h1 className="text-xl font-bold text-slate-800 tracking-tight leading-tight">{facilityName}</h1>
                         <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                            <span>{loading ? 'Loading...' : `${patients.length} active patients`}</span>
+                            <span>{loading ? 'Loading...' : `${patients.filter(p => !p.patient_status || p.patient_status === 'Current').length} active patients`}</span>
                             {lastRefreshed && <span>· Last sync {new Date(lastRefreshed).toLocaleString()}</span>}
                             {dataSource === 'live_db' && <span className="px-1.5 py-0.5 bg-teal-50 text-teal-600 rounded font-semibold border border-teal-100">LIVE</span>}
                         </div>
