@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 
 const KEY_LAB_NAMES = ['HGB','HCT','ALB','BUN','CREAT','NA','K','CO2','GLU','WBC','PLATELET','INR','CA','MG','FE','FERRITIN'];
-const ANALYSIS_TYPES = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'] as const;
+const ANALYSIS_TYPES = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk',
+    'ai_infusion', 'ai_transfusion', 'ai_foley_risk', 'ai_gtube_risk', 'ai_mtn_risk'] as const;
 
 interface LabValue {
     date: string;

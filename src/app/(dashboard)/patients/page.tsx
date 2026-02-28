@@ -49,14 +49,8 @@ interface PatientSummary {
     admit_date?: string
     days_in_facility?: number
     last_synced_at?: string
-    // DB pre-computed analysis (all 5 modules)
-    db_analysis?: {
-        infusion: DbAnalysis | null
-        transfusion: DbAnalysis | null
-        foley_risk: DbAnalysis | null
-        gtube_risk: DbAnalysis | null
-        mtn_risk: DbAnalysis | null
-    }
+    // DB pre-computed analysis (5 rule-based + 5 AI modules)
+    db_analysis?: Record<string, DbAnalysis | null>
     combined_urgency?: number
     data_source?: string
     // Legacy local data fields
@@ -419,6 +413,56 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                                         No analysis data yet — sync pending for this patient.
                                     </div>
                                 )}
+
+                                {/* AI Insights */}
+                                {(() => {
+                                    const aiTypes = ['ai_infusion', 'ai_transfusion', 'ai_foley_risk', 'ai_gtube_risk', 'ai_mtn_risk'] as const
+                                    const aiResults = aiTypes.map(t => dbAnalysis?.[t]).filter((a): a is DbAnalysis => !!a && dbSeverityToSeverity(a.severity) !== 'normal')
+                                    if (aiResults.length === 0) return null
+                                    return (
+                                        <div className="col-span-2 mt-1">
+                                            <div className="flex items-center gap-1.5 mb-2">
+                                                <ShieldAlert className="w-3.5 h-3.5 text-indigo-500" />
+                                                <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wide">AI Clinical Insights</span>
+                                                <span className="text-[9px] text-indigo-400 ml-1">GPT-4o-mini</span>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                {aiResults.map(a => {
+                                                    const label = a.indicators?.type ? String(a.indicators.type).replace('ai_', '').replace('_', ' ') : a.severity
+                                                    const recs = (a.indicators?.recommendations ?? []) as string[]
+                                                    const missed = (a.indicators?.missed_factors ?? []) as string[]
+                                                    return (
+                                                        <div key={label} className="rounded-lg border border-indigo-100 bg-indigo-50/30 p-2.5">
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <span className="text-[10px] font-bold text-indigo-700 capitalize">{label}</span>
+                                                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[dbSeverityToSeverity(a.severity)].className}`}>
+                                                                    {(a.severity ?? 'normal').toUpperCase()}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-[10px] text-slate-600 leading-relaxed">{a.reasoning ?? ''}</p>
+                                                            {recs.length > 0 && (
+                                                                <div className="mt-1.5">
+                                                                    <p className="text-[9px] font-semibold text-indigo-600 mb-0.5">Recommendations:</p>
+                                                                    <ul className="text-[9px] text-slate-500 space-y-0.5">
+                                                                        {recs.map((r, i) => <li key={i} className="flex gap-1"><span className="text-indigo-400">•</span>{r}</li>)}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                            {missed.length > 0 && (
+                                                                <div className="mt-1">
+                                                                    <p className="text-[9px] font-semibold text-amber-600 mb-0.5">Factors rules may have missed:</p>
+                                                                    <ul className="text-[9px] text-slate-500 space-y-0.5">
+                                                                        {missed.map((m, i) => <li key={i} className="flex gap-1"><span className="text-amber-400">•</span>{m}</li>)}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    )
+                                })()}
                             </div>
                         )}
 

@@ -6,6 +6,7 @@ import { transfusionModule } from './modules/transfusion';
 import { foleyRiskModule } from './modules/foley-risk';
 import { gtubeRiskModule } from './modules/gtube-risk';
 import { mtnRiskModule } from './modules/mtn-risk';
+import { runAIReview } from './modules/ai-reviewer';
 
 // Registry of all available modules
 const ALL_MODULES: Record<string, AnalysisModule> = {
@@ -63,15 +64,21 @@ export async function runAnalysis(simplId: string): Promise<AnalysisResult[]> {
         }
     }
 
-    // Persist results to DB
+    // AI review: runs only when at least one rule-based module flags medium+
+    try {
+        const aiResults = await runAIReview({ ctx, ruleResults: results });
+        results.push(...aiResults);
+    } catch (err) {
+        console.error(`[analysis] AI review failed for ${simplId}:`, err);
+    }
+
+    // Persist all results (rule-based + AI) to DB
     await withTransaction(async (client) => {
-        // Mark all existing results as stale
         await client.query(
             `UPDATE analysis_results SET is_current = FALSE WHERE simpl_id = $1`,
             [simplId]
         );
 
-        // Insert fresh results
         for (const result of results) {
             await client.query(
                 `INSERT INTO analysis_results
