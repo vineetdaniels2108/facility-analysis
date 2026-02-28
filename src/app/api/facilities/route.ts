@@ -9,7 +9,7 @@ export async function GET() {
     try {
         const res = await query<{ fac_id: number; name: string; patient_count: number }>(
             `SELECT f.fac_id, f.name,
-                    COUNT(p.simpl_id)::int AS patient_count
+                    COUNT(p.simpl_id) FILTER (WHERE p.patient_status = 'Current' OR p.patient_status IS NULL)::int AS patient_count
              FROM facilities f
              LEFT JOIN patients p ON p.fac_id = f.fac_id
              GROUP BY f.fac_id, f.name
