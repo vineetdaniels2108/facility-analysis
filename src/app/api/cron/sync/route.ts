@@ -19,14 +19,16 @@ import { syncProgressNotes } from '@/lib/sync/resources/progressnotes';
 import { syncAdtRecords, extractCurrentLocation } from '@/lib/sync/resources/adtrecords';
 import { syncAllergies, syncImmunizations, syncCoverages } from '@/lib/sync/resources/allergies';
 
-// Runs once daily at 3am UTC (vercel.json schedule: "0 3 * * *")
-// Scoped to Baywood (fac_id=121) for now.
-// Only syncs patients whose PCC summary shows data newer than our last sync.
+export const maxDuration = 300; // 5 min (Vercel Pro)
 
-const BAYWOOD_FAC_ID = 121;
+// Runs daily at 3am UTC via vercel.json cron.
+// Syncs ALL active facilities. Processes patients in staleness order,
+// fitting as many as possible within the function timeout.
+
+const MAX_PATIENTS_PER_RUN = 50; // stay well within timeout
+const STALE_THRESHOLD_HOURS = 20;
 
 export async function GET(req: NextRequest) {
-    // Vercel Cron automatically sends Authorization: Bearer <CRON_SECRET>
     const cronSecret = process.env.CRON_SECRET;
     const authHeader = req.headers.get('authorization');
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
@@ -38,53 +40,56 @@ export async function GET(req: NextRequest) {
     }
 
     const startTime = Date.now();
-
-    // Get all Baywood patients from PostgreSQL
-    const patientsRes = await query<{
-        simpl_id: string;
-        first_name: string;
-        last_name: string;
-        last_synced_at: Date | null;
-    }>(
-        `SELECT simpl_id, first_name, last_name, last_synced_at
-         FROM patients
-         WHERE fac_id = $1
-         ORDER BY last_synced_at ASC NULLS FIRST`,
-        [BAYWOOD_FAC_ID]
-    );
-
-    const patients = patientsRes.rows;
-    if (patients.length === 0) {
-        return NextResponse.json({ ok: true, message: 'No Baywood patients found' });
-    }
-
     const token = await getPccToken();
     if (!token) {
         return NextResponse.json({ error: 'Failed to get PCC auth token' }, { status: 502 });
     }
 
-    const results = { checked: 0, synced: 0, skipped: 0, errors: 0 };
+    // Get ALL patients across all facilities, ordered by staleness (never-synced first)
+    const patientsRes = await query<{
+        simpl_id: string;
+        first_name: string;
+        last_name: string;
+        fac_id: number;
+        patient_status: string;
+        last_synced_at: Date | null;
+    }>(
+        `SELECT simpl_id, first_name, last_name, fac_id, patient_status, last_synced_at
+         FROM patients
+         WHERE (patient_status = 'Current' OR patient_status IS NULL)
+         ORDER BY last_synced_at ASC NULLS FIRST
+         LIMIT $1`,
+        [MAX_PATIENTS_PER_RUN]
+    );
+
+    const patients = patientsRes.rows;
+    if (patients.length === 0) {
+        return NextResponse.json({ ok: true, message: 'No patients to sync' });
+    }
+
+    const results = { checked: 0, synced: 0, skipped: 0, errors: 0, facilities: new Set<number>() };
 
     for (const patient of patients) {
+        // Stop if we're approaching the timeout (leave 30s buffer)
+        if (Date.now() - startTime > 250_000) break;
+
         results.checked++;
+        results.facilities.add(patient.fac_id);
+
         try {
-            // Fetch PCC summary — this tells us what resources exist and their counts.
-            // We use it as a lightweight "has anything changed?" check before doing
-            // the full sync. If PCC has no data for this patient we skip them.
-            const summary = await fetchSummary(patient.simpl_id, token);
-
-            if (!summary || Object.keys(summary).length === 0) {
-                results.skipped++;
-                continue;
-            }
-
-            // If patient was synced in the last 20 hours, skip unless never synced
+            // Skip recently synced patients
             if (patient.last_synced_at) {
                 const hoursSinceSync = (Date.now() - new Date(patient.last_synced_at).getTime()) / 36e5;
-                if (hoursSinceSync < 20) {
+                if (hoursSinceSync < STALE_THRESHOLD_HOURS) {
                     results.skipped++;
                     continue;
                 }
+            }
+
+            const summary = await fetchSummary(patient.simpl_id, token);
+            if (!summary || Object.keys(summary).length === 0) {
+                results.skipped++;
+                continue;
             }
 
             await syncAndAnalyzePatient(patient.simpl_id, summary, token);
@@ -96,14 +101,19 @@ export async function GET(req: NextRequest) {
     }
 
     const durationMs = Date.now() - startTime;
-    console.log(`[cron/sync] Baywood complete in ${Math.round(durationMs / 1000)}s:`, results);
+    console.log(`[cron/sync] Complete in ${Math.round(durationMs / 1000)}s:`, {
+        ...results,
+        facilities: results.facilities.size,
+    });
 
     return NextResponse.json({
         ok: true,
-        facility: 'Baywood',
-        fac_id: BAYWOOD_FAC_ID,
+        facilitiesProcessed: results.facilities.size,
         patients: patients.length,
-        ...results,
+        checked: results.checked,
+        synced: results.synced,
+        skipped: results.skipped,
+        errors: results.errors,
         durationMs,
     });
 }
@@ -189,6 +199,5 @@ async function syncAndAnalyzePatient(
         );
     });
 
-    // Run all analysis modules — results written to analysis_results table
     await runAnalysis(simplId);
 }
