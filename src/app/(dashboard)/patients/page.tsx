@@ -392,16 +392,16 @@ function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAna
 
 // ─── Overview tab with unified cards + manual AI trigger ─────────────────────
 
-function OverviewTab({ patient, dbAnalysis, onAnalysisUpdate }: {
+function OverviewTab({ patient, dbAnalysis }: {
     patient: PatientSummary
     dbAnalysis: Record<string, DbAnalysis | null>
-    onAnalysisUpdate: (simplId: string, updated: Record<string, DbAnalysis | null>) => void
 }) {
     const [aiLoading, setAiLoading] = useState(false)
+    const [aiResults, setAiResults] = useState<Record<string, DbAnalysis>>({})
 
     const riskTypes = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'] as const
     const hasAnyRuleData = riskTypes.some(t => dbAnalysis[t])
-    const hasAiData = riskTypes.some(t => dbAnalysis[`ai_${t}`])
+    const hasAiData = riskTypes.some(t => dbAnalysis[`ai_${t}`] || aiResults[`ai_${t}`])
 
     const triggerAI = async () => {
         setAiLoading(true)
@@ -411,17 +411,13 @@ function OverviewTab({ patient, dbAnalysis, onAnalysisUpdate }: {
             })
             const data = await res.json()
             if (data.ok && data.results) {
-                const updated = { ...dbAnalysis }
+                const newAi: Record<string, DbAnalysis> = {}
                 for (const r of data.results as Array<{ type: string; severity: string; score: number; reasoning: string; indicators: Record<string, unknown> }>) {
-                    updated[r.type] = {
-                        severity: r.severity,
-                        score: r.score,
-                        priority: r.severity === 'critical' || r.severity === 'high' ? 'action_needed' : r.severity === 'medium' ? 'monitor' : 'none',
-                        reasoning: r.reasoning,
-                        indicators: r.indicators ?? {},
+                    if (r.type.startsWith('ai_')) {
+                        newAi[r.type] = { severity: r.severity, score: r.score, priority: 'ai', reasoning: r.reasoning, indicators: r.indicators ?? {} }
                     }
                 }
-                onAnalysisUpdate(patient.simpl_id, updated)
+                setAiResults(newAi)
             }
         } catch (err) {
             console.error('[AI trigger] failed:', err)
@@ -430,8 +426,10 @@ function OverviewTab({ patient, dbAnalysis, onAnalysisUpdate }: {
         }
     }
 
+    const mergedAnalysis = { ...dbAnalysis, ...aiResults }
+
     const visibleCards = riskTypes
-        .map(t => ({ type: t, rule: dbAnalysis[t] ?? null, ai: dbAnalysis[`ai_${t}`] ?? null }))
+        .map(t => ({ type: t, rule: mergedAnalysis[t] ?? null, ai: mergedAnalysis[`ai_${t}`] ?? null }))
         .filter(c => {
             if (!c.rule && !c.ai) return false
             const sev = dbSeverityToSeverity(c.rule?.severity ?? c.ai?.severity)
@@ -471,7 +469,7 @@ function OverviewTab({ patient, dbAnalysis, onAnalysisUpdate }: {
 
 // ─── Inline detail panel ─────────────────────────────────────────────────────
 
-function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResources, onFetchResource, onCloseResource, onAnalysisUpdate, colSpan }: {
+function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResources, onFetchResource, onCloseResource, colSpan }: {
     patient: PatientSummary
     labs: Record<string, LabValue>
     labHistory: Record<string, unknown> | null
@@ -479,7 +477,6 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
     openResources: Record<string, ResourceState>
     onFetchResource: (simplId: string, resource: string) => void
     onCloseResource: (resource: string) => void
-    onAnalysisUpdate: (simplId: string, updated: Record<string, DbAnalysis | null>) => void
     colSpan: number
 }) {
     const panelRef = useRef<HTMLTableRowElement>(null)
@@ -549,7 +546,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                     <div className="max-h-[400px] overflow-y-auto">
                         {/* Overview tab */}
                         {activeTab === "overview" && (
-                            <OverviewTab patient={patient} dbAnalysis={dbAnalysis ?? {}} onAnalysisUpdate={onAnalysisUpdate} />
+                            <OverviewTab patient={patient} dbAnalysis={dbAnalysis ?? {}} />
                         )}
 
                         {/* Labs tab */}
@@ -690,12 +687,6 @@ function PatientsView() {
 
     const closeResource = useCallback((resource: string) => {
         setOpenResources(prev => { const n = { ...prev }; delete n[resource]; return n })
-    }, [])
-
-    const updatePatientAnalysis = useCallback((simplId: string, updated: Record<string, DbAnalysis | null>) => {
-        setPatients(prev => prev.map(p =>
-            p.simpl_id === simplId ? { ...p, db_analysis: updated } : p
-        ))
     }, [])
 
     // Determine severity — prefer DB analysis, fall back to client-side
@@ -1024,7 +1015,6 @@ function PatientsView() {
                                                 openResources={openResources}
                                                 onFetchResource={fetchResource}
                                                 onCloseResource={closeResource}
-                                                onAnalysisUpdate={updatePatientAnalysis}
                                                 colSpan={COL_SPAN}
                                             />
                                         )}
