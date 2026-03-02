@@ -49,6 +49,7 @@ interface PatientSummary {
     admit_date?: string
     days_in_facility?: number
     last_synced_at?: string
+    last_lab_date?: string | null
     // DB pre-computed analysis (5 rule-based + 5 AI modules)
     db_analysis?: Record<string, DbAnalysis | null>
     combined_urgency?: number
@@ -722,7 +723,7 @@ function PatientsView() {
     const [labHistoryLoading, setLabHistoryLoading] = useState(false)
     const [openResources, setOpenResources] = useState<Record<string, ResourceState>>({})
     const [searchQuery, setSearchQuery] = useState("")
-    const [activeFilter, setActiveFilter] = useState<FilterType>("all")
+    const [activeFilter, setActiveFilter] = useState<FilterType>("active")
     const [sortBy, setSortBy] = useState<SortType>("urgency")
     const [showSortMenu, setShowSortMenu] = useState(false)
 
@@ -824,18 +825,30 @@ function PatientsView() {
         return (sevMap[a.severity] ?? 0) >= (sevMap[minSev] ?? 1)
     }
 
+    // Filter counts: severity filters show ONLY that severity, not higher
+    const sevMatchOnly = (a: AnalyzedPatient, sev: Severity) => a.effectiveSeverity === sev && isActive(a.patient)
+    // Infusion/transfusion filters: critical or high only (action needed)
+    const needsInfusion = (a: AnalyzedPatient) => {
+        const s = a.patient.db_analysis?.infusion?.severity
+        return isActive(a.patient) && (s === 'critical' || s === 'high')
+    }
+    const needsTransfusion = (a: AnalyzedPatient) => {
+        const s = a.patient.db_analysis?.transfusion?.severity
+        return isActive(a.patient) && (s === 'critical' || s === 'high')
+    }
+
     const counts: Record<FilterType, number> = {
         all: analyzed.length,
         active: analyzed.filter(a => isActive(a.patient)).length,
-        critical: analyzed.filter(a => a.effectiveSeverity === "critical" && isActive(a.patient)).length,
-        high: analyzed.filter(a => a.effectiveSeverity === "high" && isActive(a.patient)).length,
-        medium: analyzed.filter(a => a.effectiveSeverity === "medium" && isActive(a.patient)).length,
-        low: analyzed.filter(a => a.effectiveSeverity === "low" && isActive(a.patient)).length,
-        infusion: analyzed.filter(a => a.inf.priority !== "none" && isActive(a.patient)).length,
-        transfusion: analyzed.filter(a => a.tran.priority !== "none" && isActive(a.patient)).length,
-        foley: analyzed.filter(a => hasPrediction(a.patient, "foley_risk") && isActive(a.patient)).length,
-        gtube: analyzed.filter(a => hasPrediction(a.patient, "gtube_risk") && isActive(a.patient)).length,
-        mtn: analyzed.filter(a => hasPrediction(a.patient, "mtn_risk") && isActive(a.patient)).length,
+        critical: analyzed.filter(a => sevMatchOnly(a, "critical")).length,
+        high: analyzed.filter(a => sevMatchOnly(a, "high")).length,
+        medium: analyzed.filter(a => sevMatchOnly(a, "medium")).length,
+        low: analyzed.filter(a => sevMatchOnly(a, "low")).length,
+        infusion: analyzed.filter(needsInfusion).length,
+        transfusion: analyzed.filter(needsTransfusion).length,
+        foley: analyzed.filter(a => hasPrediction(a.patient, "foley_risk", "high") && isActive(a.patient)).length,
+        gtube: analyzed.filter(a => hasPrediction(a.patient, "gtube_risk", "high") && isActive(a.patient)).length,
+        mtn: analyzed.filter(a => hasPrediction(a.patient, "mtn_risk", "high") && isActive(a.patient)).length,
         "no-labs": analyzed.filter(a => !a.hasLabs && isActive(a.patient)).length,
         discharged: analyzed.filter(a => !isActive(a.patient)).length,
     }
@@ -853,14 +866,14 @@ function PatientsView() {
     const filtered = searched.filter(a => {
         switch (activeFilter) {
             case "active":      return isActive(a.patient)
-            case "critical":    return a.effectiveSeverity === "critical" && isActive(a.patient)
-            case "high":        return a.effectiveSeverity === "high" && isActive(a.patient)
-            case "medium":      return a.effectiveSeverity === "medium" && isActive(a.patient)
-            case "low":         return a.effectiveSeverity === "low" && isActive(a.patient)
-            case "infusion":    return a.inf.priority !== "none" && isActive(a.patient)
-            case "transfusion": return a.tran.priority !== "none" && isActive(a.patient)
-            case "foley":       return hasPrediction(a.patient, "foley_risk") && isActive(a.patient)
-            case "gtube":       return hasPrediction(a.patient, "gtube_risk") && isActive(a.patient)
+            case "critical":    return sevMatchOnly(a, "critical")
+            case "high":        return sevMatchOnly(a, "high")
+            case "medium":      return sevMatchOnly(a, "medium")
+            case "low":         return sevMatchOnly(a, "low")
+            case "infusion":    return needsInfusion(a)
+            case "transfusion": return needsTransfusion(a)
+            case "foley":       return hasPrediction(a.patient, "foley_risk", "high") && isActive(a.patient)
+            case "gtube":       return hasPrediction(a.patient, "gtube_risk", "high") && isActive(a.patient)
             case "mtn":         return hasPrediction(a.patient, "mtn_risk") && isActive(a.patient)
             case "no-labs":     return !a.hasLabs && isActive(a.patient)
             case "discharged":  return !isActive(a.patient)
@@ -1008,6 +1021,7 @@ function PatientsView() {
                                 <SortTh label="Hgb" sortAsc="hgb-low" current={sortBy} onSort={setSortBy} />
                                 <SortTh label="Alb" sortAsc="alb-low" current={sortBy} onSort={setSortBy} />
                                 <th className="text-center px-2 py-2.5 hidden lg:table-cell">Hct</th>
+                                <th className="text-center px-2 py-2.5 hidden xl:table-cell">Last Lab</th>
                                 <th className="text-left px-2 py-2.5 hidden md:table-cell">Flags</th>
                                 <th className="w-6 pr-3"></th>
                             </tr>
@@ -1074,28 +1088,29 @@ function PatientsView() {
                                             <td className="px-2 py-2.5 text-center">{active ? <LabPill value={hgb} low={11} high={16} /> : <span className="text-slate-200 text-xs">—</span>}</td>
                                             <td className="px-2 py-2.5 text-center">{active ? <LabPill value={alb} low={3.4} high={5} /> : <span className="text-slate-200 text-xs">—</span>}</td>
                                             <td className="px-2 py-2.5 text-center hidden lg:table-cell">{active ? <LabPill value={hct} low={34} high={45} unit="%" /> : <span className="text-slate-200 text-xs">—</span>}</td>
+                                            <td className="px-2 py-2.5 text-center hidden xl:table-cell">
+                                                {patient.last_lab_date
+                                                    ? <span className="text-[10px] text-slate-500 tabular-nums">{new Date(patient.last_lab_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                                                    : <span className="text-slate-300 text-[9px]">—</span>}
+                                            </td>
                                             <td className="px-2 py-2.5 hidden md:table-cell">
-                                                {active && <div className="flex gap-1 flex-wrap">
-                                                    {tran.priority !== "none" && (
-                                                        <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${tran.priority === "critical" || tran.priority === "high" ? "bg-rose-600 text-white" : "bg-rose-100 text-rose-700"}`}>
-                                                            {tran.priority === "critical" ? "TRANSFUSE" : "Transfusion"}
-                                                        </span>
-                                                    )}
-                                                    {inf.priority !== "none" && (
-                                                        <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${inf.priority === "high" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>
-                                                            {inf.priority === "high" ? "INFUSE" : "Infusion"}
-                                                        </span>
-                                                    )}
-                                                    {patient.db_analysis?.foley_risk && dbSeverityToSeverity(patient.db_analysis.foley_risk.severity) !== "normal" && (
-                                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-purple-100 text-purple-700">Foley</span>
-                                                    )}
-                                                    {patient.db_analysis?.gtube_risk && dbSeverityToSeverity(patient.db_analysis.gtube_risk.severity) !== "normal" && (
-                                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-orange-100 text-orange-700">G-Tube</span>
-                                                    )}
-                                                    {patient.db_analysis?.mtn_risk && dbSeverityToSeverity(patient.db_analysis.mtn_risk.severity) !== "normal" && (
-                                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-lime-100 text-lime-700">MTN</span>
-                                                    )}
-                                                </div>}
+                                                {active && (() => {
+                                                    const infSev = dbSeverityToSeverity(patient.db_analysis?.infusion?.severity)
+                                                    const traSev = dbSeverityToSeverity(patient.db_analysis?.transfusion?.severity)
+                                                    const folaySev = dbSeverityToSeverity(patient.db_analysis?.foley_risk?.severity)
+                                                    const gtubSev = dbSeverityToSeverity(patient.db_analysis?.gtube_risk?.severity)
+                                                    const mtnSev = dbSeverityToSeverity(patient.db_analysis?.mtn_risk?.severity)
+                                                    const urgent = (s: Severity) => s === "critical" || s === "high"
+                                                    return (
+                                                        <div className="flex gap-1 flex-wrap">
+                                                            {urgent(traSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${traSev === "critical" ? "bg-rose-600 text-white" : "bg-rose-100 text-rose-700"}`}>Transfusion</span>}
+                                                            {urgent(infSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${infSev === "critical" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>Infusion</span>}
+                                                            {urgent(folaySev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${folaySev === "critical" ? "bg-purple-600 text-white" : "bg-purple-100 text-purple-700"}`}>Foley</span>}
+                                                            {urgent(gtubSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${gtubSev === "critical" ? "bg-orange-600 text-white" : "bg-orange-100 text-orange-700"}`}>G-Tube</span>}
+                                                            {urgent(mtnSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${mtnSev === "critical" ? "bg-lime-700 text-white" : "bg-lime-100 text-lime-700"}`}>MTN</span>}
+                                                        </div>
+                                                    )
+                                                })()}
                                             </td>
                                             <td className="pr-3 py-2.5">{isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-teal-500" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}</td>
                                         </tr>

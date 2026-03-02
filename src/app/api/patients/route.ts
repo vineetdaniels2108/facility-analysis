@@ -22,41 +22,46 @@ interface AnalysisRow {
     key_indicators: Record<string, unknown>;
 }
 
-async function getLatestLabsForPatients(simplIds: string[]): Promise<Record<string, Record<string, LabValue>>> {
-    if (simplIds.length === 0) return {};
+async function getLatestLabsForPatients(simplIds: string[]): Promise<{
+    labs: Record<string, Record<string, LabValue>>;
+    lastLabDate: Record<string, string>;
+}> {
+    if (simplIds.length === 0) return { labs: {}, lastLabDate: {} };
 
-    const res = await query<{
-        simpl_id: string;
-        observation_name: string;
-        value_numeric: string;
-        unit: string;
-        reference_range: string;
-        effective_at: string;
-    }>(
-        `SELECT DISTINCT ON (simpl_id, observation_name)
-            simpl_id, observation_name, value_numeric, unit, reference_range,
-            effective_at::text
-         FROM lab_results
-         WHERE simpl_id = ANY($1)
-           AND observation_name = ANY($2)
-           AND value_numeric IS NOT NULL
-         ORDER BY simpl_id, observation_name, effective_at DESC`,
-        [simplIds, KEY_LAB_NAMES]
-    );
+    const [keyLabRes, lastDateRes] = await Promise.all([
+        query<{ simpl_id: string; observation_name: string; value_numeric: string; unit: string; reference_range: string; effective_at: string; }>(
+            `SELECT DISTINCT ON (simpl_id, observation_name)
+                simpl_id, observation_name, value_numeric, unit, reference_range, effective_at::text
+             FROM lab_results
+             WHERE simpl_id = ANY($1) AND observation_name = ANY($2) AND value_numeric IS NOT NULL
+             ORDER BY simpl_id, observation_name, effective_at DESC`,
+            [simplIds, KEY_LAB_NAMES]
+        ),
+        query<{ simpl_id: string; last_lab_date: string }>(
+            `SELECT simpl_id, MAX(effective_at)::text AS last_lab_date
+             FROM lab_results WHERE simpl_id = ANY($1) AND value_numeric IS NOT NULL
+             GROUP BY simpl_id`,
+            [simplIds]
+        ),
+    ]);
 
-    const result: Record<string, Record<string, LabValue>> = {};
-    for (const row of res.rows) {
+    const labs: Record<string, Record<string, LabValue>> = {};
+    for (const row of keyLabRes.rows) {
         const val = parseFloat(String(row.value_numeric));
         if (isNaN(val)) continue;
-        if (!result[row.simpl_id]) result[row.simpl_id] = {};
-        result[row.simpl_id][row.observation_name] = {
-            date: row.effective_at,
-            value: val,
-            unit: row.unit ?? '',
-            referenceRange: row.reference_range ?? '',
+        if (!labs[row.simpl_id]) labs[row.simpl_id] = {};
+        labs[row.simpl_id][row.observation_name] = {
+            date: row.effective_at, value: val,
+            unit: row.unit ?? '', referenceRange: row.reference_range ?? '',
         };
     }
-    return result;
+
+    const lastLabDate: Record<string, string> = {};
+    for (const row of lastDateRes.rows) {
+        lastLabDate[row.simpl_id] = row.last_lab_date;
+    }
+
+    return { labs, lastLabDate };
 }
 
 async function getAnalysisForPatients(simplIds: string[]): Promise<Record<string, Record<string, AnalysisRow>>> {
@@ -124,7 +129,7 @@ async function getPatientsFromDb(facilityFilter?: string) {
     );
 
     const simplIds = res.rows.map(r => r.simpl_id);
-    const [labsMap, analysisMap] = await Promise.all([
+    const [{ labs: labsMap, lastLabDate }, analysisMap] = await Promise.all([
         getLatestLabsForPatients(simplIds),
         getAnalysisForPatients(simplIds),
     ]);
@@ -169,6 +174,7 @@ async function getPatientsFromDb(facilityFilter?: string) {
             days_in_facility: daysInFacility,
             last_synced_at: r.last_synced_at ?? null,
             labs_latest: labsMap[r.simpl_id] ?? {},
+            last_lab_date: lastLabDate[r.simpl_id] ?? null,
             db_analysis: dbAnalysis,
             combined_urgency: combinedUrgency,
             data_source: 'live_db',

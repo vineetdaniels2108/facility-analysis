@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback, Suspense } from "react"
-import { Building2, ChevronDown, User, LogOut, Bell, Loader2 } from "lucide-react"
+import { useState, useEffect, useCallback, Suspense, useRef } from "react"
+import { Building2, ChevronDown, User, LogOut, Bell, Loader2, AlertTriangle, Droplets, FlaskConical, Syringe, Utensils, Apple } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
@@ -93,6 +93,95 @@ function FacilitySelector() {
     );
 }
 
+const TYPE_ICON: Record<string, React.ReactNode> = {
+    infusion: <Droplets className="w-3 h-3 text-blue-500" />,
+    transfusion: <FlaskConical className="w-3 h-3 text-rose-500" />,
+    foley_risk: <Syringe className="w-3 h-3 text-purple-500" />,
+    gtube_risk: <Utensils className="w-3 h-3 text-orange-500" />,
+    mtn_risk: <Apple className="w-3 h-3 text-lime-600" />,
+}
+
+function NotificationBell() {
+    const [open, setOpen] = useState(false)
+    const [notifications, setNotifications] = useState<Array<{
+        id: string; patientName: string; facilityName: string;
+        type: string; severity: string; message: string; time: string;
+    }>>([])
+    const [unread, setUnread] = useState(0)
+    const [loading, setLoading] = useState(true)
+    const ref = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        fetch('/api/notifications')
+            .then(r => r.json())
+            .then(d => { setNotifications(d.notifications ?? []); setUnread(d.unread ?? 0); setLoading(false); })
+            .catch(() => setLoading(false))
+    }, [])
+
+    useEffect(() => {
+        function handleClick(e: MouseEvent) {
+            if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+        }
+        if (open) document.addEventListener('mousedown', handleClick)
+        return () => document.removeEventListener('mousedown', handleClick)
+    }, [open])
+
+    const fmtFac = (name: string) => name.replace("Rehabilitation and Healthcare", "Rehab").replace(" Center", "")
+
+    return (
+        <div className="relative" ref={ref}>
+            <button onClick={() => setOpen(v => !v)}
+                className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors relative"
+                title="Notifications">
+                <Bell className="w-4 h-4" />
+                {unread > 0 && (
+                    <span className="absolute top-1 right-1 min-w-[14px] h-[14px] flex items-center justify-center bg-red-500 text-white text-[8px] font-bold rounded-full border-2 border-white px-0.5">
+                        {unread > 9 ? '9+' : unread}
+                    </span>
+                )}
+            </button>
+
+            {open && (
+                <div className="absolute right-0 top-full mt-2 w-96 bg-white rounded-2xl shadow-2xl shadow-slate-200/80 border border-slate-100 z-50 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-bold text-slate-800">Alerts</p>
+                            <p className="text-[10px] text-slate-400">Critical and high risk detected in last 24h</p>
+                        </div>
+                        {unread > 0 && <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold rounded-full border border-red-100">{unread} new</span>}
+                    </div>
+                    <div className="max-h-96 overflow-y-auto divide-y divide-slate-50">
+                        {loading && <div className="py-6 text-center text-slate-400 text-xs"><Loader2 className="w-4 h-4 animate-spin inline mr-1" />Loading...</div>}
+                        {!loading && notifications.length === 0 && <div className="py-8 text-center text-sm text-slate-400">No new alerts</div>}
+                        {notifications.map(n => (
+                            <div key={n.id} className="px-4 py-3 hover:bg-slate-50/60 transition-colors">
+                                <div className="flex items-start gap-2.5">
+                                    <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${n.severity === 'critical' ? 'bg-red-100' : 'bg-amber-100'}`}>
+                                        {TYPE_ICON[n.type] ?? <AlertTriangle className="w-3 h-3 text-red-500" />}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-xs font-bold text-slate-800 truncate">{n.patientName}</p>
+                                            <span className={`shrink-0 px-1 py-0.5 text-[8px] font-bold rounded ${n.severity === 'critical' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{n.severity.toUpperCase()}</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400">{fmtFac(n.facilityName)}</p>
+                                        <p className="text-[10px] text-slate-600 mt-0.5 leading-relaxed line-clamp-2">{n.message}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {notifications.length > 0 && (
+                        <div className="px-4 py-2.5 border-t border-slate-100 text-center">
+                            <p className="text-[10px] text-slate-400">Alerts refresh after each nightly sync</p>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    )
+}
+
 function NavbarLogout() {
     const router = useRouter();
     const supabase = createClient();
@@ -133,10 +222,7 @@ export function TopNavbar() {
                         <User className="w-4 h-4" />
                     </Link>
 
-                    <button className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors relative" title="Notifications">
-                        <Bell className="w-4 h-4" />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
+                    <NotificationBell />
 
                     <div className="h-6 w-px bg-slate-200 mx-1" />
 
