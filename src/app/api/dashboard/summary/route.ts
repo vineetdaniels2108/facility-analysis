@@ -63,8 +63,8 @@ export async function GET() {
                 AND a.severity IN ('critical', 'high') AND a.analysis_type NOT LIKE 'ai_%'
             WHERE (p.patient_status = 'Current' OR p.patient_status IS NULL)
             GROUP BY p.simpl_id, p.first_name, p.last_name, p.room, f.name, f.fac_id
-            ORDER BY MAX(CASE a.severity WHEN 'critical' THEN 4 WHEN 'high' THEN 3 ELSE 0 END) DESC
-            LIMIT 20
+            ORDER BY MAX(CASE a.severity WHEN 'critical' THEN 4 WHEN 'high' THEN 3 ELSE 0 END) DESC,
+                     MAX(a.score) DESC
         `);
 
         return NextResponse.json({

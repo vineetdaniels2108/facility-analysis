@@ -43,12 +43,16 @@ export async function GET(req: NextRequest) {
         }
     }
 
-    // Facility batch mode
+    // Facility batch mode — unanalyzed/stale patients first
     const patientsRes = await query<{ simpl_id: string; first_name: string; last_name: string }>(
         `SELECT p.simpl_id, p.first_name, p.last_name
          FROM patients p
          WHERE p.fac_id = $1
          AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+         ORDER BY (
+             SELECT MAX(a.created_at) FROM analysis_results a
+             WHERE a.simpl_id = p.simpl_id AND a.is_current = TRUE
+         ) ASC NULLS FIRST
          LIMIT $2`,
         [facId, limit]
     );
