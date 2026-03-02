@@ -13,7 +13,9 @@ export const infusionModule: AnalysisModule = {
         let score = 0;
         const reasons: string[] = [];
 
-        // ── Albumin ─────────────────────────────────────────────────────────
+        // ── Albumin (primary driver) ────────────────────────────────────────
+        // Normal range: 3.5-5.0 g/dL. Clinical malnutrition thresholds:
+        // <3.5 mild, <3.0 moderate, <2.5 severe, <2.0 critical.
         const alb = ctx.labs['ALB'];
         if (alb) {
             indicators.albumin = { value: alb.value, unit: alb.unit, trend: alb.trend };
@@ -24,12 +26,14 @@ export const infusionModule: AnalysisModule = {
             } else if (alb.value < 3.0) {
                 score += 40; reasons.push(`Albumin low: ${alb.value} g/dL`);
             } else if (alb.value < 3.5) {
-                score += 15; reasons.push(`Albumin borderline: ${alb.value} g/dL`);
+                score += 10; reasons.push(`Albumin borderline: ${alb.value} g/dL`);
             }
-            if (alb.trend === 'falling') { score += 20; reasons.push('Albumin trending down'); }
+            if (alb.trend === 'falling' && alb.value < 3.5) {
+                score += 20; reasons.push('Albumin trending down');
+            }
         }
 
-        // ── Prealbumin ───────────────────────────────────────────────────────
+        // ── Prealbumin (short-term nutritional marker) ──────────────────────
         const prealb = ctx.labs['PREALB'];
         if (prealb) {
             indicators.prealbumin = { value: prealb.value, unit: prealb.unit, trend: prealb.trend };
@@ -38,15 +42,17 @@ export const infusionModule: AnalysisModule = {
             } else if (prealb.value < 10) {
                 score += 50; reasons.push(`Prealbumin severely low: ${prealb.value} mg/dL`);
             } else if (prealb.value < 15) {
-                score += 25; reasons.push(`Prealbumin low: ${prealb.value} mg/dL`);
+                score += 20; reasons.push(`Prealbumin low: ${prealb.value} mg/dL`);
             }
-            if (prealb.trend === 'falling') { score += 15; reasons.push('Prealbumin trending down'); }
+            if (prealb.trend === 'falling' && prealb.value < 15) {
+                score += 15; reasons.push('Prealbumin trending down');
+            }
         }
 
         // ── Total Protein ────────────────────────────────────────────────────
         const tprot = ctx.labs['TPROT'];
         if (tprot && tprot.value < 5.5) {
-            score += 30;
+            score += 25;
             reasons.push(`Total protein low: ${tprot.value} g/dL`);
             indicators.totalProtein = tprot.value;
         }
@@ -56,7 +62,7 @@ export const infusionModule: AnalysisModule = {
             MALNUTRITION_CODES.some(m => c.startsWith(m)) || WASTING_CODES.some(m => c.startsWith(m))
         );
         if (malnutritionDx.length > 0) {
-            score += 30;
+            score += 20;
             reasons.push(`Active malnutrition diagnosis: ${malnutritionDx.join(', ')}`);
             indicators.malnutritionCodes = malnutritionDx;
         }
@@ -67,24 +73,42 @@ export const infusionModule: AnalysisModule = {
             || f.includes('supplement') || f.includes('malnutrition')
         );
         if (nutritionFocus) {
-            score += 15;
+            score += 10;
             reasons.push('Active nutrition/fluid care plan focus');
             indicators.carePlanFlag = nutritionFocus.slice(0, 80);
         }
 
-        // ── Determine severity ───────────────────────────────────────────────
+        // ── Determine severity (before gate) ────────────────────────────────
         let severity: Severity;
         let priority: string;
         if (score >= 100) {
             severity = 'critical'; priority = 'infuse';
         } else if (score >= 60) {
-            severity = 'high'; priority = 'infuse';
+            severity = 'high'; priority = 'evaluate for infusion';
         } else if (score >= 30) {
-            severity = 'medium'; priority = 'monitor';
+            severity = 'medium'; priority = 'monitor closely';
         } else if (score > 0) {
             severity = 'low'; priority = 'monitor';
         } else {
             severity = 'normal'; priority = 'none';
+        }
+
+        // ── Lab gate ────────────────────────────────────────────────────────
+        // Infusion is a lab-driven decision. If primary nutritional markers
+        // (albumin + prealbumin) are adequate, secondary factors (diagnoses,
+        // care plans) alone cannot push a patient to high/critical.
+        const albNormal = alb && alb.value >= 3.5;
+        const prealbNormal = !prealb || prealb.value >= 15;
+
+        if (albNormal && prealbNormal && severity !== 'normal') {
+            severity = 'low';
+            priority = 'monitor';
+            reasons.push('Albumin adequate (≥3.5) — infusion not indicated');
+        } else if (alb && alb.value >= 3.0 && prealbNormal) {
+            if (severity === 'critical' || severity === 'high') {
+                severity = 'medium';
+                priority = 'monitor closely';
+            }
         }
 
         return {

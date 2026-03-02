@@ -43,18 +43,29 @@ export async function GET(req: NextRequest) {
         }
     }
 
-    // Facility batch mode — unanalyzed/stale patients first
+    // Batch mode — all facilities (facId=0) or single facility
+    const allFacilities = facId === 0;
     const patientsRes = await query<{ simpl_id: string; first_name: string; last_name: string }>(
-        `SELECT p.simpl_id, p.first_name, p.last_name
-         FROM patients p
-         WHERE p.fac_id = $1
-         AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
-         ORDER BY (
-             SELECT MAX(a.created_at) FROM analysis_results a
-             WHERE a.simpl_id = p.simpl_id AND a.is_current = TRUE
-         ) ASC NULLS FIRST
-         LIMIT $2`,
-        [facId, limit]
+        allFacilities
+            ? `SELECT p.simpl_id, p.first_name, p.last_name
+               FROM patients p
+               WHERE (p.patient_status = 'Current' OR p.patient_status IS NULL)
+               AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+               ORDER BY (
+                   SELECT MAX(a.computed_at) FROM analysis_results a
+                   WHERE a.simpl_id = p.simpl_id AND a.is_current = TRUE
+               ) ASC NULLS FIRST
+               LIMIT $1`
+            : `SELECT p.simpl_id, p.first_name, p.last_name
+               FROM patients p
+               WHERE p.fac_id = $2
+               AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+               ORDER BY (
+                   SELECT MAX(a.computed_at) FROM analysis_results a
+                   WHERE a.simpl_id = p.simpl_id AND a.is_current = TRUE
+               ) ASC NULLS FIRST
+               LIMIT $1`,
+        allFacilities ? [limit] : [limit, facId]
     );
 
     const patients = patientsRes.rows;

@@ -12,7 +12,9 @@ export const transfusionModule: AnalysisModule = {
         let score = 0;
         const reasons: string[] = [];
 
-        // ── Hemoglobin ───────────────────────────────────────────────────────
+        // ── Hemoglobin (primary driver — AABB guidelines) ────────────────────
+        // Restrictive: <7 strongly indicated, <8 for cardiac/symptomatic,
+        // 8-9 moderate concern, 9-10 mild. >=10 is adequate.
         const hgb = ctx.labs['HGB'];
         if (hgb) {
             indicators.hemoglobin = { value: hgb.value, unit: hgb.unit, trend: hgb.trend };
@@ -23,9 +25,11 @@ export const transfusionModule: AnalysisModule = {
             } else if (hgb.value < 9.0) {
                 score += 60; reasons.push(`Hemoglobin low: ${hgb.value} g/dL`);
             } else if (hgb.value < 10.0) {
-                score += 25; reasons.push(`Hemoglobin borderline: ${hgb.value} g/dL`);
+                score += 20; reasons.push(`Hemoglobin mildly low: ${hgb.value} g/dL`);
             }
-            if (hgb.trend === 'falling') { score += 30; reasons.push('Hemoglobin trending downward'); }
+            if (hgb.trend === 'falling' && hgb.value < 10.0) {
+                score += 30; reasons.push('Hemoglobin trending downward');
+            }
         }
 
         // ── Hematocrit ───────────────────────────────────────────────────────
@@ -44,7 +48,7 @@ export const transfusionModule: AnalysisModule = {
         // ── RBC ──────────────────────────────────────────────────────────────
         const rbc = ctx.labs['RBC'];
         if (rbc && rbc.refLow && rbc.value < rbc.refLow) {
-            score += 20;
+            score += 15;
             reasons.push(`RBC below reference range: ${rbc.value}`);
             indicators.rbc = rbc.value;
         }
@@ -54,9 +58,9 @@ export const transfusionModule: AnalysisModule = {
         if (plt) {
             indicators.platelets = plt.value;
             if (plt.value < 50) {
-                score += 40; reasons.push(`Platelets critically low: ${plt.value} K/uL — bleeding risk`);
+                score += 30; reasons.push(`Platelets critically low: ${plt.value} K/uL — bleeding risk`);
             } else if (plt.value < 100) {
-                score += 20; reasons.push(`Platelets low: ${plt.value} K/uL`);
+                score += 15; reasons.push(`Platelets low: ${plt.value} K/uL`);
             }
         }
 
@@ -65,7 +69,7 @@ export const transfusionModule: AnalysisModule = {
             ANEMIA_CODES.some(m => c.startsWith(m))
         );
         if (anemiaDx.length > 0) {
-            score += 25;
+            score += 15;
             reasons.push(`Active anemia diagnosis: ${anemiaDx.join(', ')}`);
             indicators.anemiaCodes = anemiaDx;
         }
@@ -75,7 +79,7 @@ export const transfusionModule: AnalysisModule = {
             BLEEDING_CODES.some(m => c.startsWith(m))
         );
         if (bleedingDx.length > 0) {
-            score += 30;
+            score += 20;
             reasons.push(`Active bleeding diagnosis: ${bleedingDx.join(', ')}`);
             indicators.bleedingCodes = bleedingDx;
         }
@@ -85,23 +89,38 @@ export const transfusionModule: AnalysisModule = {
             f.includes('anemia') || f.includes('transfusion') || f.includes('bleeding')
         );
         if (bloodFocus) {
-            score += 10;
+            score += 5;
             reasons.push('Active anemia/transfusion care plan focus');
         }
 
-        // ── Severity ──────────────────────────────────────────────────────────
+        // ── Severity (before gate) ──────────────────────────────────────────
         let severity: Severity;
         let priority: string;
         if (score >= 150) {
             severity = 'critical'; priority = 'transfuse';
         } else if (score >= 80) {
-            severity = 'high'; priority = 'transfuse';
+            severity = 'high'; priority = 'evaluate for transfusion';
         } else if (score >= 40) {
-            severity = 'medium'; priority = 'monitor';
+            severity = 'medium'; priority = 'monitor closely';
         } else if (score > 0) {
             severity = 'low'; priority = 'monitor';
         } else {
             severity = 'normal'; priority = 'none';
+        }
+
+        // ── Hemoglobin gate ─────────────────────────────────────────────────
+        // If Hgb is available and adequate, secondary factors (diagnoses,
+        // care plans) alone cannot push a patient into high/critical for
+        // transfusion. Transfusion is a lab-driven decision.
+        if (hgb) {
+            if (hgb.value >= 10.0 && severity !== 'normal') {
+                severity = 'low';
+                priority = 'monitor';
+                reasons.push('Hemoglobin adequate (≥10) — transfusion not indicated');
+            } else if (hgb.value >= 9.0 && (severity === 'critical' || severity === 'high')) {
+                severity = 'medium';
+                priority = 'monitor closely';
+            }
         }
 
         return {

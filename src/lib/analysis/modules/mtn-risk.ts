@@ -1,10 +1,18 @@
-import { AnalysisModule, AnalysisResult, PatientContext } from '../types';
+import { AnalysisModule, AnalysisResult, PatientContext, Severity } from '../types';
 
 // MTN = Medical Therapeutic Nutrition (specialized IV/enteral nutrition intervention)
 const MALNUTRITION_CODES = ['E40', 'E41', 'E42', 'E43', 'E44', 'E46'];
 const WASTING_CODES = ['M62.50', 'M62.51', 'M62.59', 'R64'];
 const WOUND_CODES = ['L89', 'L97', 'L98.4'];
-const CANCER_CODES = ['C'];
+// Only cancers with significant metabolic/nutritional impact
+const CANCER_CODES = [
+    'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', // GI tract
+    'C22', 'C23', 'C24', 'C25', 'C26',                 // hepatobiliary/pancreatic
+    'C34',                                               // lung
+    'C76', 'C78', 'C79', 'C80',                         // metastatic/advanced
+    'C81', 'C82', 'C83', 'C84', 'C85', 'C86',          // lymphomas
+    'C90', 'C91', 'C92', 'C93', 'C94', 'C95', 'C96',   // leukemias/myeloma
+];
 const CKD_CODES = ['N18'];
 const LIVER_CODES = ['K70', 'K71', 'K72', 'K73', 'K74'];
 const CARDIAC_CODES = ['I50'];
@@ -21,7 +29,7 @@ export const mtnRiskModule: AnalysisModule = {
 
         const icd10s = ctx.activeIcd10Codes;
 
-        // ── Albumin trend (most predictive for MTN) ───────────────────────────
+        // ── Albumin (most predictive for MTN) ─────────────────────────────────
         const alb = ctx.labs['ALB'];
         if (alb) {
             indicators.albumin = { value: alb.value, trend: alb.trend };
@@ -32,7 +40,9 @@ export const mtnRiskModule: AnalysisModule = {
             } else if (alb.value < 3.0) {
                 score += 35; reasons.push(`Albumin low: ${alb.value} g/dL`);
             }
-            if (alb.trend === 'falling') { score += 25; reasons.push('Albumin declining — suggests ongoing nutritional failure'); }
+            if (alb.trend === 'falling' && alb.value < 3.5) {
+                score += 25; reasons.push('Albumin declining — suggests ongoing nutritional failure');
+            }
         }
 
         // ── Prealbumin ────────────────────────────────────────────────────────
@@ -46,49 +56,51 @@ export const mtnRiskModule: AnalysisModule = {
             } else if (prealb.value < 15) {
                 score += 20; reasons.push(`Prealbumin low: ${prealb.value} mg/dL`);
             }
-            if (prealb.trend === 'falling') { score += 15; reasons.push('Prealbumin declining'); }
+            if (prealb.trend === 'falling' && prealb.value < 15) {
+                score += 15; reasons.push('Prealbumin declining');
+            }
         }
 
         // ── Malnutrition diagnoses ─────────────────────────────────────────────
         const malnDx = icd10s.filter(c => MALNUTRITION_CODES.some(m => c.startsWith(m)));
         if (malnDx.length > 0) {
-            score += 35; reasons.push(`Malnutrition diagnosis: ${malnDx.join(', ')}`);
+            score += 25; reasons.push(`Malnutrition diagnosis: ${malnDx.join(', ')}`);
             indicators.malnutritionCodes = malnDx;
         }
 
         // ── Muscle wasting ────────────────────────────────────────────────────
         if (icd10s.some(c => WASTING_CODES.some(m => c.startsWith(m)))) {
-            score += 30; reasons.push('Muscle wasting / cachexia diagnosis');
+            score += 25; reasons.push('Muscle wasting / cachexia diagnosis');
             indicators.wasting = true;
         }
 
         // ── Active pressure wounds (MTN accelerates healing) ──────────────────
         if (icd10s.some(c => WOUND_CODES.some(m => c.startsWith(m)))) {
-            score += 25; reasons.push('Active pressure ulcer/wound (nutritional support accelerates healing)');
+            score += 20; reasons.push('Active pressure ulcer/wound (nutritional support accelerates healing)');
             indicators.wounds = true;
         }
 
         // ── High-demand conditions (increase protein/calorie needs) ───────────
         if (icd10s.some(c => CANCER_CODES.some(m => c.startsWith(m)))) {
-            score += 30; reasons.push('Active cancer diagnosis (high metabolic demand)');
+            score += 25; reasons.push('Active high-demand cancer diagnosis');
             indicators.cancer = true;
         }
         if (icd10s.some(c => COPD_CODES.some(m => c.startsWith(m)))) {
-            score += 15; reasons.push('COPD (increased respiratory work increases calorie needs)');
+            score += 10; reasons.push('COPD (increased calorie needs)');
             indicators.copd = true;
         }
         if (icd10s.some(c => CARDIAC_CODES.some(m => c.startsWith(m)))) {
-            score += 15; reasons.push('Heart failure (cardiac cachexia risk)');
+            score += 10; reasons.push('Heart failure (cardiac cachexia risk)');
             indicators.heartFailure = true;
         }
 
         // ── CKD / Liver disease (specialized diet needs) ──────────────────────
         if (icd10s.some(c => CKD_CODES.some(m => c.startsWith(m)))) {
-            score += 20; reasons.push('CKD (specialized renal nutrition needed)');
+            score += 15; reasons.push('CKD (specialized renal nutrition needed)');
             indicators.ckd = true;
         }
         if (icd10s.some(c => LIVER_CODES.some(m => c.startsWith(m)))) {
-            score += 20; reasons.push('Liver disease (hepatic nutrition protocol)');
+            score += 15; reasons.push('Liver disease (hepatic nutrition protocol)');
             indicators.liverDisease = true;
         }
 
@@ -98,7 +110,7 @@ export const mtnRiskModule: AnalysisModule = {
             || f.includes('malnutrition') || f.includes('fluid deficit')
         );
         if (nutritionFocus) {
-            score += 15; reasons.push('Active nutrition care plan focus');
+            score += 10; reasons.push('Active nutrition care plan focus');
             indicators.nutritionCarePlan = nutritionFocus.slice(0, 80);
         }
 
@@ -112,11 +124,27 @@ export const mtnRiskModule: AnalysisModule = {
             else if (val >= 12) { score += 10; reasons.push(`Elevated nutritional risk score: ${val}`); }
         }
 
-        const severity = score >= 100 ? 'critical'
+        // ── Severity (before gate) ────────────────────────────────────────────
+        let severity: Severity = score >= 100 ? 'critical'
             : score >= 60 ? 'high'
             : score >= 30 ? 'medium'
             : score > 0 ? 'low'
             : 'normal';
+
+        // ── Lab gate ──────────────────────────────────────────────────────────
+        // If primary nutritional labs are adequate, chronic conditions alone
+        // don't warrant MTN — current management is working.
+        const albNormal = alb && alb.value >= 3.5;
+        const prealbNormal = !prealb || prealb.value >= 15;
+
+        if (albNormal && prealbNormal && severity !== 'normal') {
+            severity = 'low';
+            reasons.push('Nutritional labs adequate (ALB ≥3.5) — MTN not indicated');
+        } else if (alb && alb.value >= 3.0 && prealbNormal) {
+            if (severity === 'critical' || severity === 'high') {
+                severity = 'medium';
+            }
+        }
 
         return {
             analysisType: 'mtn_risk',

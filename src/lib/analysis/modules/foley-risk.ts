@@ -101,9 +101,9 @@ export const foleyRiskModule: AnalysisModule = {
             indicators.carePlanFlag = bladderFocus.slice(0, 80);
         }
 
-        const severity = score >= 100 ? 'critical'
-            : score >= 60 ? 'high'
-            : score >= 30 ? 'medium'
+        const severity = score >= 120 ? 'critical'
+            : score >= 75 ? 'high'
+            : score >= 35 ? 'medium'
             : score > 0 ? 'low'
             : 'normal';
 
