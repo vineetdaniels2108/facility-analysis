@@ -9,7 +9,7 @@ export default function LabTrendChart({ name, history, refRange }: {
 }) {
     const data = (history ?? [])
         .filter(h => h.date && h.value != null)
-        .map(h => ({ date: (h.date ?? '').slice(5), value: h.value, fullDate: h.date ?? '' }))
+        .map(h => ({ date: (h.date ?? '').slice(0, 10).slice(5), value: h.value, fullDate: (h.date ?? '').slice(0, 10) }))
 
     if (data.length === 0) return null
 
