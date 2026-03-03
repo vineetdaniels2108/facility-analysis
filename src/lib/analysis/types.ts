@@ -37,6 +37,15 @@ export interface PatientContext {
         painLevel?: { value: number; recordedAt: Date };
         weight?: { value: number; recordedAt: Date };
     };
+    // Structured clinical signals extracted from recent progress notes
+    noteSignals: NoteSignal[];
+}
+
+export interface NoteSignal {
+    category: 'fall' | 'swallowing' | 'nutrition' | 'bleeding' | 'catheter' | 'wound' | 'respiratory' | 'behavioral' | 'pain';
+    keyword: string;
+    snippet: string;       // short excerpt around the matched keyword
+    date: Date;
 }
 
 export interface AnalysisResult {

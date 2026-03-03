@@ -1,5 +1,52 @@
 import { query } from '@/lib/db/client';
-import { PatientContext, LabSnapshot } from './types';
+import { PatientContext, LabSnapshot, NoteSignal } from './types';
+
+const NOTE_SIGNAL_PATTERNS: { category: NoteSignal['category']; keywords: string[] }[] = [
+    { category: 'fall',       keywords: ['fall', 'fell', 'found on floor', 'unsteady gait'] },
+    { category: 'swallowing', keywords: ['difficulty swallowing', 'choking', 'aspiration', 'dysphagia', 'npo', 'speech therapy', 'peg tube', 'g-tube', 'gtube'] },
+    { category: 'nutrition',  keywords: ['weight loss', 'poor oral intake', 'refusing meals', 'poor appetite', 'malnutrition', 'calorie count', 'tube feed', 'tpn', 'parenteral nutrition', 'supplement', 'albumin infusion', 'dehydrat'] },
+    { category: 'bleeding',   keywords: ['transfusion', 'blood loss', 'gi bleed', 'melena', 'hematemesis', 'active bleeding', 'hemorrha', 'bloody stool', 'rectal bleeding'] },
+    { category: 'catheter',   keywords: ['foley', 'catheter', 'unable to void', 'urinary retention', 'straight cath', 'indwelling', 'suprapubic'] },
+    { category: 'wound',      keywords: ['pressure ulcer', 'pressure injury', 'wound', 'stage ii', 'stage iii', 'stage iv', 'unstageable', 'skin breakdown', 'wound vac'] },
+    { category: 'respiratory', keywords: ['shortness of breath', 'dyspnea', 'oxygen saturation', 'pneumonia', 'respiratory distress', 'suctioning'] },
+    { category: 'behavioral', keywords: ['agitat', 'combative', 'wander', 'elopement', 'sundown', 'refusing care'] },
+    { category: 'pain',       keywords: ['pain level', 'pain score', 'severe pain', 'uncontrolled pain'] },
+];
+
+function extractNoteSignals(notes: { section_value: string; effective_at: Date }[]): NoteSignal[] {
+    const signals: NoteSignal[] = [];
+    const seen = new Set<string>();
+
+    for (const note of notes) {
+        const text = (note.section_value ?? '').toLowerCase();
+        if (text.length < 10) continue;
+
+        for (const pattern of NOTE_SIGNAL_PATTERNS) {
+            for (const kw of pattern.keywords) {
+                const idx = text.indexOf(kw);
+                if (idx === -1) continue;
+
+                const dedup = `${pattern.category}-${note.effective_at.toISOString().slice(0, 10)}`;
+                if (seen.has(dedup)) break;
+                seen.add(dedup);
+
+                const start = Math.max(0, idx - 30);
+                const end = Math.min(text.length, idx + kw.length + 50);
+                const snippet = text.slice(start, end).replace(/\r?\n/g, ' ').trim();
+
+                signals.push({
+                    category: pattern.category,
+                    keyword: kw,
+                    snippet,
+                    date: note.effective_at,
+                });
+                break;
+            }
+        }
+    }
+
+    return signals;
+}
 
 function calcTrend(history: LabSnapshot[]): 'rising' | 'falling' | 'stable' {
     if (history.length < 2) return 'stable';
@@ -82,6 +129,20 @@ export async function buildPatientContext(simplId: string): Promise<PatientConte
             [simplId]
         );
 
+        // 8. Recent progress note sections (last 14 days, keyword-scannable)
+        const notesRes = await query<{ section_value: string; effective_at: Date }>(
+            `SELECT LEFT(pns.section_value, 400) AS section_value, pn.effective_at
+             FROM progress_note_sections pns
+             JOIN progress_notes pn ON pn.note_id = pns.note_id AND pn.simpl_id = pns.simpl_id
+             WHERE pns.simpl_id = $1
+               AND pn.effective_at >= NOW() - INTERVAL '30 days'
+               AND pns.section_value IS NOT NULL
+               AND LENGTH(TRIM(pns.section_value)) > 15
+             ORDER BY pn.effective_at DESC
+             LIMIT 50`,
+            [simplId]
+        );
+
         // Build lab history map
         const labHistoryMap: Record<string, LabSnapshot[]> = {};
         for (const row of histRes.rows) {
@@ -144,6 +205,7 @@ export async function buildPatientContext(simplId: string): Promise<PatientConte
             activeMedications: medRes.rows.map(r => ({ name: r.description, rxnorm: r.rxnorm_id, directions: r.directions })),
             assessmentScores: Object.fromEntries(assRes.rows.map(r => [r.description, parseFloat(r.score)])),
             vitals,
+            noteSignals: extractNoteSignals(notesRes.rows),
         };
     } catch (err) {
         console.error(`[analysis/context] Failed to build context for ${simplId}:`, err);

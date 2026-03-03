@@ -78,6 +78,14 @@ export const infusionModule: AnalysisModule = {
             indicators.carePlanFlag = nutritionFocus.slice(0, 80);
         }
 
+        // ── Progress note signals ───────────────────────────────────────────
+        const nutritionNotes = ctx.noteSignals.filter(s => s.category === 'nutrition');
+        if (nutritionNotes.length > 0) {
+            score += 15;
+            reasons.push(`Progress note: ${nutritionNotes[0].snippet}`);
+            indicators.noteSignals = nutritionNotes.length;
+        }
+
         // ── Determine severity (before gate) ────────────────────────────────
         let severity: Severity;
         let priority: string;

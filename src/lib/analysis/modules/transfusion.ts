@@ -93,6 +93,14 @@ export const transfusionModule: AnalysisModule = {
             reasons.push('Active anemia/transfusion care plan focus');
         }
 
+        // ── Progress note signals ───────────────────────────────────────────
+        const bleedingNotes = ctx.noteSignals.filter(s => s.category === 'bleeding');
+        if (bleedingNotes.length > 0) {
+            score += 15;
+            reasons.push(`Progress note: ${bleedingNotes[0].snippet}`);
+            indicators.noteSignals = bleedingNotes.length;
+        }
+
         // ── Severity (before gate) ──────────────────────────────────────────
         let severity: Severity;
         let priority: string;

@@ -73,6 +73,11 @@ ${Object.entries(ctx.assessmentScores).length > 0
     ? Object.entries(ctx.assessmentScores).map(([k, v]) => `  ${k}: ${v}`).join('\n')
     : '  None'}
 
+### Clinical Signals from Progress Notes (last 14 days)
+${ctx.noteSignals.length > 0
+    ? ctx.noteSignals.map(s => `  [${s.category.toUpperCase()}] "${s.snippet}" (${s.date.toISOString().slice(0, 10)})`).join('\n')
+    : '  No relevant clinical signals detected in recent notes'}
+
 ### Rule-Based Analysis (already computed)
 ${ruleSummary}
 
@@ -90,6 +95,7 @@ For each, consider factors the rule-based system may have missed:
 - Diagnosis combinations that compound risk
 - Care plan signals indicating clinical concern
 - Lab trends over time (not just current values)
+- Progress notes mentioning falls, difficulty swallowing, weight loss, bleeding, catheter issues, wound changes, refusal to eat, aspiration events, or other clinical concerns
 
 Respond with JSON only. No markdown, no explanation outside the JSON.`;
 }

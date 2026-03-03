@@ -105,6 +105,14 @@ export const gtubeRiskModule: AnalysisModule = {
             score += 10; reasons.push('Nutritional supplement in care plan');
         }
 
+        // ── Progress note signals ───────────────────────────────────────────
+        const swallowNotes = ctx.noteSignals.filter(s => s.category === 'swallowing');
+        if (swallowNotes.length > 0) {
+            score += 20;
+            reasons.push(`Progress note: ${swallowNotes[0].snippet}`);
+            indicators.noteSignals = swallowNotes.length;
+        }
+
         const severity = score >= 120 ? 'critical'
             : score >= 70 ? 'high'
             : score >= 35 ? 'medium'

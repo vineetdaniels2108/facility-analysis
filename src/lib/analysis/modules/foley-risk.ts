@@ -101,6 +101,14 @@ export const foleyRiskModule: AnalysisModule = {
             indicators.carePlanFlag = bladderFocus.slice(0, 80);
         }
 
+        // ── Progress note signals ───────────────────────────────────────────
+        const catheterNotes = ctx.noteSignals.filter(s => s.category === 'catheter');
+        if (catheterNotes.length > 0) {
+            score += 20;
+            reasons.push(`Progress note: ${catheterNotes[0].snippet}`);
+            indicators.noteSignals = catheterNotes.length;
+        }
+
         const severity = score >= 120 ? 'critical'
             : score >= 75 ? 'high'
             : score >= 35 ? 'medium'
