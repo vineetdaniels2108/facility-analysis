@@ -555,15 +555,14 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
 
     const histMap = (labHistory ?? {}) as Record<string, Array<{ date: string; value: number; referenceRange?: string }>>
 
-    // Clinically relevant labs grouped by risk area
+    const mods = patient.enabled_modules ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
     const CLINICAL_LABS: Record<string, { label: string; labs: string[] }> = {
-        transfusion: { label: "Transfusion", labs: ["HGB", "HCT", "RBC", "PLATELET", "INR", "FERRITIN", "FE"] },
-        infusion:    { label: "Infusion / Nutrition", labs: ["ALB", "PREALB", "TPROT", "A/G_RATIO"] },
+        hematology:  { label: "Hematology", labs: ["HGB", "HCT", "RBC", "PLATELET", "INR", "FERRITIN", "FE", "WBC"] },
+        nutrition:   { label: "Nutrition", labs: ["ALB", "PREALB", "TPROT", "A/G_RATIO"] },
+        cardiac:     { label: "Cardiac", labs: ["BNP", "NT-PROBNP", "TROPONIN", "TROPONIN_I", "CK", "CK-MB", "CHOLESTEROL", "TRIGLYCERIDES", "HDL_CHOLESTEROL", "CALCULATED_LDL"] },
         renal:       { label: "Renal", labs: ["BUN", "CREAT", "EGFR_(NON_AFRICAN-AMERICAN)", "BUN/CREATININE_RATIO"] },
         metabolic:   { label: "Metabolic", labs: ["NA", "K", "CO2", "CHLORIDE", "CA", "MG", "PHOS", "ANION_GAP", "GLU", "HA1C"] },
         hepatic:     { label: "Hepatic", labs: ["TOTAL_BILIRUBIN", "ALKALINE_PHOSPHATASE", "ALT_(SGPT)", "AST_(SGOT)"] },
-        lipids:      { label: "Lipids", labs: ["CHOLESTEROL", "TRIGLYCERIDES", "HDL_CHOLESTEROL", "CALCULATED_LDL"] },
-        other:       { label: "Other", labs: [] },
     }
     const allGroupedLabs = new Set(Object.values(CLINICAL_LABS).flatMap(g => g.labs))
 
