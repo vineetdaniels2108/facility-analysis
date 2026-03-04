@@ -339,20 +339,22 @@ function SortTh({ label, sortAsc, sortDesc, current, onSort, align = "center", c
 // ─── Unified analysis card (merges rule-based + AI) ─────────────────────────
 
 const RISK_META: Record<string, { icon: React.ReactNode; label: string; keyIndicatorLabel?: string; keyIndicatorField?: string; unit?: string }> = {
-    infusion:    { icon: <Droplets className="w-3.5 h-3.5 text-blue-500" />,    label: "Infusion Need",    keyIndicatorLabel: "Albumin",    keyIndicatorField: "albumin",    unit: "g/dL" },
-    transfusion: { icon: <FlaskConical className="w-3.5 h-3.5 text-rose-500" />, label: "Transfusion Need", keyIndicatorLabel: "Hemoglobin", keyIndicatorField: "hemoglobin", unit: "g/dL" },
-    foley_risk:  { icon: <Syringe className="w-3.5 h-3.5 text-purple-500" />,    label: "Foley Tube Risk" },
-    gtube_risk:  { icon: <Utensils className="w-3.5 h-3.5 text-orange-500" />,   label: "G-Tube Risk" },
-    mtn_risk:    { icon: <Apple className="w-3.5 h-3.5 text-lime-600" />,         label: "MTN / Nutrition Risk" },
+    infusion:     { icon: <Droplets className="w-3.5 h-3.5 text-blue-500" />,      label: "Infusion Need",        keyIndicatorLabel: "Albumin",    keyIndicatorField: "albumin",    unit: "g/dL" },
+    transfusion:  { icon: <FlaskConical className="w-3.5 h-3.5 text-rose-500" />,  label: "Transfusion Need",     keyIndicatorLabel: "Hemoglobin", keyIndicatorField: "hemoglobin", unit: "g/dL" },
+    foley_risk:   { icon: <Syringe className="w-3.5 h-3.5 text-purple-500" />,     label: "Foley Tube Risk" },
+    gtube_risk:   { icon: <Utensils className="w-3.5 h-3.5 text-orange-500" />,    label: "G-Tube Risk" },
+    mtn_risk:     { icon: <Apple className="w-3.5 h-3.5 text-lime-600" />,          label: "MTN / Nutrition Risk" },
+    cardiology:   { icon: <Heart className="w-3.5 h-3.5 text-red-500" />,          label: "Heart Disease & Cardiology" },
+    care_gaps:    { icon: <ClipboardList className="w-3.5 h-3.5 text-amber-500" />, label: "Care Gaps & Recommendations" },
+    primary_care: { icon: <Stethoscope className="w-3.5 h-3.5 text-teal-500" />,   label: "Primary Care Analysis" },
+    psych_meds:   { icon: <Brain className="w-3.5 h-3.5 text-indigo-500" />,       label: "Psychology & Medication Mgmt" },
 }
 
 function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAnalysis | null; ai: DbAnalysis | null }) {
-    const meta = RISK_META[riskType]
-    if (!meta) return null
+    const meta = RISK_META[riskType] ?? { icon: null, label: riskType }
     const primary = rule ?? ai
     if (!primary) return null
     const sev = dbSeverityToSeverity(primary.severity)
-    if (sev === "normal" && !ai) return null
 
     const bg = sev === 'critical' ? 'bg-red-50 border-red-200'
         : sev === 'high' ? 'bg-red-50/50 border-red-100'
@@ -443,13 +445,10 @@ function OverviewTab({ patient, dbAnalysis }: {
 
     const mergedAnalysis = { ...dbAnalysis, ...aiResults }
 
+    // Show all cards that have any analysis data (including low/medium)
     const visibleCards = riskTypes
         .map(t => ({ type: t, rule: mergedAnalysis[t] ?? null, ai: mergedAnalysis[`ai_${t}`] ?? null }))
-        .filter(c => {
-            if (!c.rule && !c.ai) return false
-            const sev = dbSeverityToSeverity(c.rule?.severity ?? c.ai?.severity)
-            return sev !== "normal"
-        })
+        .filter(c => c.rule || c.ai)
 
     return (
         <div className="p-4">
@@ -1112,7 +1111,7 @@ function PatientsView() {
                                                                 const meta = MODULE_FILTER_META[mod]
                                                                 if (!meta) return null
                                                                 return (
-                                                                    <span key={mod} className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded ${sev === "critical" ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-700"}`}>
+                                                                    <span key={mod} className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded ${sev === "critical" ? meta.activeColor : meta.color}`}>
                                                                         {meta.icon}{meta.label}
                                                                     </span>
                                                                 )

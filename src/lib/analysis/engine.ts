@@ -73,11 +73,14 @@ export async function runAnalysis(simplId: string): Promise<AnalysisResult[]> {
     }
 
     // AI review: runs only when at least one rule-based module flags medium+
-    try {
-        const aiResults = await runAIReview({ ctx, ruleResults: results });
-        results.push(...aiResults);
-    } catch (err) {
-        console.error(`[analysis] AI review failed for ${simplId}:`, err);
+    // Skip AI for facilities that don't have OPENAI configured or flag skipAI
+    if (process.env.OPENAI_API_KEY) {
+        try {
+            const aiResults = await runAIReview({ ctx, ruleResults: results });
+            results.push(...aiResults);
+        } catch (err) {
+            console.error(`[analysis] AI review failed for ${simplId}:`, err);
+        }
     }
 
     // Persist all results (rule-based + AI) to DB
