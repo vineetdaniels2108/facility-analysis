@@ -106,7 +106,12 @@ export async function GET() {
                      MAX(a.score) DESC
         `, facParams);
 
-        return NextResponse.json({ facilities, urgent: urgentRes.rows });
+        const urgent = urgentRes.rows.map(u => ({
+            ...u,
+            enabled_modules: facModuleMap[u.fac_id] ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'],
+        }));
+
+        return NextResponse.json({ facilities, urgent });
     } catch (err) {
         console.error('[dashboard/summary]', err);
         return NextResponse.json({ facilities: [], urgent: [] });

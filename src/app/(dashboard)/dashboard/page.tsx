@@ -30,6 +30,7 @@ interface UrgentPatient {
     hgb: number | null
     alb: number | null
     last_lab_date: string | null
+    enabled_modules: string[]
 }
 
 const FLAG_META: Record<string, { label: string; cls: string; critCls: string; icon: React.ReactNode }> = {
@@ -178,8 +179,9 @@ export default function DashboardPage() {
                             <>
                                 <div className="divide-y divide-slate-50">
                                     {pagePatients.map(p => {
-                                        const flagTypes = p.flags ? p.flags.split(',').filter(Boolean) : []
+                                        const flagTypes = p.flags ? p.flags.split(',').filter(f => f && p.enabled_modules?.includes(f)) : []
                                         const isCrit = p.max_sev === 'critical'
+                                        const showHgbAlb = p.enabled_modules?.some(m => m === 'infusion' || m === 'transfusion')
                                         return (
                                             <button key={p.simpl_id}
                                                 onClick={() => router.push(`/patients?facility=${encodeURIComponent(p.fac_name)}`)}
@@ -200,8 +202,8 @@ export default function DashboardPage() {
                                                         </div>
                                                     </div>
                                                     <div className="text-right shrink-0">
-                                                        {p.hgb != null && <p className="text-[10px] font-bold text-rose-600">Hgb {p.hgb}</p>}
-                                                        {p.alb != null && <p className="text-[10px] font-bold text-blue-600">Alb {p.alb}</p>}
+                                                        {showHgbAlb && p.hgb != null && <p className="text-[10px] font-bold text-rose-600">Hgb {p.hgb}</p>}
+                                                        {showHgbAlb && p.alb != null && <p className="text-[10px] font-bold text-blue-600">Alb {p.alb}</p>}
                                                         {p.last_lab_date && <p className="text-[9px] text-slate-400 mt-0.5">{new Date(p.last_lab_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>}
                                                     </div>
                                                 </div>

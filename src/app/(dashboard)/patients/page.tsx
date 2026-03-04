@@ -414,7 +414,7 @@ function OverviewTab({ patient, dbAnalysis }: {
     const [aiLoading, setAiLoading] = useState(false)
     const [aiResults, setAiResults] = useState<Record<string, DbAnalysis>>({})
 
-    const riskTypes = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'] as const
+    const riskTypes = patient.enabled_modules ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
     const hasAnyRuleData = riskTypes.some(t => dbAnalysis[t])
     const hasAiData = riskTypes.some(t => dbAnalysis[`ai_${t}`] || aiResults[`ai_${t}`])
 
@@ -1104,19 +1104,20 @@ function PatientsView() {
                                             </td>
                                             <td className="px-2 py-2.5 hidden md:table-cell">
                                                 {active && (() => {
-                                                    const infSev = dbSeverityToSeverity(patient.db_analysis?.infusion?.severity)
-                                                    const traSev = dbSeverityToSeverity(patient.db_analysis?.transfusion?.severity)
-                                                    const folaySev = dbSeverityToSeverity(patient.db_analysis?.foley_risk?.severity)
-                                                    const gtubSev = dbSeverityToSeverity(patient.db_analysis?.gtube_risk?.severity)
-                                                    const mtnSev = dbSeverityToSeverity(patient.db_analysis?.mtn_risk?.severity)
-                                                    const urgent = (s: Severity) => s === "critical" || s === "high"
+                                                    const mods = patient.enabled_modules ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
                                                     return (
                                                         <div className="flex gap-1 flex-wrap">
-                                                            {urgent(traSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${traSev === "critical" ? "bg-rose-600 text-white" : "bg-rose-100 text-rose-700"}`}>Transfusion</span>}
-                                                            {urgent(infSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${infSev === "critical" ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-700"}`}>Infusion</span>}
-                                                            {urgent(folaySev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${folaySev === "critical" ? "bg-purple-600 text-white" : "bg-purple-100 text-purple-700"}`}>Foley</span>}
-                                                            {urgent(gtubSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${gtubSev === "critical" ? "bg-orange-600 text-white" : "bg-orange-100 text-orange-700"}`}>G-Tube</span>}
-                                                            {urgent(mtnSev) && <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${mtnSev === "critical" ? "bg-lime-700 text-white" : "bg-lime-100 text-lime-700"}`}>MTN</span>}
+                                                            {mods.map(mod => {
+                                                                const sev = dbSeverityToSeverity(patient.db_analysis?.[mod]?.severity)
+                                                                if (sev !== "critical" && sev !== "high") return null
+                                                                const meta = MODULE_FILTER_META[mod]
+                                                                if (!meta) return null
+                                                                return (
+                                                                    <span key={mod} className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded ${sev === "critical" ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-700"}`}>
+                                                                        {meta.icon}{meta.label}
+                                                                    </span>
+                                                                )
+                                                            })}
                                                         </div>
                                                     )
                                                 })()}
