@@ -50,7 +50,11 @@ export async function GET(req: NextRequest) {
             ? `SELECT p.simpl_id, p.first_name, p.last_name
                FROM patients p
                WHERE (p.patient_status = 'Current' OR p.patient_status IS NULL)
-               AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+               AND (
+                 EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+                 OR EXISTS (SELECT 1 FROM conditions c WHERE c.simpl_id = p.simpl_id)
+                 OR EXISTS (SELECT 1 FROM medications m WHERE m.simpl_id = p.simpl_id)
+               )
                ORDER BY (
                    SELECT MAX(a.computed_at) FROM analysis_results a
                    WHERE a.simpl_id = p.simpl_id AND a.is_current = TRUE
@@ -59,7 +63,11 @@ export async function GET(req: NextRequest) {
             : `SELECT p.simpl_id, p.first_name, p.last_name
                FROM patients p
                WHERE p.fac_id = $2
-               AND EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+               AND (
+                 EXISTS (SELECT 1 FROM lab_results l WHERE l.simpl_id = p.simpl_id)
+                 OR EXISTS (SELECT 1 FROM conditions c WHERE c.simpl_id = p.simpl_id)
+                 OR EXISTS (SELECT 1 FROM medications m WHERE m.simpl_id = p.simpl_id)
+               )
                ORDER BY (
                    SELECT MAX(a.computed_at) FROM analysis_results a
                    WHERE a.simpl_id = p.simpl_id AND a.is_current = TRUE
