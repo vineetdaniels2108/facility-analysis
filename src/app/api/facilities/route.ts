@@ -1,18 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 import { getUserProfile } from '@/lib/auth/get-user-facilities';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     if (!isDbConfigured()) {
         return NextResponse.json({ facilities: [] });
     }
 
     try {
+        const showAll = req.nextUrl.searchParams.get('all') === 'true';
         const profile = await getUserProfile();
-        console.log('[/api/facilities] profile:', profile?.email, 'role:', profile?.role, 'facilityIds:', profile?.facilityIds);
-        const allowedFacIds = profile?.facilityIds?.length ? profile.facilityIds : null;
+        const allowedFacIds = showAll ? null : (profile?.facilityIds?.length ? profile.facilityIds : null);
 
         let sql = `SELECT f.fac_id, f.name,
                     COUNT(p.simpl_id) FILTER (WHERE p.patient_status = 'Current' OR p.patient_status IS NULL)::int AS active_count

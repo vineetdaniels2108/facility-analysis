@@ -45,7 +45,7 @@ export default function UsersPage() {
         try {
             const [usersRes, facRes] = await Promise.all([
                 fetch('/api/admin/users'),
-                fetch('/api/facilities'),
+                fetch('/api/facilities?all=true'),
             ])
             const usersData = await usersRes.json()
             const facData = await facRes.json()

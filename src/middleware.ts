@@ -4,8 +4,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
 
-    // API routes bypass auth — called server-to-server
-    if (pathname.startsWith('/api/')) {
+    // Cron/webhook API routes bypass auth entirely
+    if (pathname.startsWith('/api/cron/') || pathname.startsWith('/api/health/')) {
         return NextResponse.next()
     }
 
@@ -29,6 +29,11 @@ export async function middleware(request: NextRequest) {
     )
 
     const { data: { user } } = await supabase.auth.getUser()
+
+    // API routes: refresh session but don't redirect to login
+    if (pathname.startsWith('/api/')) {
+        return supabaseResponse
+    }
 
     if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/auth')) {
         const url = request.nextUrl.clone()
