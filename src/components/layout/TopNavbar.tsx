@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, Suspense, useRef } from "react"
-import { Building2, ChevronDown, User, LogOut, Bell, Loader2, AlertTriangle, Droplets, FlaskConical, Syringe, Utensils, Apple } from "lucide-react"
+import { Building2, ChevronDown, User, LogOut, Bell, Loader2, AlertTriangle, Droplets, FlaskConical, Syringe, Utensils, Apple, Settings } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
@@ -220,6 +220,9 @@ export function TopNavbar() {
                 <div className="flex items-center gap-2">
                     <Link href="/users" className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors" title="Users">
                         <User className="w-4 h-4" />
+                    </Link>
+                    <Link href="/settings" className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors" title="Settings">
+                        <Settings className="w-4 h-4" />
                     </Link>
 
                     <NotificationBell />

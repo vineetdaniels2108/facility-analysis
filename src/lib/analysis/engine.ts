@@ -6,6 +6,10 @@ import { transfusionModule } from './modules/transfusion';
 import { foleyRiskModule } from './modules/foley-risk';
 import { gtubeRiskModule } from './modules/gtube-risk';
 import { mtnRiskModule } from './modules/mtn-risk';
+import { cardiologyModule } from './modules/cardiology';
+import { careGapsModule } from './modules/care-gaps';
+import { primaryCareModule } from './modules/primary-care';
+import { psychMedsModule } from './modules/psych-meds';
 import { runAIReview } from './modules/ai-reviewer';
 
 // Registry of all available modules
@@ -15,6 +19,10 @@ const ALL_MODULES: Record<string, AnalysisModule> = {
     foley_risk: foleyRiskModule,
     gtube_risk: gtubeRiskModule,
     mtn_risk: mtnRiskModule,
+    cardiology: cardiologyModule,
+    care_gaps: careGapsModule,
+    primary_care: primaryCareModule,
+    psych_meds: psychMedsModule,
 };
 
 // Default modules to run if no client config is found
