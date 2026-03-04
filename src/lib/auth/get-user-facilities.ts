@@ -35,6 +35,8 @@ export function filterFacilitiesByUser(
     userProfile: AuthUserProfile | null
 ): number[] | null {
     if (!userProfile) return null;
-    if (userProfile.role === 'admin') return null; // null = no filter (see all)
-    return userProfile.facilityIds;
+    // If user has facility assignments, filter by them (even for admins)
+    // Empty array = no filter (see all)
+    if (userProfile.facilityIds.length > 0) return userProfile.facilityIds;
+    return null;
 }

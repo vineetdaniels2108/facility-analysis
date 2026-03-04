@@ -9,8 +9,7 @@ export async function GET() {
 
     try {
         const profile = await getUserProfile();
-        const isAdmin = !profile || profile.role === 'admin';
-        const allowedFacIds = isAdmin ? null : profile?.facilityIds ?? [];
+        const allowedFacIds = profile?.facilityIds?.length ? profile.facilityIds : null;
 
         let sql = `SELECT f.fac_id, f.name,
                     COUNT(p.simpl_id) FILTER (WHERE p.patient_status = 'Current' OR p.patient_status IS NULL)::int AS active_count
