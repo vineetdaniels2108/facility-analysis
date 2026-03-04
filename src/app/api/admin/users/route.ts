@@ -12,6 +12,9 @@ function deriveStatus(authUser: { email_confirmed_at?: string | null; last_sign_
     return 'active';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function usersTable(supabase: any) { return supabase.from('users'); }
+
 export async function GET() {
     try {
         const supabase = getSupabaseAdmin();
@@ -21,12 +24,12 @@ export async function GET() {
             return NextResponse.json({ error: authErr.message }, { status: 500 });
         }
 
-        const { data: profileRows } = await supabase
-            .from('users')
+        const { data: profileRows } = await usersTable(supabase)
             .select('id, email, first_name, last_name, role, facility_ids, created_at');
 
-        const profileMap = new Map(
-            (profileRows ?? []).map(p => [p.id, p])
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const profileMap = new Map<string, any>(
+            (profileRows ?? []).map((p: any) => [p.id, p])
         );
 
         const users = authUsers.users.map(au => {
@@ -84,7 +87,7 @@ export async function POST(req: NextRequest) {
         }
 
         if (authUser?.user) {
-            await supabase.from('users').upsert({
+            await usersTable(supabase).upsert({
                 id: authUser.user.id,
                 email,
                 first_name: firstName || null,

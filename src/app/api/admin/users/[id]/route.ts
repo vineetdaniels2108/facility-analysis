@@ -3,6 +3,9 @@ import { getSupabaseAdmin } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function usersTable(supabase: any) { return supabase.from('users'); }
+
 export async function PATCH(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -25,9 +28,7 @@ export async function PATCH(
         if (facilityIds !== undefined) updates.facility_ids = facilityIds;
 
         if (Object.keys(updates).length > 0) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const table = supabase.from('users') as any;
-            const { error } = await table.update(updates).eq('id', id);
+            const { error } = await usersTable(supabase).update(updates).eq('id', id);
 
             if (error) {
                 return NextResponse.json({ error: error.message }, { status: 400 });
@@ -58,7 +59,7 @@ export async function DELETE(
         const { id } = await params;
         const supabase = getSupabaseAdmin();
 
-        await supabase.from('users').delete().eq('id', id);
+        await usersTable(supabase).delete().eq('id', id);
 
         const { error } = await supabase.auth.admin.deleteUser(id);
         if (error) {
