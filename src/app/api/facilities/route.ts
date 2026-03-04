@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 import { getUserProfile } from '@/lib/auth/get-user-facilities';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     if (!isDbConfigured()) {
         return NextResponse.json({ facilities: [] });
@@ -9,6 +11,7 @@ export async function GET() {
 
     try {
         const profile = await getUserProfile();
+        console.log('[/api/facilities] profile:', profile?.email, 'role:', profile?.role, 'facilityIds:', profile?.facilityIds);
         const allowedFacIds = profile?.facilityIds?.length ? profile.facilityIds : null;
 
         let sql = `SELECT f.fac_id, f.name,
