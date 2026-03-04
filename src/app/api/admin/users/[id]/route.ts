@@ -26,10 +26,8 @@ export async function PATCH(
 
         if (Object.keys(updates).length > 0) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { error } = await supabase
-                .from('users')
-                .update(updates as any)
-                .eq('id', id);
+            const table = supabase.from('users') as any;
+            const { error } = await table.update(updates).eq('id', id);
 
             if (error) {
                 return NextResponse.json({ error: error.message }, { status: 400 });
