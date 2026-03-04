@@ -25,9 +25,10 @@ export async function PATCH(
         if (facilityIds !== undefined) updates.facility_ids = facilityIds;
 
         if (Object.keys(updates).length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { error } = await supabase
                 .from('users')
-                .update(updates)
+                .update(updates as any)
                 .eq('id', id);
 
             if (error) {
