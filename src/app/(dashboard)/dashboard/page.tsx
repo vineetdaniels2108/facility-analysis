@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
     Building2, Loader2, Users, AlertTriangle, ChevronRight,
-    Droplets, FlaskConical, Syringe, Utensils, Apple, TrendingDown,
-    ChevronLeft, ChevronDown,
+    Droplets, FlaskConical, Syringe, Utensils, Apple,
+    ChevronLeft, Heart, ClipboardList, Stethoscope, Brain,
 } from "lucide-react"
 
 interface FacilitySummary {
@@ -14,11 +14,8 @@ interface FacilitySummary {
     active_count: number
     critical: number
     high: number
-    infusion_count: number
-    transfusion_count: number
-    foley_count: number
-    gtube_count: number
-    mtn_count: number
+    enabled_modules: string[]
+    module_counts: Record<string, number>
 }
 
 interface UrgentPatient {
@@ -36,11 +33,15 @@ interface UrgentPatient {
 }
 
 const FLAG_META: Record<string, { label: string; cls: string; critCls: string; icon: React.ReactNode }> = {
-    infusion:    { label: "Infusion",    cls: "bg-blue-100 text-blue-700",    critCls: "bg-blue-600 text-white",    icon: <Droplets className="w-2.5 h-2.5" /> },
-    transfusion: { label: "Transfusion", cls: "bg-rose-100 text-rose-700",    critCls: "bg-rose-600 text-white",    icon: <FlaskConical className="w-2.5 h-2.5" /> },
-    foley_risk:  { label: "Foley",       cls: "bg-purple-100 text-purple-700", critCls: "bg-purple-600 text-white",  icon: <Syringe className="w-2.5 h-2.5" /> },
-    gtube_risk:  { label: "G-Tube",      cls: "bg-orange-100 text-orange-700", critCls: "bg-orange-600 text-white",  icon: <Utensils className="w-2.5 h-2.5" /> },
-    mtn_risk:    { label: "MTN",         cls: "bg-lime-100 text-lime-700",     critCls: "bg-lime-700 text-white",    icon: <Apple className="w-2.5 h-2.5" /> },
+    infusion:     { label: "Infusion",      cls: "bg-blue-100 text-blue-700",     critCls: "bg-blue-600 text-white",     icon: <Droplets className="w-2.5 h-2.5" /> },
+    transfusion:  { label: "Transfusion",   cls: "bg-rose-100 text-rose-700",     critCls: "bg-rose-600 text-white",     icon: <FlaskConical className="w-2.5 h-2.5" /> },
+    foley_risk:   { label: "Foley",         cls: "bg-purple-100 text-purple-700", critCls: "bg-purple-600 text-white",   icon: <Syringe className="w-2.5 h-2.5" /> },
+    gtube_risk:   { label: "G-Tube",        cls: "bg-orange-100 text-orange-700", critCls: "bg-orange-600 text-white",   icon: <Utensils className="w-2.5 h-2.5" /> },
+    mtn_risk:     { label: "MTN",           cls: "bg-lime-100 text-lime-700",     critCls: "bg-lime-700 text-white",     icon: <Apple className="w-2.5 h-2.5" /> },
+    cardiology:   { label: "Cardiology",    cls: "bg-red-100 text-red-700",       critCls: "bg-red-600 text-white",      icon: <Heart className="w-2.5 h-2.5" /> },
+    care_gaps:    { label: "Care Gaps",     cls: "bg-amber-100 text-amber-700",   critCls: "bg-amber-600 text-white",    icon: <ClipboardList className="w-2.5 h-2.5" /> },
+    primary_care: { label: "Primary Care",  cls: "bg-teal-100 text-teal-700",     critCls: "bg-teal-600 text-white",     icon: <Stethoscope className="w-2.5 h-2.5" /> },
+    psych_meds:   { label: "Psych/Meds",    cls: "bg-indigo-100 text-indigo-700", critCls: "bg-indigo-600 text-white",   icon: <Brain className="w-2.5 h-2.5" /> },
 }
 
 function FlagBadge({ type, isCrit }: { type: string; isCrit: boolean }) {
@@ -127,11 +128,16 @@ export default function DashboardPage() {
                                             {f.high > 0 && <span className="text-amber-600 font-semibold">{f.high} high</span>}
                                         </div>
                                         <div className="flex gap-1 mt-2 flex-wrap">
-                                            {f.transfusion_count > 0 && <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded bg-rose-100 text-rose-700"><FlaskConical className="w-2.5 h-2.5" />{f.transfusion_count}</span>}
-                                            {f.infusion_count > 0 && <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded bg-blue-100 text-blue-700"><Droplets className="w-2.5 h-2.5" />{f.infusion_count}</span>}
-                                            {f.foley_count > 0 && <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded bg-purple-100 text-purple-700"><Syringe className="w-2.5 h-2.5" />{f.foley_count}</span>}
-                                            {f.gtube_count > 0 && <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded bg-orange-100 text-orange-700"><Utensils className="w-2.5 h-2.5" />{f.gtube_count}</span>}
-                                            {f.mtn_count > 0 && <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded bg-lime-100 text-lime-700"><Apple className="w-2.5 h-2.5" />{f.mtn_count}</span>}
+                                            {f.enabled_modules.map(mod => {
+                                                const count = f.module_counts[mod] ?? 0;
+                                                const meta = FLAG_META[mod];
+                                                if (!meta || count === 0) return null;
+                                                return (
+                                                    <span key={mod} className={`flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold rounded ${meta.cls}`}>
+                                                        {meta.icon}{count}
+                                                    </span>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>

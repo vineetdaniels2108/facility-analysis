@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 
 const KEY_LAB_NAMES = ['HGB','HCT','ALB','BUN','CREAT','NA','K','CO2','GLU','WBC','PLATELET','INR','CA','MG','FE','FERRITIN'];
-const ANALYSIS_TYPES = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk',
-    'ai_infusion', 'ai_transfusion', 'ai_foley_risk', 'ai_gtube_risk', 'ai_mtn_risk'] as const;
+const ANALYSIS_TYPES = [
+    'infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk',
+    'cardiology', 'care_gaps', 'primary_care', 'psych_meds',
+    'ai_infusion', 'ai_transfusion', 'ai_foley_risk', 'ai_gtube_risk', 'ai_mtn_risk',
+    'ai_cardiology', 'ai_care_gaps', 'ai_primary_care', 'ai_psych_meds',
+] as const;
 
 interface LabValue {
     date: string;
@@ -129,10 +133,21 @@ async function getPatientsFromDb(facilityFilter?: string) {
     );
 
     const simplIds = res.rows.map(r => r.simpl_id);
-    const [{ labs: labsMap, lastLabDate }, analysisMap] = await Promise.all([
+
+    const [{ labs: labsMap, lastLabDate }, analysisMap, modulesRes] = await Promise.all([
         getLatestLabsForPatients(simplIds),
         getAnalysisForPatients(simplIds),
+        query<{ fac_ids: number[]; enabled_modules: string[] }>(
+            `SELECT fac_ids, enabled_modules FROM clients WHERE is_active = TRUE`
+        ),
     ]);
+
+    const facModuleMap: Record<number, string[]> = {};
+    for (const row of modulesRes.rows) {
+        for (const fid of row.fac_ids ?? []) {
+            facModuleMap[fid] = row.enabled_modules ?? [];
+        }
+    }
 
     const now = Date.now();
     const patients = res.rows.map(r => {
@@ -176,6 +191,7 @@ async function getPatientsFromDb(facilityFilter?: string) {
             labs_latest: labsMap[r.simpl_id] ?? {},
             last_lab_date: lastLabDate[r.simpl_id] ?? null,
             db_analysis: dbAnalysis,
+            enabled_modules: facModuleMap[r.fac_id] ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'],
             combined_urgency: combinedUrgency,
             data_source: 'live_db',
         };

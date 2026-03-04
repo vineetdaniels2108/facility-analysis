@@ -21,22 +21,26 @@ export async function GET() {
             facParams.push(allowedFacIds);
         }
 
+        // Get enabled modules per facility
+        const modulesRes = await query<{ fac_ids: number[]; enabled_modules: string[] }>(
+            `SELECT fac_ids, enabled_modules FROM clients WHERE is_active = TRUE`
+        );
+        const facModuleMap: Record<number, string[]> = {};
+        for (const row of modulesRes.rows) {
+            for (const fid of row.fac_ids ?? []) {
+                facModuleMap[fid] = row.enabled_modules ?? [];
+            }
+        }
+
         const facRes = await query<{
             fac_id: number; name: string; active_count: number;
             critical: number; high: number;
-            infusion_count: number; transfusion_count: number;
-            foley_count: number; gtube_count: number; mtn_count: number;
         }>(`
             SELECT
                 f.fac_id, f.name,
                 COUNT(p.simpl_id) FILTER (WHERE p.patient_status = 'Current' OR p.patient_status IS NULL)::int AS active_count,
                 COUNT(*) FILTER (WHERE ar_top.max_sev = 'critical' AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS critical,
-                COUNT(*) FILTER (WHERE ar_top.max_sev = 'high'     AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS high,
-                COUNT(*) FILTER (WHERE ar_inf.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS infusion_count,
-                COUNT(*) FILTER (WHERE ar_tra.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS transfusion_count,
-                COUNT(*) FILTER (WHERE ar_fol.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS foley_count,
-                COUNT(*) FILTER (WHERE ar_gtu.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS gtube_count,
-                COUNT(*) FILTER (WHERE ar_mtn.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS mtn_count
+                COUNT(*) FILTER (WHERE ar_top.max_sev = 'high'     AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS high
             FROM facilities f
             LEFT JOIN patients p ON p.fac_id = f.fac_id
             LEFT JOIN LATERAL (
@@ -44,17 +48,38 @@ export async function GET() {
                     WHEN 4 THEN 'critical' WHEN 3 THEN 'high' WHEN 2 THEN 'medium' WHEN 1 THEN 'low' ELSE 'normal' END AS max_sev
                 FROM analysis_results WHERE simpl_id = p.simpl_id AND is_current = TRUE AND analysis_type NOT LIKE 'ai_%'
             ) ar_top ON TRUE
-            LEFT JOIN analysis_results ar_inf ON ar_inf.simpl_id = p.simpl_id AND ar_inf.analysis_type = 'infusion'    AND ar_inf.is_current = TRUE
-            LEFT JOIN analysis_results ar_tra ON ar_tra.simpl_id = p.simpl_id AND ar_tra.analysis_type = 'transfusion' AND ar_tra.is_current = TRUE
-            LEFT JOIN analysis_results ar_fol ON ar_fol.simpl_id = p.simpl_id AND ar_fol.analysis_type = 'foley_risk'  AND ar_fol.is_current = TRUE
-            LEFT JOIN analysis_results ar_gtu ON ar_gtu.simpl_id = p.simpl_id AND ar_gtu.analysis_type = 'gtube_risk'  AND ar_gtu.is_current = TRUE
-            LEFT JOIN analysis_results ar_mtn ON ar_mtn.simpl_id = p.simpl_id AND ar_mtn.analysis_type = 'mtn_risk'    AND ar_mtn.is_current = TRUE
             WHERE 1=1 ${facWhereClause}
             GROUP BY f.fac_id, f.name
             HAVING COUNT(p.simpl_id) > 0
             ORDER BY critical DESC, high DESC, f.name
         `, facParams);
 
+        // Get per-module counts for each facility
+        const moduleCountsRes = await query<{
+            fac_id: number; analysis_type: string; crit_high: number;
+        }>(`
+            SELECT p.fac_id, a.analysis_type,
+                COUNT(*) FILTER (WHERE a.severity IN ('critical','high'))::int AS crit_high
+            FROM analysis_results a
+            JOIN patients p ON p.simpl_id = a.simpl_id
+            WHERE a.is_current = TRUE AND a.analysis_type NOT LIKE 'ai_%'
+              AND (p.patient_status = 'Current' OR p.patient_status IS NULL)
+            GROUP BY p.fac_id, a.analysis_type
+        `);
+
+        const facModuleCounts: Record<number, Record<string, number>> = {};
+        for (const row of moduleCountsRes.rows) {
+            if (!facModuleCounts[row.fac_id]) facModuleCounts[row.fac_id] = {};
+            facModuleCounts[row.fac_id][row.analysis_type] = row.crit_high;
+        }
+
+        const facilities = facRes.rows.map(f => ({
+            ...f,
+            enabled_modules: facModuleMap[f.fac_id] ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'],
+            module_counts: facModuleCounts[f.fac_id] ?? {},
+        }));
+
+        // Urgent patients
         const urgentRes = await query<{
             simpl_id: string; first_name: string; last_name: string;
             room: string; fac_name: string; fac_id: number;
@@ -81,10 +106,7 @@ export async function GET() {
                      MAX(a.score) DESC
         `, facParams);
 
-        return NextResponse.json({
-            facilities: facRes.rows,
-            urgent: urgentRes.rows,
-        });
+        return NextResponse.json({ facilities, urgent: urgentRes.rows });
     } catch (err) {
         console.error('[dashboard/summary]', err);
         return NextResponse.json({ facilities: [], urgent: [] });
