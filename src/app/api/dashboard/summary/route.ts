@@ -10,8 +10,16 @@ export async function GET() {
     try {
         const profile = await getUserProfile();
         const allowedFacIds = profile?.facilityIds?.length ? profile.facilityIds : null;
-        const facFilter = allowedFacIds ? `WHERE f.fac_id = ANY(ARRAY[${allowedFacIds.join(',')}])` : '';
-        const patientFacFilter = allowedFacIds ? `AND f.fac_id = ANY(ARRAY[${allowedFacIds.join(',')}])` : '';
+
+        const facParams: unknown[] = [];
+        let facWhereClause = '';
+        let urgentFacClause = '';
+
+        if (allowedFacIds) {
+            facWhereClause = `AND f.fac_id = ANY($1)`;
+            urgentFacClause = `AND f.fac_id = ANY($1)`;
+            facParams.push(allowedFacIds);
+        }
 
         const facRes = await query<{
             fac_id: number; name: string; active_count: number;
@@ -30,7 +38,6 @@ export async function GET() {
                 COUNT(*) FILTER (WHERE ar_gtu.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS gtube_count,
                 COUNT(*) FILTER (WHERE ar_mtn.severity IN ('critical','high') AND (p.patient_status = 'Current' OR p.patient_status IS NULL))::int AS mtn_count
             FROM facilities f
-            ${facFilter}
             LEFT JOIN patients p ON p.fac_id = f.fac_id
             LEFT JOIN LATERAL (
                 SELECT CASE MAX(CASE severity WHEN 'critical' THEN 4 WHEN 'high' THEN 3 WHEN 'medium' THEN 2 WHEN 'low' THEN 1 ELSE 0 END)
@@ -42,12 +49,12 @@ export async function GET() {
             LEFT JOIN analysis_results ar_fol ON ar_fol.simpl_id = p.simpl_id AND ar_fol.analysis_type = 'foley_risk'  AND ar_fol.is_current = TRUE
             LEFT JOIN analysis_results ar_gtu ON ar_gtu.simpl_id = p.simpl_id AND ar_gtu.analysis_type = 'gtube_risk'  AND ar_gtu.is_current = TRUE
             LEFT JOIN analysis_results ar_mtn ON ar_mtn.simpl_id = p.simpl_id AND ar_mtn.analysis_type = 'mtn_risk'    AND ar_mtn.is_current = TRUE
+            WHERE 1=1 ${facWhereClause}
             GROUP BY f.fac_id, f.name
             HAVING COUNT(p.simpl_id) > 0
             ORDER BY critical DESC, high DESC, f.name
-        `);
+        `, facParams);
 
-        // Top urgent patients across all facilities
         const urgentRes = await query<{
             simpl_id: string; first_name: string; last_name: string;
             room: string; fac_name: string; fac_id: number;
@@ -68,11 +75,11 @@ export async function GET() {
             JOIN analysis_results a ON a.simpl_id = p.simpl_id AND a.is_current = TRUE
                 AND a.severity IN ('critical', 'high') AND a.analysis_type NOT LIKE 'ai_%'
             WHERE (p.patient_status = 'Current' OR p.patient_status IS NULL)
-            ${patientFacFilter}
+            ${urgentFacClause}
             GROUP BY p.simpl_id, p.first_name, p.last_name, p.room, f.name, f.fac_id
             ORDER BY MAX(CASE a.severity WHEN 'critical' THEN 4 WHEN 'high' THEN 3 ELSE 0 END) DESC,
                      MAX(a.score) DESC
-        `);
+        `, facParams);
 
         return NextResponse.json({
             facilities: facRes.rows,
