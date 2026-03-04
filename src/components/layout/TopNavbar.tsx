@@ -7,14 +7,16 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 
 interface Facility {
+    fac_id: number;
     name: string;
-    patient_count: number;
+    active_count: number;
 }
 
 function FacilitySelector() {
     const [facilities, setFacilities] = useState<Facility[]>([]);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
     const activeFacilityName = searchParams.get('facility') ?? '';
@@ -31,8 +33,13 @@ function FacilitySelector() {
 
     const activeFacility = facilities.find(f => f.name === activeFacilityName) ?? facilities[0] ?? null;
 
+    const filtered = facilities.filter(f =>
+        !search || f.name.toLowerCase().includes(search.toLowerCase())
+    );
+
     const selectFacility = useCallback((name: string) => {
         setIsOpen(false);
+        setSearch('');
         router.push(`/patients?facility=${encodeURIComponent(name)}`);
     }, [router]);
 
@@ -46,11 +53,11 @@ function FacilitySelector() {
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Building2 className="w-4 h-4" />}
                 </div>
                 <div className="flex-col items-start hidden sm:flex">
-                    <span className="text-xs font-semibold text-slate-700 leading-tight max-w-[160px] truncate">
+                    <span className="text-xs font-semibold text-slate-700 leading-tight max-w-[180px] truncate">
                         {activeFacility?.name ?? (loading ? 'Loading...' : 'Select Facility')}
                     </span>
                     <span className="text-[10px] text-slate-500 font-medium">
-                        {activeFacility ? `${activeFacility.patient_count} patients` : 'No facility selected'}
+                        {activeFacility ? `${activeFacility.active_count} active patients` : 'No facility selected'}
                     </span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
@@ -58,10 +65,17 @@ function FacilitySelector() {
 
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100 py-2 top-full z-50">
-                        <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                            Select Facility
+                    <div className="fixed inset-0 z-40" onClick={() => { setIsOpen(false); setSearch(''); }} />
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100 top-full z-50 overflow-hidden">
+                        <div className="px-3 pt-3 pb-2">
+                            <input
+                                type="text"
+                                placeholder="Search facilities..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                autoFocus
+                                className="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-primary-400 bg-slate-50"
+                            />
                         </div>
                         <div className="max-h-72 overflow-y-auto">
                             {loading && (
@@ -69,19 +83,21 @@ function FacilitySelector() {
                                     <Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading facilities...
                                 </div>
                             )}
-                            {!loading && facilities.length === 0 && (
+                            {!loading && filtered.length === 0 && (
                                 <div className="px-4 py-3 text-sm text-slate-400">No facilities found.</div>
                             )}
-                            {facilities.map(f => {
+                            {filtered.map(f => {
                                 const isActive = activeFacility?.name === f.name;
                                 return (
                                     <button
-                                        key={f.name}
+                                        key={f.fac_id}
                                         onClick={() => selectFacility(f.name)}
-                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 transition-colors flex items-center justify-between gap-2 ${isActive ? 'bg-primary-50/60 text-primary-700 font-medium' : 'text-slate-700'}`}
+                                        className={`w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors flex items-center justify-between gap-2 ${isActive ? 'bg-primary-50/60' : ''}`}
                                     >
-                                        <span className="truncate">{f.name}</span>
-                                        <span className="text-xs text-slate-400 flex-shrink-0">{f.patient_count}p</span>
+                                        <div className="min-w-0">
+                                            <div className={`text-sm truncate ${isActive ? 'text-primary-700 font-medium' : 'text-slate-700'}`}>{f.name}</div>
+                                        </div>
+                                        <span className="text-[10px] text-slate-400 flex-shrink-0 whitespace-nowrap">{f.active_count} active</span>
                                     </button>
                                 );
                             })}
