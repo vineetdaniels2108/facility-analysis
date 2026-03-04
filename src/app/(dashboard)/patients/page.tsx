@@ -10,6 +10,7 @@ import {
     Search, ArrowUpDown, ChevronUp, TrendingDown, Eye,
     Bed, Clock, UserCheck, UserX,
     Syringe, Utensils, Apple, ShieldAlert,
+    Heart, ClipboardList, Stethoscope, Brain,
 } from "lucide-react"
 
 const ResourceDataRenderer = dynamic(
@@ -50,8 +51,9 @@ interface PatientSummary {
     days_in_facility?: number
     last_synced_at?: string
     last_lab_date?: string | null
-    // DB pre-computed analysis (5 rule-based + 5 AI modules)
+    // DB pre-computed analysis
     db_analysis?: Record<string, DbAnalysis | null>
+    enabled_modules?: string[]
     combined_urgency?: number
     data_source?: string
     // Legacy local data fields
@@ -224,7 +226,19 @@ const LabTrendChart = dynamic(
 
 // ─── Sort / filter types ──────────────────────────────────────────────────────
 
-type FilterType = "all" | "active" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "foley" | "gtube" | "mtn" | "no-labs" | "discharged"
+type FilterType = "all" | "active" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "foley" | "gtube" | "mtn" | "cardiology" | "care_gaps" | "primary_care" | "psych_meds" | "no-labs" | "discharged"
+
+const MODULE_FILTER_META: Record<string, { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string; analysisKey: string }> = {
+    infusion:     { key: "infusion",      label: "Infusion",     icon: <Droplets className="w-3 h-3" />,      color: "text-blue-600 border-blue-200 hover:bg-blue-50",       activeColor: "text-white bg-blue-600 border-blue-600",     analysisKey: "infusion" },
+    transfusion:  { key: "transfusion",   label: "Transfusion",  icon: <FlaskConical className="w-3 h-3" />,  color: "text-rose-600 border-rose-200 hover:bg-rose-50",       activeColor: "text-white bg-rose-600 border-rose-600",     analysisKey: "transfusion" },
+    foley_risk:   { key: "foley",         label: "Foley",        icon: <Syringe className="w-3 h-3" />,       color: "text-purple-600 border-purple-200 hover:bg-purple-50", activeColor: "text-white bg-purple-600 border-purple-600",  analysisKey: "foley_risk" },
+    gtube_risk:   { key: "gtube",         label: "G-Tube",       icon: <Utensils className="w-3 h-3" />,      color: "text-orange-600 border-orange-200 hover:bg-orange-50", activeColor: "text-white bg-orange-600 border-orange-600",  analysisKey: "gtube_risk" },
+    mtn_risk:     { key: "mtn",           label: "MTN",          icon: <Apple className="w-3 h-3" />,         color: "text-lime-700 border-lime-200 hover:bg-lime-50",       activeColor: "text-white bg-lime-700 border-lime-700",     analysisKey: "mtn_risk" },
+    cardiology:   { key: "cardiology",    label: "Cardiology",   icon: <Heart className="w-3 h-3" />,         color: "text-red-600 border-red-200 hover:bg-red-50",          activeColor: "text-white bg-red-600 border-red-600",       analysisKey: "cardiology" },
+    care_gaps:    { key: "care_gaps",     label: "Care Gaps",    icon: <ClipboardList className="w-3 h-3" />, color: "text-amber-600 border-amber-200 hover:bg-amber-50",    activeColor: "text-white bg-amber-600 border-amber-600",   analysisKey: "care_gaps" },
+    primary_care: { key: "primary_care",  label: "Primary Care", icon: <Stethoscope className="w-3 h-3" />,   color: "text-teal-600 border-teal-200 hover:bg-teal-50",       activeColor: "text-white bg-teal-600 border-teal-600",     analysisKey: "primary_care" },
+    psych_meds:   { key: "psych_meds",    label: "Psych/Meds",   icon: <Brain className="w-3 h-3" />,         color: "text-indigo-600 border-indigo-200 hover:bg-indigo-50", activeColor: "text-white bg-indigo-600 border-indigo-600",  analysisKey: "psych_meds" },
+}
 type SortType = "urgency" | "name-az" | "name-za" | "status" | "severity" | "room-asc" | "room-desc" | "days-long" | "days-short" | "hgb-low" | "alb-low"
 
 interface AnalyzedPatient {
@@ -825,15 +839,12 @@ function PatientsView() {
         return (sevMap[a.severity] ?? 0) >= (sevMap[minSev] ?? 1)
     }
 
-    // Filter counts: severity filters show ONLY that severity, not higher
     const sevMatchOnly = (a: AnalyzedPatient, sev: Severity) => a.effectiveSeverity === sev && isActive(a.patient)
-    // Infusion/transfusion filters: critical or high only (action needed)
-    const needsInfusion = (a: AnalyzedPatient) => {
-        const s = a.patient.db_analysis?.infusion?.severity
-        return isActive(a.patient) && (s === 'critical' || s === 'high')
-    }
-    const needsTransfusion = (a: AnalyzedPatient) => {
-        const s = a.patient.db_analysis?.transfusion?.severity
+
+    const moduleMatch = (a: AnalyzedPatient, filterKey: FilterType): boolean => {
+        const meta = Object.values(MODULE_FILTER_META).find(m => m.key === filterKey)
+        if (!meta) return false
+        const s = a.patient.db_analysis?.[meta.analysisKey]?.severity
         return isActive(a.patient) && (s === 'critical' || s === 'high')
     }
 
@@ -844,11 +855,15 @@ function PatientsView() {
         high: analyzed.filter(a => sevMatchOnly(a, "high")).length,
         medium: analyzed.filter(a => sevMatchOnly(a, "medium")).length,
         low: analyzed.filter(a => sevMatchOnly(a, "low")).length,
-        infusion: analyzed.filter(needsInfusion).length,
-        transfusion: analyzed.filter(needsTransfusion).length,
-        foley: analyzed.filter(a => hasPrediction(a.patient, "foley_risk", "high") && isActive(a.patient)).length,
-        gtube: analyzed.filter(a => hasPrediction(a.patient, "gtube_risk", "high") && isActive(a.patient)).length,
-        mtn: analyzed.filter(a => hasPrediction(a.patient, "mtn_risk", "high") && isActive(a.patient)).length,
+        infusion: analyzed.filter(a => moduleMatch(a, "infusion")).length,
+        transfusion: analyzed.filter(a => moduleMatch(a, "transfusion")).length,
+        foley: analyzed.filter(a => moduleMatch(a, "foley")).length,
+        gtube: analyzed.filter(a => moduleMatch(a, "gtube")).length,
+        mtn: analyzed.filter(a => moduleMatch(a, "mtn")).length,
+        cardiology: analyzed.filter(a => moduleMatch(a, "cardiology")).length,
+        care_gaps: analyzed.filter(a => moduleMatch(a, "care_gaps")).length,
+        primary_care: analyzed.filter(a => moduleMatch(a, "primary_care")).length,
+        psych_meds: analyzed.filter(a => moduleMatch(a, "psych_meds")).length,
         "no-labs": analyzed.filter(a => !a.hasLabs && isActive(a.patient)).length,
         discharged: analyzed.filter(a => !isActive(a.patient)).length,
     }
@@ -870,14 +885,10 @@ function PatientsView() {
             case "high":        return sevMatchOnly(a, "high")
             case "medium":      return sevMatchOnly(a, "medium")
             case "low":         return sevMatchOnly(a, "low")
-            case "infusion":    return needsInfusion(a)
-            case "transfusion": return needsTransfusion(a)
-            case "foley":       return hasPrediction(a.patient, "foley_risk", "high") && isActive(a.patient)
-            case "gtube":       return hasPrediction(a.patient, "gtube_risk", "high") && isActive(a.patient)
-            case "mtn":         return hasPrediction(a.patient, "mtn_risk") && isActive(a.patient)
             case "no-labs":     return !a.hasLabs && isActive(a.patient)
             case "discharged":  return !isActive(a.patient)
-            default:            return true
+            case "all":         return true
+            default:            return moduleMatch(a, activeFilter)
         }
     })
 
@@ -895,6 +906,12 @@ function PatientsView() {
     }
 
     type FilterDef = { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string }
+
+    const enabledModules = patients[0]?.enabled_modules ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
+    const moduleFilters: FilterDef[] = enabledModules
+        .map(m => MODULE_FILTER_META[m])
+        .filter((m): m is typeof MODULE_FILTER_META[string] => !!m)
+
     const FILTER_GROUPS: { label: string; filters: FilterDef[] }[] = [
         { label: "Status", filters: [
             { key: "all",         label: "All",        icon: <Users className="w-3 h-3" />,         color: "text-slate-600 border-slate-200 hover:bg-slate-50",        activeColor: "text-white bg-slate-700 border-slate-700" },
@@ -906,15 +923,7 @@ function PatientsView() {
             { key: "high",        label: "High",       icon: <TrendingDown className="w-3 h-3" />,  color: "text-red-500 border-red-200 hover:bg-red-50",             activeColor: "text-white bg-red-500 border-red-500" },
             { key: "medium",      label: "Monitor",    icon: <Eye className="w-3 h-3" />,           color: "text-amber-600 border-amber-200 hover:bg-amber-50",       activeColor: "text-white bg-amber-500 border-amber-500" },
         ]},
-        { label: "Needs", filters: [
-            { key: "infusion",    label: "Infusion",   icon: <Droplets className="w-3 h-3" />,      color: "text-blue-600 border-blue-200 hover:bg-blue-50",          activeColor: "text-white bg-blue-600 border-blue-600" },
-            { key: "transfusion", label: "Transfusion",icon: <FlaskConical className="w-3 h-3" />,  color: "text-rose-600 border-rose-200 hover:bg-rose-50",          activeColor: "text-white bg-rose-600 border-rose-600" },
-        ]},
-        { label: "Predictions", filters: [
-            { key: "foley",       label: "Foley",      icon: <Syringe className="w-3 h-3" />,       color: "text-purple-600 border-purple-200 hover:bg-purple-50",    activeColor: "text-white bg-purple-600 border-purple-600" },
-            { key: "gtube",       label: "G-Tube",     icon: <Utensils className="w-3 h-3" />,      color: "text-orange-600 border-orange-200 hover:bg-orange-50",    activeColor: "text-white bg-orange-600 border-orange-600" },
-            { key: "mtn",         label: "MTN",        icon: <Apple className="w-3 h-3" />,         color: "text-lime-700 border-lime-200 hover:bg-lime-50",          activeColor: "text-white bg-lime-700 border-lime-700" },
-        ]},
+        ...(moduleFilters.length > 0 ? [{ label: "Modules", filters: moduleFilters }] : []),
     ]
 
     return (
