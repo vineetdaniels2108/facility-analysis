@@ -415,10 +415,13 @@ function OverviewTab({ patient, dbAnalysis }: {
 }) {
     const [aiLoading, setAiLoading] = useState(false)
     const [aiResults, setAiResults] = useState<Record<string, DbAnalysis>>({})
+    const [freshAnalysis, setFreshAnalysis] = useState<Record<string, DbAnalysis | null> | null>(null)
 
     const riskTypes = patient.enabled_modules ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
-    const hasAnyRuleData = riskTypes.some(t => dbAnalysis[t])
-    const hasAiData = riskTypes.some(t => dbAnalysis[`ai_${t}`] || aiResults[`ai_${t}`])
+    // Use freshAnalysis if we have it (post-trigger), otherwise use what came from the patient list
+    const baseAnalysis = freshAnalysis ?? dbAnalysis
+    const hasAnyRuleData = riskTypes.some(t => baseAnalysis[t])
+    const hasAiData = riskTypes.some(t => baseAnalysis[`ai_${t}`] || aiResults[`ai_${t}`])
 
     const triggerAI = async () => {
         setAiLoading(true)
@@ -427,14 +430,26 @@ function OverviewTab({ patient, dbAnalysis }: {
                 headers: { Authorization: `Bearer simpl-cron-s3cur3-xK9mP2026` },
             })
             const data = await res.json()
-            if (data.ok && data.results) {
-                const newAi: Record<string, DbAnalysis> = {}
-                for (const r of data.results as Array<{ type: string; severity: string; score: number; reasoning: string; indicators: Record<string, unknown> }>) {
-                    if (r.type.startsWith('ai_')) {
-                        newAi[r.type] = { severity: r.severity, score: r.score, priority: 'ai', reasoning: r.reasoning, indicators: r.indicators ?? {} }
+            if (data.ok) {
+                // Refetch the patient's full analysis from the DB so all cards update
+                try {
+                    const labsRes = await fetch(`/api/patients?facility=${encodeURIComponent(patient.facility ?? '')}`)
+                    const labsData = await labsRes.json()
+                    const updated = (labsData.patients ?? []).find((p: PatientSummary) => p.simpl_id === patient.simpl_id)
+                    if (updated?.db_analysis) {
+                        setFreshAnalysis(updated.db_analysis)
                     }
+                } catch { /* silent — DB results saved, just couldn't refresh */ }
+                // Also capture any AI results returned directly in the response
+                if (data.results) {
+                    const newAi: Record<string, DbAnalysis> = {}
+                    for (const r of data.results as Array<{ type: string; severity: string; score: number; reasoning: string; indicators: Record<string, unknown> }>) {
+                        if (r.type.startsWith('ai_')) {
+                            newAi[r.type] = { severity: r.severity, score: r.score, priority: 'ai', reasoning: r.reasoning, indicators: r.indicators ?? {} }
+                        }
+                    }
+                    if (Object.keys(newAi).length > 0) setAiResults(newAi)
                 }
-                setAiResults(newAi)
             }
         } catch (err) {
             console.error('[AI trigger] failed:', err)
@@ -443,7 +458,7 @@ function OverviewTab({ patient, dbAnalysis }: {
         }
     }
 
-    const mergedAnalysis = { ...dbAnalysis, ...aiResults }
+    const mergedAnalysis = { ...baseAnalysis, ...aiResults }
 
     // Show all cards that have any analysis data (including low/medium)
     const visibleCards = riskTypes

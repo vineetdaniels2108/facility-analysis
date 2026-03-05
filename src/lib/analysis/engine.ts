@@ -76,7 +76,7 @@ export async function runAnalysis(simplId: string): Promise<AnalysisResult[]> {
     // Skip AI for facilities that don't have OPENAI configured or flag skipAI
     if (process.env.OPENAI_API_KEY) {
         try {
-            const aiResults = await runAIReview({ ctx, ruleResults: results });
+            const aiResults = await runAIReview({ ctx, ruleResults: results, enabledModules });
             results.push(...aiResults);
         } catch (err) {
             console.error(`[analysis] AI review failed for ${simplId}:`, err);

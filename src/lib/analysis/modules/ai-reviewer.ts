@@ -8,9 +8,22 @@ const SEVERITY_THRESHOLD: Record<Severity, number> = {
 interface AIReviewInput {
     ctx: PatientContext;
     ruleResults: AnalysisResult[];
+    enabledModules?: string[];
 }
 
-function buildPrompt(ctx: PatientContext, ruleResults: AnalysisResult[]): string {
+const MODULE_DESCRIPTIONS: Record<string, string> = {
+    infusion:     'IV fluid/albumin infusion need',
+    transfusion:  'Blood transfusion need',
+    foley_risk:   'Likelihood of needing a Foley catheter',
+    gtube_risk:   'Likelihood of needing a G-tube',
+    mtn_risk:     'Malnutrition/MTN therapy need',
+    cardiology:   'Heart disease risk and cardiac management needs',
+    care_gaps:    'Missing labs, screenings, or follow-ups given diagnoses',
+    primary_care: 'Chronic disease burden, polypharmacy, and primary care concerns',
+    psych_meds:   'Psychotropic medication safety, GDR compliance, and behavioral concerns',
+};
+
+function buildPrompt(ctx: PatientContext, ruleResults: AnalysisResult[], enabledModules: string[]): string {
     const labSummary = Object.entries(ctx.labs)
         .filter(([, v]) => v.value != null)
         .map(([name, v]) => {
@@ -83,12 +96,8 @@ ${ruleSummary}
 
 ## Instructions
 
-Review the full clinical picture. For each of these 5 risk areas, provide your assessment:
-1. **infusion** — IV fluid/albumin infusion need
-2. **transfusion** — Blood transfusion need
-3. **foley_risk** — Likelihood of needing a Foley catheter
-4. **gtube_risk** — Likelihood of needing a G-tube
-5. **mtn_risk** — Malnutrition/MTN therapy need
+Review the full clinical picture. For each of these ${enabledModules.length} risk areas, provide your assessment:
+${enabledModules.map((m, i) => `${i + 1}. **${m}** — ${MODULE_DESCRIPTIONS[m] ?? m}`).join('\n')}
 
 For each, consider factors the rule-based system may have missed:
 - Medication side effects that increase risk
@@ -107,6 +116,10 @@ export async function runAIReview(input: AIReviewInput): Promise<AnalysisResult[
         return [];
     }
 
+    const enabledModules = input.enabledModules?.length
+        ? input.enabledModules
+        : ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk'];
+
     const maxSeverity = Math.max(
         ...input.ruleResults.map(r => SEVERITY_THRESHOLD[r.severity]),
         0
@@ -116,15 +129,16 @@ export async function runAIReview(input: AIReviewInput): Promise<AnalysisResult[
     }
 
     const openai = new OpenAI({ apiKey });
-    const prompt = buildPrompt(input.ctx, input.ruleResults);
+    const prompt = buildPrompt(input.ctx, input.ruleResults, enabledModules);
+    const moduleList = enabledModules.join('/');
 
     try {
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: `You are a clinical decision support system for skilled nursing facilities. Respond ONLY with a JSON object in this exact format:
-{"assessments":[{"type":"infusion","severity":"critical","confidence":0.95,"reasoning":"...","recommendations":["..."],"missed_factors":["..."]}]}
-Each assessment must have: type (one of infusion/transfusion/foley_risk/gtube_risk/mtn_risk), severity (critical/high/medium/low/normal), confidence (0-1), reasoning (string), recommendations (array of strings), missed_factors (array of strings).
+{"assessments":[{"type":"cardiology","severity":"high","confidence":0.85,"reasoning":"...","recommendations":["..."],"missed_factors":["..."]}]}
+Each assessment must have: type (one of ${moduleList}), severity (critical/high/medium/low/normal), confidence (0-1), reasoning (string), recommendations (array of strings), missed_factors (array of strings).
 Only include assessments where you have something meaningful to add beyond the rule-based analysis. Skip normal/unchanged ones.` },
                 { role: 'user', content: prompt },
             ],
