@@ -351,6 +351,7 @@ const RISK_META: Record<string, { icon: React.ReactNode; label: string; keyIndic
 }
 
 function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAnalysis | null; ai: DbAnalysis | null }) {
+    const [open, setOpen] = useState(false)
     const meta = RISK_META[riskType] ?? { icon: null, label: riskType }
     const primary = rule ?? ai
     if (!primary) return null
@@ -365,45 +366,191 @@ function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAna
     const recs = (ai?.indicators?.recommendations ?? []) as string[]
     const missed = (ai?.indicators?.missed_factors ?? []) as string[]
 
+    // Parse reasoning into bullet points (split on ". " for readability)
+    const reasoningPoints = (rule?.reasoning ?? ai?.reasoning ?? '').split(/\.\s+/).filter(Boolean)
+
+    // Pull structured gaps/findings from indicators if available
+    const gaps = (rule?.indicators?.gaps ?? []) as Array<{ gap: string; recommendation: string } | string>
+    const findings = (rule?.indicators?.findings ?? []) as Array<{ area: string; concern: string; action: string }>
+
     return (
-        <div className={`rounded-lg border p-3 ${bg}`}>
-            <div className="flex items-center gap-1.5 mb-1.5">
-                {meta.icon}
-                <span className="text-xs font-bold text-slate-700">{meta.label}</span>
-                <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[sev].className}`}>
-                    {(primary.severity ?? 'normal').toUpperCase()}
-                </span>
+        <>
+            {/* Compact card — click to expand */}
+            <div
+                className={`rounded-lg border p-3 cursor-pointer hover:shadow-md transition-shadow group ${bg}`}
+                onClick={() => setOpen(true)}
+                title="Click for full detail"
+            >
+                <div className="flex items-center gap-1.5 mb-1.5">
+                    {meta.icon}
+                    <span className="text-xs font-bold text-slate-700">{meta.label}</span>
+                    <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${SEVERITY_BADGE[sev].className}`}>
+                        {(primary.severity ?? 'normal').toUpperCase()}
+                    </span>
+                </div>
+                <p className="text-[10px] text-slate-600 leading-relaxed line-clamp-3">{rule?.reasoning ?? ai?.reasoning ?? ''}</p>
+                {keyVal != null && (
+                    <p className="text-[10px] font-semibold text-slate-500 mt-1">{meta.keyIndicatorLabel}: {keyVal} {meta.unit}</p>
+                )}
+                <p className="text-[9px] text-slate-400 mt-1.5 group-hover:text-teal-500 transition-colors">Click to view full detail →</p>
             </div>
-            <p className="text-[10px] text-slate-600 leading-relaxed">{rule?.reasoning ?? ai?.reasoning ?? ''}</p>
-            {keyVal != null && (
-                <p className="text-[10px] font-semibold text-slate-500 mt-1">{meta.keyIndicatorLabel}: {keyVal} {meta.unit}</p>
-            )}
-            {ai && (
-                <div className="mt-2 pt-2 border-t border-slate-200/60">
-                    {ai.reasoning && rule && (
-                        <p className="text-[10px] text-indigo-600 leading-relaxed mb-1">
-                            <span className="font-semibold">AI:</span> {ai.reasoning}
-                        </p>
-                    )}
-                    {recs.length > 0 && (
-                        <div className="mb-1">
-                            <p className="text-[9px] font-bold text-teal-700 mb-0.5">Recommendations</p>
-                            <ul className="text-[9px] text-slate-600 space-y-0.5">
-                                {recs.map((r, i) => <li key={i} className="flex gap-1"><span className="text-teal-400">&#8250;</span>{r}</li>)}
-                            </ul>
+
+            {/* Full-detail modal */}
+            {open && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
+                    onClick={() => setOpen(false)}
+                >
+                    <div
+                        className={`bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto`}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Modal header */}
+                        <div className={`flex items-center justify-between px-6 py-4 border-b ${
+                            sev === 'critical' ? 'bg-red-50 border-red-200' :
+                            sev === 'high' ? 'bg-red-50/50 border-red-100' :
+                            sev === 'medium' ? 'bg-amber-50 border-amber-200' :
+                            'bg-slate-50 border-slate-100'
+                        }`}>
+                            <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                                    {meta.icon && <span className="scale-150">{meta.icon}</span>}
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-bold text-slate-800">{meta.label}</h2>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${SEVERITY_BADGE[sev].className}`}>
+                                            {(primary.severity ?? 'normal').toUpperCase()}
+                                        </span>
+                                        {primary.score != null && (
+                                            <span className="text-xs text-slate-400">Score: {primary.score}</span>
+                                        )}
+                                        {keyVal != null && (
+                                            <span className="text-xs font-semibold text-slate-600">
+                                                {meta.keyIndicatorLabel}: <span className="text-slate-800">{keyVal} {meta.unit}</span>
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <button onClick={() => setOpen(false)} className="p-2 hover:bg-white/80 rounded-xl transition-colors">
+                                <X className="w-5 h-5 text-slate-400" />
+                            </button>
                         </div>
-                    )}
-                    {missed.length > 0 && (
-                        <div>
-                            <p className="text-[9px] font-bold text-amber-600 mb-0.5">Additional Factors</p>
-                            <ul className="text-[9px] text-slate-600 space-y-0.5">
-                                {missed.map((m, i) => <li key={i} className="flex gap-1"><span className="text-amber-400">&#8250;</span>{m}</li>)}
-                            </ul>
+
+                        {/* Modal body */}
+                        <div className="px-6 py-5 space-y-5">
+
+                            {/* Rule-based reasoning */}
+                            {rule?.reasoning && (
+                                <div>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Clinical Assessment</p>
+                                    {reasoningPoints.length > 1 ? (
+                                        <ul className="space-y-1.5">
+                                            {reasoningPoints.map((point, i) => (
+                                                <li key={i} className="flex gap-2 text-sm text-slate-700 leading-relaxed">
+                                                    <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${
+                                                        sev === 'critical' ? 'bg-red-400' :
+                                                        sev === 'high' ? 'bg-red-300' :
+                                                        sev === 'medium' ? 'bg-amber-400' : 'bg-slate-300'
+                                                    }`} />
+                                                    {point.endsWith('.') ? point : point + '.'}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="text-sm text-slate-700 leading-relaxed">{rule.reasoning}</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Structured findings (primary_care) */}
+                            {findings.length > 0 && (
+                                <div>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Findings</p>
+                                    <div className="space-y-2">
+                                        {findings.map((f, i) => (
+                                            <div key={i} className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                                                <p className="text-sm font-semibold text-slate-700">{f.area}</p>
+                                                <p className="text-sm text-slate-600 mt-0.5">{f.concern}</p>
+                                                {f.action && (
+                                                    <p className="text-sm text-teal-700 mt-1 flex gap-1.5 items-start">
+                                                        <span className="mt-0.5 text-teal-400 flex-shrink-0">→</span>{f.action}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Structured gaps (care_gaps) */}
+                            {gaps.length > 0 && (
+                                <div>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Care Gaps</p>
+                                    <div className="space-y-2">
+                                        {gaps.map((g, i) => {
+                                            const gapText = typeof g === 'string' ? g : g.gap
+                                            const recText = typeof g === 'string' ? '' : g.recommendation
+                                            return (
+                                                <div key={i} className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3">
+                                                    <p className="text-sm font-semibold text-amber-800">{gapText}</p>
+                                                    {recText && <p className="text-sm text-amber-700 mt-0.5">{recText}</p>}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* AI insights */}
+                            {ai && (
+                                <div className="pt-4 border-t border-slate-100">
+                                    <p className="text-xs font-bold text-indigo-500 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                                        <ShieldAlert className="w-3.5 h-3.5" /> AI Clinical Insights
+                                    </p>
+                                    {ai.reasoning && rule && (
+                                        <p className="text-sm text-indigo-700 leading-relaxed mb-3">{ai.reasoning}</p>
+                                    )}
+                                    {recs.length > 0 && (
+                                        <div className="mb-3">
+                                            <p className="text-xs font-bold text-teal-600 mb-2">Recommendations</p>
+                                            <ul className="space-y-1.5">
+                                                {recs.map((r, i) => (
+                                                    <li key={i} className="flex gap-2 text-sm text-slate-700 leading-relaxed">
+                                                        <span className="text-teal-400 flex-shrink-0 mt-0.5">›</span>{r}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    {missed.length > 0 && (
+                                        <div>
+                                            <p className="text-xs font-bold text-amber-600 mb-2">Additional Factors to Consider</p>
+                                            <ul className="space-y-1.5">
+                                                {missed.map((m, i) => (
+                                                    <li key={i} className="flex gap-2 text-sm text-slate-700 leading-relaxed">
+                                                        <span className="text-amber-400 flex-shrink-0 mt-0.5">›</span>{m}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                    )}
+
+                        {/* Modal footer */}
+                        <div className="px-6 py-4 border-t border-slate-100 flex justify-end">
+                            <button onClick={() => setOpen(false)}
+                                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
-        </div>
+        </>
     )
 }
 
