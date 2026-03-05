@@ -1,14 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isDbConfigured, query } from '@/lib/db/client';
 import { runAnalysis } from '@/lib/analysis/engine';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-export async function GET(req: NextRequest) {
+async function isAuthorized(req: NextRequest): Promise<boolean> {
+    // Allow cron secret (for batch/server calls)
     const secret = process.env.CRON_SECRET;
     const auth = req.headers.get('authorization');
-    if (secret && auth !== `Bearer ${secret}`) {
+    if (secret && auth === `Bearer ${secret}`) return true;
+
+    // Allow authenticated Supabase users (for manual per-patient triggers in the UI)
+    try {
+        const cookieStore = await cookies();
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { cookies: { getAll: () => cookieStore.getAll() } }
+        );
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) return true;
+    } catch { /* fall through */ }
+
+    return false;
+}
+
+export async function GET(req: NextRequest) {
+    if (!(await isAuthorized(req))) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

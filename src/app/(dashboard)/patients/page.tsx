@@ -426,9 +426,7 @@ function OverviewTab({ patient, dbAnalysis }: {
     const triggerAI = async () => {
         setAiLoading(true)
         try {
-            const res = await fetch(`/api/admin/reanalyze?simplId=${patient.simpl_id}`, {
-                headers: { Authorization: `Bearer simpl-cron-s3cur3-xK9mP2026` },
-            })
+            const res = await fetch(`/api/admin/reanalyze?simplId=${patient.simpl_id}`)
             const data = await res.json()
             if (data.ok) {
                 // Refetch the patient's full analysis from the DB so all cards update
