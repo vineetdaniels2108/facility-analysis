@@ -620,7 +620,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
 
     const tabs = [
         { id: "overview" as const, label: "Overview" },
-        { id: "labs" as const, label: "Labs", count: Object.keys(histMap).length },
+        { id: "labs" as const, label: "Labs", count: labHistoryLoading ? -1 : Object.keys(histMap).length },
         { id: "trends" as const, label: "Trends", count: labHistoryLoading ? -1 : totalCharts },
         ...(resources.length > 0 ? [{ id: "data" as const, label: "Raw Data", count: resources.length }] : []),
     ]
@@ -663,7 +663,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                         {/* Labs tab — all labs grouped by clinical category, latest value + date */}
                         {activeTab === "labs" && (
                             <div className="p-3">
-                                {labHistoryLoading
+                                {(labHistoryLoading || labHistory === null)
                                     ? <div className="py-6 text-center text-xs text-slate-400"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading labs...</div>
                                     : Object.keys(histMap).length === 0
                                         ? <div className="py-6 text-center text-xs text-slate-400">No lab data available for this patient.</div>
