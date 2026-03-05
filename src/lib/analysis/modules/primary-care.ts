@@ -10,7 +10,7 @@ const HYPERTENSION_CODES = ['I10', 'I11', 'I12', 'I13'];
 
 export const primaryCareModule: AnalysisModule = {
     type: 'primary_care',
-    name: 'Primary Care Analysis',
+    name: 'General Medical Review',
 
     analyze(ctx: PatientContext): AnalysisResult {
         const indicators: Record<string, unknown> = {};

@@ -39,9 +39,9 @@ const FLAG_META: Record<string, { label: string; cls: string; critCls: string; i
     foley_risk:   { label: "Foley",         cls: "bg-purple-100 text-purple-700", critCls: "bg-purple-600 text-white",   icon: <Syringe className="w-2.5 h-2.5" /> },
     gtube_risk:   { label: "G-Tube",        cls: "bg-orange-100 text-orange-700", critCls: "bg-orange-600 text-white",   icon: <Utensils className="w-2.5 h-2.5" /> },
     mtn_risk:     { label: "MTN",           cls: "bg-lime-100 text-lime-700",     critCls: "bg-lime-700 text-white",     icon: <Apple className="w-2.5 h-2.5" /> },
-    cardiology:   { label: "Cardiology",    cls: "bg-red-100 text-red-700",       critCls: "bg-red-600 text-white",      icon: <Heart className="w-2.5 h-2.5" /> },
+    cardiology:   { label: "Cardiac Risk",   cls: "bg-red-100 text-red-700",       critCls: "bg-red-600 text-white",      icon: <Heart className="w-2.5 h-2.5" /> },
     care_gaps:    { label: "Care Gaps",     cls: "bg-amber-100 text-amber-700",   critCls: "bg-amber-600 text-white",    icon: <ClipboardList className="w-2.5 h-2.5" /> },
-    primary_care: { label: "Primary Care",  cls: "bg-teal-100 text-teal-700",     critCls: "bg-teal-600 text-white",     icon: <Stethoscope className="w-2.5 h-2.5" /> },
+    primary_care: { label: "General Medical", cls: "bg-teal-100 text-teal-700",     critCls: "bg-teal-600 text-white",     icon: <Stethoscope className="w-2.5 h-2.5" /> },
     psych_meds:   { label: "Psych/Meds",    cls: "bg-indigo-100 text-indigo-700", critCls: "bg-indigo-600 text-white",   icon: <Brain className="w-2.5 h-2.5" /> },
 }
 

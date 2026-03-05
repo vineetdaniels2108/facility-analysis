@@ -234,9 +234,9 @@ const MODULE_FILTER_META: Record<string, { key: FilterType; label: string; icon:
     foley_risk:   { key: "foley",         label: "Foley",        icon: <Syringe className="w-3 h-3" />,       color: "text-purple-600 border-purple-200 hover:bg-purple-50", activeColor: "text-white bg-purple-600 border-purple-600",  analysisKey: "foley_risk" },
     gtube_risk:   { key: "gtube",         label: "G-Tube",       icon: <Utensils className="w-3 h-3" />,      color: "text-orange-600 border-orange-200 hover:bg-orange-50", activeColor: "text-white bg-orange-600 border-orange-600",  analysisKey: "gtube_risk" },
     mtn_risk:     { key: "mtn",           label: "MTN",          icon: <Apple className="w-3 h-3" />,         color: "text-lime-700 border-lime-200 hover:bg-lime-50",       activeColor: "text-white bg-lime-700 border-lime-700",     analysisKey: "mtn_risk" },
-    cardiology:   { key: "cardiology",    label: "Cardiology",   icon: <Heart className="w-3 h-3" />,         color: "text-red-600 border-red-200 hover:bg-red-50",          activeColor: "text-white bg-red-600 border-red-600",       analysisKey: "cardiology" },
+    cardiology:   { key: "cardiology",    label: "Cardiac Risk",   icon: <Heart className="w-3 h-3" />,         color: "text-red-600 border-red-200 hover:bg-red-50",          activeColor: "text-white bg-red-600 border-red-600",       analysisKey: "cardiology" },
     care_gaps:    { key: "care_gaps",     label: "Care Gaps",    icon: <ClipboardList className="w-3 h-3" />, color: "text-amber-600 border-amber-200 hover:bg-amber-50",    activeColor: "text-white bg-amber-600 border-amber-600",   analysisKey: "care_gaps" },
-    primary_care: { key: "primary_care",  label: "Primary Care", icon: <Stethoscope className="w-3 h-3" />,   color: "text-teal-600 border-teal-200 hover:bg-teal-50",       activeColor: "text-white bg-teal-600 border-teal-600",     analysisKey: "primary_care" },
+    primary_care: { key: "primary_care",  label: "General Medical", icon: <Stethoscope className="w-3 h-3" />,   color: "text-teal-600 border-teal-200 hover:bg-teal-50",       activeColor: "text-white bg-teal-600 border-teal-600",     analysisKey: "primary_care" },
     psych_meds:   { key: "psych_meds",    label: "Psych/Meds",   icon: <Brain className="w-3 h-3" />,         color: "text-indigo-600 border-indigo-200 hover:bg-indigo-50", activeColor: "text-white bg-indigo-600 border-indigo-600",  analysisKey: "psych_meds" },
 }
 type SortType = "urgency" | "name-az" | "name-za" | "status" | "severity" | "room-asc" | "room-desc" | "days-long" | "days-short" | "hgb-low" | "alb-low"
@@ -344,9 +344,9 @@ const RISK_META: Record<string, { icon: React.ReactNode; label: string; keyIndic
     foley_risk:   { icon: <Syringe className="w-3.5 h-3.5 text-purple-500" />,     label: "Foley Tube Risk" },
     gtube_risk:   { icon: <Utensils className="w-3.5 h-3.5 text-orange-500" />,    label: "G-Tube Risk" },
     mtn_risk:     { icon: <Apple className="w-3.5 h-3.5 text-lime-600" />,          label: "MTN / Nutrition Risk" },
-    cardiology:   { icon: <Heart className="w-3.5 h-3.5 text-red-500" />,          label: "Heart Disease & Cardiology" },
+    cardiology:   { icon: <Heart className="w-3.5 h-3.5 text-red-500" />,          label: "Cardiac Risk & Monitoring" },
     care_gaps:    { icon: <ClipboardList className="w-3.5 h-3.5 text-amber-500" />, label: "Care Gaps & Recommendations" },
-    primary_care: { icon: <Stethoscope className="w-3.5 h-3.5 text-teal-500" />,   label: "Primary Care Analysis" },
+    primary_care: { icon: <Stethoscope className="w-3.5 h-3.5 text-teal-500" />,   label: "General Medical Review" },
     psych_meds:   { icon: <Brain className="w-3.5 h-3.5 text-indigo-500" />,       label: "Psychology & Medication Mgmt" },
 }
 

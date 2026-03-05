@@ -21,7 +21,7 @@ const CARDIAC_MEDS_KEYWORDS = [
 
 export const cardiologyModule: AnalysisModule = {
     type: 'cardiology',
-    name: 'Heart Disease & Cardiology',
+    name: 'Cardiac Risk & Monitoring',
 
     analyze(ctx: PatientContext): AnalysisResult {
         const indicators: Record<string, unknown> = {};
