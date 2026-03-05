@@ -220,6 +220,16 @@ function NavbarLogout() {
 }
 
 export function TopNavbar() {
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false)
+
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.auth.getUser().then(async ({ data: { user } }) => {
+            if (!user) return
+            const { data } = await (supabase.from('users') as any).select('role').eq('id', user.id).single()
+            if (data?.role === 'superadmin') setIsSuperAdmin(true)
+        })
+    }, [])
     return (
         <header className="sticky top-0 z-50 w-full border-b border-black/5 bg-white/70 backdrop-blur-md">
             <div className="flex h-16 items-center px-6 justify-between max-w-[1600px] mx-auto">
@@ -234,12 +244,16 @@ export function TopNavbar() {
 
                 {/* Right: Actions */}
                 <div className="flex items-center gap-2">
-                    <Link href="/users" className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors" title="Users">
-                        <User className="w-4 h-4" />
-                    </Link>
-                    <Link href="/settings" className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors" title="Settings">
-                        <Settings className="w-4 h-4" />
-                    </Link>
+                    {isSuperAdmin && (
+                        <Link href="/users" className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors" title="Users">
+                            <User className="w-4 h-4" />
+                        </Link>
+                    )}
+                    {isSuperAdmin && (
+                        <Link href="/settings" className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors" title="Settings">
+                            <Settings className="w-4 h-4" />
+                        </Link>
+                    )}
 
                     <NotificationBell />
 

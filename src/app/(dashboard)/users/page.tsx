@@ -28,7 +28,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof
     disabled: { label: 'Disabled', color: 'bg-red-100 text-red-700', icon: Ban },
 }
 
-const ROLES = ['admin', 'physician', 'nurse', 'user']
+const ROLES = ['superadmin', 'admin', 'physician', 'nurse', 'user']
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([])
@@ -158,7 +158,9 @@ export default function UsersPage() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {user.role === 'admin' ? (
+                                                {user.role === 'superadmin' ? (
+                                                    <span className="text-xs text-purple-600 font-medium flex items-center gap-1"><Shield className="w-3 h-3" />All Facilities (Super Admin)</span>
+                                                ) : user.role === 'admin' ? (
                                                     <span className="text-xs text-indigo-600 font-medium">All Facilities</span>
                                                 ) : user.facilityIds.length > 0 ? (
                                                     <div className="flex flex-wrap gap-1">
@@ -295,7 +297,9 @@ function UserModal({ user, facilities, saving, onClose, onSave }: {
                     )}
                     <div>
                         <label className="block text-xs font-medium text-slate-600 mb-2">Facility Access</label>
-                        {role === 'admin' ? (
+                        {role === 'superadmin' ? (
+                            <p className="text-xs text-purple-600 font-medium">Super admins have access to all facilities</p>
+                        ) : role === 'admin' ? (
                             <p className="text-xs text-indigo-600">Admins have access to all facilities</p>
                         ) : (
                             <div className="space-y-1.5 max-h-48 overflow-y-auto border border-slate-100 rounded-xl p-2">
@@ -315,7 +319,7 @@ function UserModal({ user, facilities, saving, onClose, onSave }: {
                 <div className="flex justify-end gap-2 p-5 border-t border-slate-100">
                     <button onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
                     <button disabled={saving || (!user && !email)}
-                        onClick={() => onSave({ ...(!user ? { email } : {}), firstName, lastName, role, facilityIds: role === 'admin' ? [] : facilityIds, ...(!user && password ? { password } : {}) })}
+                        onClick={() => onSave({ ...(!user ? { email } : {}), firstName, lastName, role, facilityIds: (role === 'admin' || role === 'superadmin') ? [] : facilityIds, ...(!user && password ? { password } : {}) })}
                         className="flex items-center gap-2 px-4 py-2 text-sm bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-xl disabled:opacity-50">
                         <Check className="w-4 h-4" /> {saving ? 'Saving...' : user ? 'Save Changes' : 'Create User'}
                     </button>
@@ -324,3 +328,4 @@ function UserModal({ user, facilities, saving, onClose, onSave }: {
         </div>
     )
 }
+

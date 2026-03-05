@@ -5,6 +5,7 @@ export interface AuthUserProfile {
     email: string;
     role: string;
     facilityIds: number[];
+    isSuperAdmin: boolean;
 }
 
 export async function getUserProfile(): Promise<AuthUserProfile | null> {
@@ -30,13 +31,17 @@ export async function getUserProfile(): Promise<AuthUserProfile | null> {
             console.log('[getUserProfile] profile query error:', profileErr.message, 'for user:', user.email);
         }
 
+        const role = (profile as any)?.role ?? 'user';
+        const isSuperAdmin = role === 'superadmin';
+
         const result = {
             id: user.id,
             email: user.email ?? '',
-            role: (profile as any)?.role ?? 'user',
-            facilityIds: (profile as any)?.facility_ids ?? [],
+            role,
+            facilityIds: isSuperAdmin ? [] : ((profile as any)?.facility_ids ?? []),
+            isSuperAdmin,
         };
-        console.log('[getUserProfile] result:', result.email, 'facilities:', result.facilityIds);
+        console.log('[getUserProfile] result:', result.email, 'role:', result.role, 'facilities:', result.facilityIds);
         return result;
     } catch (err) {
         console.error('[getUserProfile] unexpected error:', err);
@@ -49,8 +54,10 @@ export function filterFacilitiesByUser(
     userProfile: AuthUserProfile | null
 ): number[] | null {
     if (!userProfile) return null;
-    // If user has facility assignments, filter by them (even for admins)
-    // Empty array = no filter (see all)
+    // Superadmin sees everything — no filter
+    if (userProfile.isSuperAdmin) return null;
+    // Non-empty facility list = filter to those facilities only
     if (userProfile.facilityIds.length > 0) return userProfile.facilityIds;
+    // Empty list and not superadmin = no facilities (shouldn't happen in practice)
     return null;
 }
