@@ -852,10 +852,11 @@ function PatientsView() {
 
         const sevOrder: Record<Severity, number> = { critical: 4, high: 3, medium: 2, low: 1, normal: 0 }
 
-        // Compute effective severity from ALL analysis modules (rule-based only, not ai_ prefixed)
+        // Compute effective severity from ALL rule-based analysis modules for this patient
+        // Use the patient's enabled_modules so Guardian patients aren't stuck at "normal"
         let effectiveSeverity: Severity = "normal"
         if (p.db_analysis) {
-            const ruleTypes = ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
+            const ruleTypes = p.enabled_modules ?? ['infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk']
             for (const t of ruleTypes) {
                 const a = p.db_analysis[t]
                 if (a) {
@@ -888,7 +889,11 @@ function PatientsView() {
         }
 
         const sevScore = { critical: 1000, high: 500, medium: 200, low: 50, normal: 0 }
-        const urgencyScore = sevScore[effectiveSeverity] + (p.db_analysis?.infusion?.score ?? inf.score)
+        // Use the highest raw score across all enabled modules for urgency ranking
+        const maxModuleScore = p.enabled_modules
+            ? Math.max(0, ...p.enabled_modules.map(t => p.db_analysis?.[t]?.score ?? 0))
+            : (p.db_analysis?.infusion?.score ?? inf.score)
+        const urgencyScore = sevScore[effectiveSeverity] + maxModuleScore
 
         return { patient: p, inf, tran, hasLabs, effectiveSeverity, urgencyScore }
     })
