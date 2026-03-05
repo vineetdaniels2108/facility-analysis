@@ -620,7 +620,7 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
 
     const tabs = [
         { id: "overview" as const, label: "Overview" },
-        { id: "labs" as const, label: "Labs", count: keyLabs.length },
+        { id: "labs" as const, label: "Labs", count: Object.keys(histMap).length },
         { id: "trends" as const, label: "Trends", count: labHistoryLoading ? -1 : totalCharts },
         ...(resources.length > 0 ? [{ id: "data" as const, label: "Raw Data", count: resources.length }] : []),
     ]
@@ -660,32 +660,85 @@ function InlineDetail({ patient, labs, labHistory, labHistoryLoading, openResour
                             <OverviewTab patient={patient} dbAnalysis={dbAnalysis ?? {}} />
                         )}
 
-                        {/* Labs tab */}
+                        {/* Labs tab — all labs grouped by clinical category, latest value + date */}
                         {activeTab === "labs" && (
                             <div className="p-3">
-                                {keyLabs.length === 0
-                                    ? <div className="py-6 text-center text-xs text-slate-400">No lab data available for this patient.</div>
-                                    : <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
-                                        {keyLabs.map(({ canonical, lab }) => {
-                                            const range = NORMAL[canonical]
-                                            const abnormal = range ? (lab.value < range[0] || lab.value > range[1]) : false
+                                {labHistoryLoading
+                                    ? <div className="py-6 text-center text-xs text-slate-400"><Loader2 className="w-3 h-3 animate-spin inline mr-1" />Loading labs...</div>
+                                    : Object.keys(histMap).length === 0
+                                        ? <div className="py-6 text-center text-xs text-slate-400">No lab data available for this patient.</div>
+                                        : (() => {
+                                            // Build latest-value map from histMap (already loaded)
+                                            const allLatest: Record<string, { value: number; unit: string; referenceRange: string; date: string; isAbnormal: boolean }> = {}
+                                            for (const [name, history] of Object.entries(histMap)) {
+                                                if (!history || history.length === 0) continue
+                                                const sorted = [...history].sort((a, b) => b.date.localeCompare(a.date))
+                                                const latest = sorted[0]
+                                                if (latest.value == null) continue
+                                                let isAbnormal = false
+                                                if (latest.referenceRange) {
+                                                    const m = latest.referenceRange.match(/([\d.]+)\s*[-–]\s*([\d.]+)/)
+                                                    if (m) isAbnormal = latest.value < parseFloat(m[1]) || latest.value > parseFloat(m[2])
+                                                }
+                                                allLatest[name] = { value: latest.value, unit: (latest as { unit?: string }).unit ?? '', referenceRange: latest.referenceRange ?? '', date: latest.date, isAbnormal }
+                                            }
+
+                                            // Group by clinical category (same as Trends)
+                                            const LAB_GROUPS: { label: string; labs: string[] }[] = [
+                                                { label: "Hematology",  labs: ["HGB","HCT","RBC","PLATELET","PLATELET_COUNT","INR","FERRITIN","FE","WBC","MCH","MCV","MCHC","RDW","MPV"] },
+                                                { label: "Nutrition",   labs: ["ALB","PREALB","TPROT","A/G_RATIO","TPROT"] },
+                                                { label: "Cardiac",     labs: ["BNP","NT-PROBNP","NT_PROBNP","TROPONIN","TROPONIN_I","CK","CK-MB","CHOLESTEROL","TRIGLYCERIDES","HDL_CHOLESTEROL","CALCULATED_LDL"] },
+                                                { label: "Renal",       labs: ["BUN","CREAT","CREATININE","EGFR","EGFR_(NON_AFRICAN-AMERICAN)","BUN/CREAT_RATIO","BUN/CREATININE_RATIO","BUN/CREAT","CALCULATED_OSMOLALITY"] },
+                                                { label: "Metabolic",   labs: ["NA","K","CO2","CHLORIDE","CA","CALCIUM","MG","PHOS","ANION_GAP","GLU","HA1C","HBA1C"] },
+                                                { label: "Hepatic",     labs: ["TOTAL_BILIRUBIN","BILIRUBIN_TOTAL","ALKALINE_PHOSPHATASE","ALT","ALT_(SGPT)","AST","AST_(SGOT)"] },
+                                                { label: "Immune / Infection", labs: ["WBC","NEUTROPHILS","NEUTROPHIL_ABSOLUTE","LYMPHOCYTES","LYMPHOCYTE_ABSOLUTE","MONOCYTES","MONOCYTE_ABSOLUTE","EOSINOPHILS","EOSINOPHIL_ABSOLUTE","BASOPHILS","BASOPHIL_ABSOLUTE","IMMATURE_GRANULOCYTES","IMMATURE_GRANULOCYTE_ABSOLUTE"] },
+                                            ]
+
+                                            const allGroupedKeys = new Set(LAB_GROUPS.flatMap(g => g.labs))
+                                            const ungroupedKeys = Object.keys(allLatest).filter(k => !allGroupedKeys.has(k))
+
+                                            const groups = [
+                                                ...LAB_GROUPS.map(g => ({
+                                                    label: g.label,
+                                                    items: g.labs.map(k => allLatest[k] ? { name: k, ...allLatest[k] } : null).filter(Boolean) as Array<{ name: string; value: number; unit: string; referenceRange: string; date: string; isAbnormal: boolean }>
+                                                })).filter(g => g.items.length > 0),
+                                                ...(ungroupedKeys.length > 0 ? [{ label: "Other", items: ungroupedKeys.sort().map(k => ({ name: k, ...allLatest[k] })) }] : [])
+                                            ]
+
+                                            const totalLabs = groups.reduce((s, g) => s + g.items.length, 0)
+                                            const abnormalCount = groups.reduce((s, g) => s + g.items.filter(i => i.isAbnormal).length, 0)
+
                                             return (
-                                                <div key={canonical} className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg border ${abnormal ? "bg-red-50/60 border-red-200" : "bg-slate-50/60 border-slate-100"}`}>
-                                                    <div>
-                                                        <p className="text-[10px] font-semibold text-slate-400">{canonical}</p>
-                                                        <p className={`text-sm font-black leading-tight ${abnormal ? "text-red-700" : "text-slate-800"}`}>
-                                                            {lab.value} <span className="text-[9px] font-normal text-slate-400">{lab.unit}</span>
-                                                        </p>
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                                                        {abnormalCount > 0 && <span className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded font-bold border border-red-100">{abnormalCount} abnormal</span>}
+                                                        <span>{totalLabs} labs on file</span>
                                                     </div>
-                                                    <div className="text-right">
-                                                        {abnormal
-                                                            ? <span className="px-1 py-0.5 text-[8px] font-bold bg-red-100 text-red-700 rounded">ABN</span>
-                                                            : <span className="px-1 py-0.5 text-[8px] font-bold bg-green-100 text-green-700 rounded">OK</span>}
-                                                    </div>
+                                                    {groups.map(group => (
+                                                        <div key={group.label}>
+                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">{group.label}</p>
+                                                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
+                                                                {group.items.map(item => (
+                                                                    <div key={item.name} className={`px-2.5 py-2 rounded-lg border ${item.isAbnormal ? "bg-red-50/60 border-red-200" : "bg-slate-50/60 border-slate-100"}`}>
+                                                                        <div className="flex items-start justify-between gap-1 mb-0.5">
+                                                                            <p className="text-[10px] font-semibold text-slate-500 leading-tight">{item.name}</p>
+                                                                            {item.isAbnormal
+                                                                                ? <span className="text-[8px] font-bold bg-red-100 text-red-700 px-1 py-0.5 rounded flex-shrink-0">ABN</span>
+                                                                                : <span className="text-[8px] font-bold bg-green-100 text-green-700 px-1 py-0.5 rounded flex-shrink-0">OK</span>}
+                                                                        </div>
+                                                                        <p className={`text-sm font-black leading-tight ${item.isAbnormal ? "text-red-700" : "text-slate-800"}`}>
+                                                                            {item.value} <span className="text-[9px] font-normal text-slate-400">{item.unit}</span>
+                                                                        </p>
+                                                                        {item.referenceRange && <p className="text-[8px] text-slate-300 mt-0.5">ref: {item.referenceRange}</p>}
+                                                                        <p className="text-[8px] text-slate-300 mt-0.5">{item.date ? new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : ""}</p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             )
-                                        })}
-                                    </div>
+                                        })()
                                 }
                             </div>
                         )}
