@@ -21,12 +21,12 @@ import { syncAllergies, syncImmunizations, syncCoverages } from '@/lib/sync/reso
 
 export const maxDuration = 300; // 5 min (Vercel Pro)
 
-// Runs daily at 3am UTC via vercel.json cron.
-// Syncs ALL active facilities. Processes patients in staleness order,
-// fitting as many as possible within the function timeout.
+// Runs 4x daily via vercel.json cron.
+// Fetches only patients whose data is older than 24h (truly stale), up to 200 candidates.
+// The 250s wall-clock guard stops processing when timeout approaches.
 
-const MAX_PATIENTS_PER_RUN = 50; // stay well within timeout
-const STALE_THRESHOLD_HOURS = 20;
+const MAX_PATIENTS_PER_RUN = 200; // fetch enough candidates; wall-clock guard is the real cap
+const STALE_THRESHOLD_HOURS = 24; // only sync patients whose data is > 24h old
 
 export async function GET(req: NextRequest) {
     const cronSecret = process.env.CRON_SECRET;
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to get PCC auth token' }, { status: 502 });
     }
 
-    // Get ALL patients across all facilities, ordered by staleness (never-synced first)
+    // Get stale patients across all facilities — only those not synced in the last 24h
     const patientsRes = await query<{
         simpl_id: string;
         first_name: string;
@@ -57,6 +57,8 @@ export async function GET(req: NextRequest) {
         `SELECT simpl_id, first_name, last_name, fac_id, patient_status, last_synced_at
          FROM patients
          WHERE (patient_status = 'Current' OR patient_status IS NULL)
+           AND (last_synced_at IS NULL
+                OR last_synced_at < NOW() - INTERVAL '24 hours')
          ORDER BY last_synced_at ASC NULLS FIRST
          LIMIT $1`,
         [MAX_PATIENTS_PER_RUN]
@@ -77,15 +79,6 @@ export async function GET(req: NextRequest) {
         results.facilities.add(patient.fac_id);
 
         try {
-            // Skip recently synced patients
-            if (patient.last_synced_at) {
-                const hoursSinceSync = (Date.now() - new Date(patient.last_synced_at).getTime()) / 36e5;
-                if (hoursSinceSync < STALE_THRESHOLD_HOURS) {
-                    results.skipped++;
-                    continue;
-                }
-            }
-
             const summary = await fetchSummary(patient.simpl_id, token);
             if (!summary || Object.keys(summary).length === 0) {
                 results.skipped++;
