@@ -11,6 +11,7 @@ import {
     Bed, Clock, UserCheck, UserX,
     Syringe, Utensils, Apple, ShieldAlert,
     Heart, ClipboardList, Stethoscope, Brain,
+    ClipboardCheck, Copy, Check,
 } from "lucide-react"
 
 const ResourceDataRenderer = dynamic(
@@ -226,7 +227,7 @@ const LabTrendChart = dynamic(
 
 // ─── Sort / filter types ──────────────────────────────────────────────────────
 
-type FilterType = "all" | "active" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "foley" | "gtube" | "mtn" | "cardiology" | "care_gaps" | "primary_care" | "psych_meds" | "no-labs" | "discharged"
+type FilterType = "all" | "active" | "critical" | "high" | "medium" | "low" | "infusion" | "transfusion" | "foley" | "gtube" | "mtn" | "cardiology" | "care_gaps" | "primary_care" | "psych_meds" | "ccm" | "no-labs" | "discharged"
 
 const MODULE_FILTER_META: Record<string, { key: FilterType; label: string; icon: React.ReactNode; color: string; activeColor: string; analysisKey: string }> = {
     infusion:     { key: "infusion",      label: "Infusion",     icon: <Droplets className="w-3 h-3" />,      color: "text-blue-600 border-blue-200 hover:bg-blue-50",       activeColor: "text-white bg-blue-600 border-blue-600",     analysisKey: "infusion" },
@@ -238,6 +239,7 @@ const MODULE_FILTER_META: Record<string, { key: FilterType; label: string; icon:
     care_gaps:    { key: "care_gaps",     label: "Care Gaps",    icon: <ClipboardList className="w-3 h-3" />, color: "text-amber-600 border-amber-200 hover:bg-amber-50",    activeColor: "text-white bg-amber-600 border-amber-600",   analysisKey: "care_gaps" },
     primary_care: { key: "primary_care",  label: "General Medical", icon: <Stethoscope className="w-3 h-3" />,   color: "text-teal-600 border-teal-200 hover:bg-teal-50",       activeColor: "text-white bg-teal-600 border-teal-600",     analysisKey: "primary_care" },
     psych_meds:   { key: "psych_meds",    label: "Psych/Meds",   icon: <Brain className="w-3 h-3" />,         color: "text-indigo-600 border-indigo-200 hover:bg-indigo-50", activeColor: "text-white bg-indigo-600 border-indigo-600",  analysisKey: "psych_meds" },
+    ccm:          { key: "ccm",           label: "CCM",          icon: <ClipboardCheck className="w-3 h-3" />, color: "text-cyan-600 border-cyan-200 hover:bg-cyan-50",       activeColor: "text-white bg-cyan-600 border-cyan-600",     analysisKey: "ccm" },
 }
 type SortType = "urgency" | "name-az" | "name-za" | "status" | "severity" | "room-asc" | "room-desc" | "days-long" | "days-short" | "hgb-low" | "alb-low"
 
@@ -348,9 +350,172 @@ const RISK_META: Record<string, { icon: React.ReactNode; label: string; keyIndic
     care_gaps:    { icon: <ClipboardList className="w-3.5 h-3.5 text-amber-500" />, label: "Care Gaps & Recommendations" },
     primary_care: { icon: <Stethoscope className="w-3.5 h-3.5 text-teal-500" />,   label: "General Medical Review" },
     psych_meds:   { icon: <Brain className="w-3.5 h-3.5 text-indigo-500" />,       label: "Psychology & Medication Mgmt" },
+    ccm:          { icon: <ClipboardCheck className="w-3.5 h-3.5 text-cyan-500" />, label: "Chronic Care Management",     keyIndicatorLabel: "Conditions", keyIndicatorField: "conditionCount" },
 }
 
-function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAnalysis | null; ai: DbAnalysis | null }) {
+// ─── CCM Note Panel (on-demand AI generation) ───────────────────────────────
+
+interface CCMNoteSection {
+    title: string
+    content: string
+}
+
+function CCMNotePanel({ simplId }: { simplId: string }) {
+    const [loading, setLoading] = useState(false)
+    const [initialLoading, setInitialLoading] = useState(true)
+    const [sections, setSections] = useState<CCMNoteSection[] | null>(null)
+    const [generatedAt, setGeneratedAt] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
+    const [copiedIdx, setCopiedIdx] = useState<number | null>(null)
+    const [copiedAll, setCopiedAll] = useState(false)
+
+    // Load saved note on mount
+    useEffect(() => {
+        let cancelled = false
+        setInitialLoading(true)
+        fetch(`/api/patients/${simplId}/ccm-note`)
+            .then(r => r.json())
+            .then(data => {
+                if (cancelled) return
+                if (data.note?.sections?.length) {
+                    setSections(data.note.sections)
+                    setGeneratedAt(data.note.generatedAt)
+                }
+            })
+            .catch(() => {})
+            .finally(() => { if (!cancelled) setInitialLoading(false) })
+        return () => { cancelled = true }
+    }, [simplId])
+
+    const generateNote = async () => {
+        setLoading(true)
+        setError(null)
+        try {
+            const res = await fetch(`/api/patients/${simplId}/ccm-note`, { method: 'POST' })
+            const data = await res.json()
+            if (!res.ok) {
+                setError(data.error ?? 'Failed to generate note')
+                return
+            }
+            setSections(data.note?.sections ?? [])
+            setGeneratedAt(data.note?.generatedAt ?? new Date().toISOString())
+        } catch {
+            setError('Network error — could not reach the server')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const copySection = async (idx: number) => {
+        if (!sections?.[idx]) return
+        await navigator.clipboard.writeText(`${sections[idx].title}\n\n${sections[idx].content}`)
+        setCopiedIdx(idx)
+        setTimeout(() => setCopiedIdx(null), 2000)
+    }
+
+    const copyAll = async () => {
+        if (!sections) return
+        const text = sections.map(s => `=== ${s.title} ===\n\n${s.content}`).join('\n\n\n')
+        await navigator.clipboard.writeText(text)
+        setCopiedAll(true)
+        setTimeout(() => setCopiedAll(false), 2000)
+    }
+
+    if (initialLoading) {
+        return (
+            <div className="pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-xs text-slate-400 py-3">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading saved CCM note...
+                </div>
+            </div>
+        )
+    }
+
+    if (!sections) {
+        return (
+            <div className="pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold text-cyan-600 uppercase tracking-wide flex items-center gap-1.5">
+                        <ClipboardCheck className="w-3.5 h-3.5" /> CCM Clinical Note
+                    </p>
+                </div>
+                <p className="text-sm text-slate-500 mb-3">
+                    Generate an audit-ready CCM note with care plans, medication review, monitoring schedules, and all Medicare-required documentation sections. The note will be saved for future reference.
+                </p>
+                {error && (
+                    <div className="mb-3 p-2.5 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        {error}
+                    </div>
+                )}
+                <button
+                    onClick={generateNote}
+                    disabled={loading}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-lg hover:bg-cyan-100 transition-colors disabled:opacity-50"
+                >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                    {loading ? "Generating CCM Note..." : "Generate CCM Note"}
+                </button>
+            </div>
+        )
+    }
+
+    return (
+        <div className="pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+                <div>
+                    <p className="text-xs font-bold text-cyan-600 uppercase tracking-wide flex items-center gap-1.5">
+                        <ClipboardCheck className="w-3.5 h-3.5" /> CCM Clinical Note
+                    </p>
+                    {generatedAt && (
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                            Generated {new Date(generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}
+                        </p>
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={copyAll}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-lg hover:bg-cyan-100 transition-colors"
+                    >
+                        {copiedAll ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                        {copiedAll ? "Copied!" : "Copy Entire Note"}
+                    </button>
+                    <button
+                        onClick={generateNote}
+                        disabled={loading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                    >
+                        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                        {loading ? "Regenerating..." : "Regenerate"}
+                    </button>
+                </div>
+            </div>
+            <div className="space-y-3">
+                {sections.map((section, idx) => (
+                    <div key={idx} className="rounded-xl border border-slate-200 bg-slate-50/50 overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 bg-white">
+                            <p className="text-sm font-bold text-slate-700">{section.title}</p>
+                            <button
+                                onClick={() => copySection(idx)}
+                                className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded transition-colors"
+                                title="Copy this section"
+                            >
+                                {copiedIdx === idx ? <Check className="w-3 h-3 text-cyan-600" /> : <Copy className="w-3 h-3" />}
+                                {copiedIdx === idx ? "Copied" : "Copy"}
+                            </button>
+                        </div>
+                        <div className="px-4 py-3">
+                            <pre className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-sans">{section.content}</pre>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+function UnifiedRiskCard({ riskType, rule, ai, simplId }: { riskType: string; rule: DbAnalysis | null; ai: DbAnalysis | null; simplId?: string }) {
     const [open, setOpen] = useState(false)
     const meta = RISK_META[riskType] ?? { icon: null, label: riskType }
     const primary = rule ?? ai
@@ -392,7 +557,9 @@ function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAna
                 {keyVal != null && (
                     <p className="text-[10px] font-semibold text-slate-500 mt-1">{meta.keyIndicatorLabel}: {keyVal} {meta.unit}</p>
                 )}
-                <p className="text-[9px] text-slate-400 mt-1.5 group-hover:text-teal-500 transition-colors">Click to view full detail →</p>
+                <p className="text-[9px] text-slate-400 mt-1.5 group-hover:text-teal-500 transition-colors">
+                    {riskType === 'ccm' && (rule?.indicators?.isEligible as boolean) ? 'Click to view details & generate CCM note →' : 'Click to view full detail →'}
+                </p>
             </div>
 
             {/* Full-detail modal */}
@@ -484,6 +651,46 @@ function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAna
                                 </div>
                             )}
 
+                            {/* CCM qualifying conditions */}
+                            {riskType === 'ccm' && rule?.indicators?.qualifyingConditions && (
+                                <div>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Qualifying Chronic Conditions</p>
+                                    <div className="space-y-1.5">
+                                        {(rule.indicators.qualifyingConditions as Array<{ icd10: string; description: string; categoryLabel: string }>).map((cond, i) => (
+                                            <div key={i} className="flex items-start gap-2 rounded-lg border border-cyan-100 bg-cyan-50/50 px-3 py-2">
+                                                <span className="mt-0.5 w-2 h-2 rounded-full bg-cyan-400 flex-shrink-0" />
+                                                <div>
+                                                    <p className="text-sm font-semibold text-slate-700">{cond.categoryLabel}</p>
+                                                    <p className="text-xs text-slate-500">{cond.description} ({cond.icd10})</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {(rule.indicators.complexityTier as string) && (
+                                        <p className="text-xs text-slate-500 mt-2">
+                                            Complexity: <span className="font-semibold capitalize">{rule.indicators.complexityTier as string}</span>
+                                            {' · '}{rule.indicators.conditionCount as number} condition categories
+                                            {(rule.indicators.activeMedicationCount as number) > 0 && ` · ${rule.indicators.activeMedicationCount} chronic meds`}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* CCM monitoring gaps */}
+                            {riskType === 'ccm' && (rule?.indicators?.missingMonitoring as Array<{ condition: string; gap: string; recommendation: string }>)?.length > 0 && (
+                                <div>
+                                    <p className="text-xs font-bold text-amber-500 uppercase tracking-wide mb-2">Monitoring Gaps</p>
+                                    <div className="space-y-2">
+                                        {(rule!.indicators.missingMonitoring as Array<{ condition: string; gap: string; recommendation: string }>).map((m, i) => (
+                                            <div key={i} className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3">
+                                                <p className="text-sm font-semibold text-amber-800">{m.condition}: {m.gap}</p>
+                                                <p className="text-sm text-amber-700 mt-0.5">{m.recommendation}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Structured gaps (care_gaps) */}
                             {gaps.length > 0 && (
                                 <div>
@@ -537,6 +744,11 @@ function UnifiedRiskCard({ riskType, rule, ai }: { riskType: string; rule: DbAna
                                         </div>
                                     )}
                                 </div>
+                            )}
+
+                            {/* CCM Note Generator */}
+                            {riskType === 'ccm' && simplId && (rule?.indicators?.isEligible as boolean) && (
+                                <CCMNotePanel simplId={simplId} />
                             )}
                         </div>
 
@@ -627,7 +839,7 @@ function OverviewTab({ patient, dbAnalysis }: {
             {visibleCards.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {visibleCards.map(c => (
-                        <UnifiedRiskCard key={c.type} riskType={c.type} rule={c.rule} ai={c.ai} />
+                        <UnifiedRiskCard key={c.type} riskType={c.type} rule={c.rule} ai={c.ai} simplId={patient.simpl_id} />
                     ))}
                 </div>
             ) : (
@@ -1080,6 +1292,7 @@ function PatientsView() {
         care_gaps: analyzed.filter(a => moduleMatch(a, "care_gaps")).length,
         primary_care: analyzed.filter(a => moduleMatch(a, "primary_care")).length,
         psych_meds: analyzed.filter(a => moduleMatch(a, "psych_meds")).length,
+        ccm: analyzed.filter(a => moduleMatch(a, "ccm")).length,
         "no-labs": analyzed.filter(a => !a.hasLabs && isActive(a.patient)).length,
         discharged: analyzed.filter(a => !isActive(a.patient)).length,
     }

@@ -21,6 +21,7 @@ const MODULE_DESCRIPTIONS: Record<string, string> = {
     care_gaps:    'Missing labs, screenings, or follow-ups given diagnoses',
     primary_care: 'Chronic disease burden, polypharmacy, and primary care concerns',
     psych_meds:   'Psychotropic medication safety, GDR compliance, and behavioral concerns',
+    ccm:          'Chronic Care Management eligibility, qualifying conditions, and care coordination needs',
 };
 
 function buildPrompt(ctx: PatientContext, ruleResults: AnalysisResult[], enabledModules: string[]): string {

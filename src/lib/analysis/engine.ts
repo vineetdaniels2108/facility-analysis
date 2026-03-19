@@ -10,6 +10,7 @@ import { cardiologyModule } from './modules/cardiology';
 import { careGapsModule } from './modules/care-gaps';
 import { primaryCareModule } from './modules/primary-care';
 import { psychMedsModule } from './modules/psych-meds';
+import { ccmModule } from './modules/ccm';
 import { runAIReview } from './modules/ai-reviewer';
 
 // Registry of all available modules
@@ -23,6 +24,7 @@ const ALL_MODULES: Record<string, AnalysisModule> = {
     care_gaps: careGapsModule,
     primary_care: primaryCareModule,
     psych_meds: psychMedsModule,
+    ccm: ccmModule,
 };
 
 // Default modules to run if no client config is found

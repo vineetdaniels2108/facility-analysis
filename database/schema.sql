@@ -423,6 +423,21 @@ CREATE TABLE analysis_results (
 CREATE INDEX idx_analysis_current ON analysis_results(simpl_id, analysis_type) WHERE is_current = TRUE;
 CREATE INDEX idx_analysis_severity ON analysis_results(severity) WHERE is_current = TRUE;
 
+-- Generated CCM clinical notes (persisted for audit trail)
+CREATE TABLE ccm_notes (
+    id              SERIAL PRIMARY KEY,
+    simpl_id        UUID NOT NULL REFERENCES patients(simpl_id),
+    sections        JSONB NOT NULL,                   -- [{title, content}]
+    complexity_tier TEXT,                              -- 'standard', 'moderate', 'complex'
+    condition_count INT,
+    model           TEXT,                              -- 'gpt-4o-mini'
+    generated_at    TIMESTAMPTZ DEFAULT NOW(),
+    generated_by    TEXT,                              -- user who triggered generation
+    is_current      BOOLEAN DEFAULT TRUE
+);
+
+CREATE INDEX idx_ccm_notes_patient ON ccm_notes(simpl_id) WHERE is_current = TRUE;
+
 -- Historical snapshots for trend analysis / ML training
 CREATE TABLE patient_snapshots (
     id                  SERIAL PRIMARY KEY,

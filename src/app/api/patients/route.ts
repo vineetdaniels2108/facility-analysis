@@ -4,9 +4,9 @@ import { isDbConfigured, query } from '@/lib/db/client';
 const KEY_LAB_NAMES = ['HGB','HCT','ALB','BUN','CREAT','NA','K','CO2','GLU','WBC','PLATELET','INR','CA','MG','FE','FERRITIN'];
 const ANALYSIS_TYPES = [
     'infusion', 'transfusion', 'foley_risk', 'gtube_risk', 'mtn_risk',
-    'cardiology', 'care_gaps', 'primary_care', 'psych_meds',
+    'cardiology', 'care_gaps', 'primary_care', 'psych_meds', 'ccm',
     'ai_infusion', 'ai_transfusion', 'ai_foley_risk', 'ai_gtube_risk', 'ai_mtn_risk',
-    'ai_cardiology', 'ai_care_gaps', 'ai_primary_care', 'ai_psych_meds',
+    'ai_cardiology', 'ai_care_gaps', 'ai_primary_care', 'ai_psych_meds', 'ai_ccm',
 ] as const;
 
 interface LabValue {
