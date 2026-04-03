@@ -536,7 +536,7 @@ function UnifiedRiskCard({ riskType, rule, ai, simplId }: { riskType: string; ru
 
     // Pull structured gaps/findings from indicators if available
     const gaps = (rule?.indicators?.gaps ?? []) as Array<{ gap: string; recommendation: string } | string>
-    const findings = (rule?.indicators?.findings ?? []) as Array<{ area: string; concern: string; action: string }>
+    const findings = (rule?.indicators?.findings ?? []) as Array<{ area: string; concern: string; action: string | undefined }>
 
     return (
         <>
